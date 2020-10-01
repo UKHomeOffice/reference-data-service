@@ -39,6 +39,7 @@
     }
   ],
   "rules": {
+    "import/no-extraneous-dependencies": ["off", {"devDependencies": ["**/setupTests.js","**/*.test.js", "**/*.spec.js"]}],
     "no-underscore-dangle": "off",
     "react/react-in-jsx-scope": "off",
     "import/prefer-default-export" : "off",
