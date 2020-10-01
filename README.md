@@ -2,7 +2,7 @@
 
 # Reference Data Service
 
-Provides a UI viewing and updating reference data
+Provides a UI for viewing and updating reference data. Data is not updated directly and requires an approval process.
 
 # Server
 
