@@ -1,3 +1,5 @@
+![Reference Data Service UI CI](https://github.com/DigitalPatterns/reference-data-service/workflows/Reference%20Data%20Service%20UI%20CI/badge.svg)
+
 # Reference Data Service
 
 Provides a UI viewing and updating reference data
