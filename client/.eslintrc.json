@@ -30,12 +30,15 @@
   "plugins": [
     "react"
   ],
+  "overrides": [
+    {
+      "files": ["AccessibilityStatement.jsx", "PrivacyPolicy.jsx"],
+      "rules": {
+        "max-len": 0
+      }
+    }
+  ],
   "rules": {
-    "jsx-a11y/label-has-associated-control": [ 2, {
-      "labelComponents": ["label"],
-      "labelAttributes": ["htmlFor"],
-      "controlComponents": ["input"]
-    }],
     "no-underscore-dangle": "off",
     "react/react-in-jsx-scope": "off",
     "import/prefer-default-export" : "off",

@@ -3,21 +3,69 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.5.0",
-    "@testing-library/user-event": "^7.2.1",
+    "@react-keycloak/web": "^2.1.4",
+    "axios": "^0.20.0",
+    "govuk-frontend": "^3.9.1",
+    "i18next": "^19.7.0",
+    "i18next-browser-languagedetector": "^6.0.1",
+    "i18next-xhr-backend": "^3.2.2",
+    "keycloak-js": "^11.0.2",
+    "lodash": "^4.17.20",
+    "moment": "^2.29.0",
+    "navi": "^0.14.0",
+    "node-sass": "^4.14.1",
+    "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-scripts": "3.4.3"
+    "react-global-configuration": "^1.4.0",
+    "react-i18next": "^11.7.3",
+    "react-navi": "^0.14.4",
+    "react-navi-helmet": "^0.14.4",
+    "react-scripts": "3.4.3",
+    "styled-components": "^5.2.0",
+    "uuid": "^8.3.0"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "test-coverage": "react-scripts test \"--coverage\" \"--watchAll=false\"",
+    "test-coverage-watch": "react-scripts test \"--coverage\" \"--watchAll=true\"",
+    "lint": "eslint --ignore-pattern node_modules/ --ext .js --ext .jsx --fix src"
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": [
+      "react-app",
+      "airbnb"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint",
+      "pre-push": "CI=true react-scripts test"
+    }
+  },
+  "jest": {
+    "coverageReporters": [
+      "lcov",
+      "json",
+      "text"
+    ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "src/index.js",
+      "src/serviceWorker.js",
+      "src/i18n.js"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 70,
+        "functions": 80,
+        "lines": 80,
+        "statements": 90
+      }
+    }
   },
   "browserslist": {
     "production": [
@@ -30,5 +78,25 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^11.0.4",
+    "@testing-library/react-hooks": "^3.4.2",
+    "@testing-library/user-event": "^12.1.6",
+    "axios-mock-adapter": "^1.18.2",
+    "babel-eslint": "^10.1.0",
+    "cheerio": "^1.0.0-rc.3",
+    "enzyme": "^3.11.0",
+    "enzyme-adapter-react-16": "^1.15.5",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb": "^18.2.0",
+    "eslint-config-prettier": "^6.12.0",
+    "eslint-plugin-jsx-a11y": "^6.3.1",
+    "eslint-plugin-react": "^7.21.2",
+    "eslint-plugin-react-hooks": "^4.1.2",
+    "husky": "^4.3.0",
+    "jest-canvas-mock": "^2.3.0",
+    "sinon": "^9.0.3"
   }
 }
