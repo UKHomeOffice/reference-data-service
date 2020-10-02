@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: reference-data-service
+  cloud:
+    config:
+      uri: ${CONFIG_SERVER_URL:http://localhost:8010}
+      token: ${CONFIG_SERVER_TOKEN:00000000-0000-0000-0000-000000000000}
