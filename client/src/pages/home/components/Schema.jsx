@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes, { shape } from 'prop-types';
 
-const Schema = ({ entity }) => <div>{entity}</div>;
+const Schema = ({ entity }) => <div>{JSON.stringify(entity)}</div>;
 
 Schema.propTypes = {
   entity: PropTypes.shape({
