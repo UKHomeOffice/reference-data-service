@@ -4,14 +4,16 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { BLACK } from 'govuk-colours';
 
-const ApplicationSpinner = ({ translationKey, args, colour }) => {
+const ApplicationSpinner = ({
+  translationKey, args, colour, position, top,
+}) => {
   const { t } = useTranslation();
   return (
     <>
       <div className="govuk-width-container">
         <div className="govuk-grid-row">
           <div className="govuk-grid-column-full">
-            <SpinnerContainer>
+            <SpinnerContainer position={position} top={top}>
               <Spinner />
               <SpinnerText colour={colour}>
                 {args ? t(translationKey, args) : t(translationKey)}
@@ -25,8 +27,8 @@ const ApplicationSpinner = ({ translationKey, args, colour }) => {
 };
 
 const SpinnerContainer = styled.div`
-position: fixed;
-  top: 50%;
+  position: ${(props) => (props.position ? props.position : 'fixed')};
+  top: ${(props) => (props.top ? props.top : '50%')};
   left: 50%;
   display: flex;
   flex-direction: column;
@@ -62,8 +64,13 @@ ApplicationSpinner.defaultProps = {
   translationKey: 'loading',
   args: null,
   colour: BLACK,
+  top: '50%',
+  position: 'fixed',
+
 };
 ApplicationSpinner.propTypes = {
+  position: PropTypes.string,
+  top: PropTypes.string,
   translationKey: PropTypes.string,
   args: PropTypes.shape({}),
   colour: PropTypes.string,

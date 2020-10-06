@@ -16,6 +16,7 @@
     "navi": "^0.14.0",
     "node-sass": "^4.14.1",
     "prop-types": "^15.7.2",
+    "query-string": "^6.13.5",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-error-boundary": "^3.0.2",
@@ -48,7 +49,11 @@
       "pre-push": "CI=true react-scripts test"
     }
   },
+  "proxy": "http://localhost:8100",
   "jest": {
+    "snapshotSerializers": [
+      "enzyme-to-json/serializer"
+    ],
     "coverageReporters": [
       "lcov",
       "json",
@@ -91,6 +96,7 @@
     "cheerio": "^1.0.0-rc.3",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.5",
+    "enzyme-to-json": "^3.6.1",
     "eslint": "^6.8.0",
     "eslint-config-airbnb": "^18.2.0",
     "eslint-config-prettier": "^6.12.0",

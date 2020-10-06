@@ -32,7 +32,7 @@ zuul:
     refdata-service:
       path: /refdata/**
       strip-prefix: true
-      url: ${refData.url:http://localhost:9002}
+      url: ${refData.url:http://localhost:3002}
     form-service:
       path: /form/**
       strip-prefix: false
@@ -42,7 +42,6 @@ zuul:
       path: /camunda/**
       url: ${workflowApi.url:http://localhost:8000}
   sensitive-headers: Cookie,Set-Cookie
-  ssl-hostname-validation-enabled: false
 
 management:
   endpoints:

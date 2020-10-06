@@ -46,7 +46,16 @@
   },
   "pages" : {
     "home" : {
-      "title": "Reference Data Service"
+      "title": "Reference Data Service",
+      "description" : "This service allows you to view and manage reference data sets.",
+      "data-set-title" : "Current data sets",
+      "loading" : "Loading data sets...",
+      "entities" : {
+        "title" : "Entity"
+      }
+    },
+    "login" : {
+      "title" : "Login"
     }
   }
 }
