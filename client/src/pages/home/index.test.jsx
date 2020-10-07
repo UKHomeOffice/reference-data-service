@@ -64,6 +64,82 @@ describe('Home', () => {
         },
       },
     },
+    definitions: {
+      behavioursigns: {
+        description: '{"label": "Behaviour Signs", "description": "Behaviours Warning and Danger Signs", "schemalastupdated": "06/03/2019", "dataversion": 1}',
+        required: [
+          'id',
+          'name',
+          'warning',
+          'danger',
+        ],
+        properties: {
+          id: {
+            format: 'integer',
+            type: 'integer',
+            description: '{"label": "Identifier", "description": "Unique identifying column.", "summaryview": "false"}\n\nNote:\nThis is a Primary Key.<pk/>',
+          },
+          name: {
+            maxLength: 30,
+            format: 'character varying',
+            type: 'string',
+            description: '{"label": "Name", "description": "Name of behaviour", "summaryview": "true"}',
+          },
+          warning: {
+            format: 'boolean',
+            type: 'boolean',
+            description: '{"label": "Warning", "description": "Warning Sign?", "summaryview": "true"}',
+          },
+          danger: {
+            format: 'boolean',
+            type: 'boolean',
+            description: '{"label": "Danger", "description": "Danger Sign?", "summaryview": "true"}',
+          },
+          validfrom: {
+            format: 'timestamp with time zone',
+            type: 'string',
+            description: '{"label": "Valid from date", "description": "Item valid from date.", "summaryview" : "false"}',
+          },
+          validto: {
+            format: 'timestamp with time zone',
+            type: 'string',
+            description: '{"label": "Valid to date", "description": "Item valid to date.", "summaryview" : "false"}',
+          },
+        },
+        type: 'object',
+      },
+      bffunctiontypes: {
+        description: '{"label": "Border function types", "description": "Border functions type clarifications.", "schemalastupdated": "06/03/2019", "dataversion": 1}',
+        required: [
+          'id',
+          'bffunction',
+        ],
+        properties: {
+          id: {
+            format: 'uuid',
+            type: 'string',
+            description: '{"label": "Identifier", "description": "Unique identifying column.", "summaryview": "false"}\n\nNote:\nThis is a Primary Key.<pk/>',
+          },
+          bffunction: {
+            maxLength: 20,
+            format: 'character varying',
+            type: 'string',
+            description: '{"label": "Function", "description": "The type of border crossing.", "summaryview": "true"}',
+          },
+          validfrom: {
+            format: 'timestamp with time zone',
+            type: 'string',
+            description: '{"label": "Valid from date", "description": "Item valid from date.", "summaryview" : "false"}',
+          },
+          validto: {
+            format: 'timestamp with time zone',
+            type: 'string',
+            description: '{"label": "Valid to date", "description": "Item valid to date.", "summaryview" : "false"}',
+          },
+        },
+        type: 'object',
+      },
+    },
   };
   beforeEach(() => {
     mockAxios.reset();

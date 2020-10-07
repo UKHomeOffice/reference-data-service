@@ -68,9 +68,8 @@ const Layout = ({ children }) => {
             <AlertContextProvider>
               <AlertBanner />
               {route.url.pathname !== '/' ? (
-              // eslint-disable-next-line jsx-a11y/anchor-is-valid
                 <a
-                  href="#"
+                  href="/"
                   onClick={async (e) => {
                     e.preventDefault();
                     await navigation.goBack();

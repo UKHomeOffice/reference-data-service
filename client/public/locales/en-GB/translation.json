@@ -51,7 +51,25 @@
       "data-set-title" : "Current data sets",
       "loading" : "Loading data sets...",
       "entities" : {
-        "title" : "Entity"
+        "title" : "Data"
+      }
+    },
+    "schema": {
+      "version" : "Version",
+      "lastupdated": "Last updated",
+      "properties": {
+        "property" : "Property",
+        "label" : "Label",
+        "description": "Description",
+        "type" : "Type"
+      }
+    },
+    "data" : {
+      "loading" : "Loading data for {{entity}}",
+      "no-more-data" : "No more data for {{entity}}",
+      "total" : "Total number of entries for {{entity}}",
+      "row": {
+        "identifier" : "Primary identifier"
       }
     },
     "login" : {
