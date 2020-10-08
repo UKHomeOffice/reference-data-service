@@ -31,24 +31,25 @@ const Schema = ({ definition }) => {
       </dl>
       <div className="govuk-grid-row govuk-!-margin-top-3">
         <div className="govuk-grid-column-full">
+          <TableWrapper>
           <CustomTable className="govuk-table">
             <thead className="govuk-table__head">
               <tr className="govuk-table__row">
-                <th scope="col" className="govuk-table__header">
+                <CustomTh scope="col" className="govuk-table__header">
                   {t('pages.schema.properties.property')}
-                </th>
-                <th scope="col" className="govuk-table__header">
+                </CustomTh>
+                <CustomTh scope="col" className="govuk-table__header">
                   {t('pages.schema.properties.label')}
-                </th>
-                <th scope="col" className="govuk-table__header">
+                </CustomTh>
+                <CustomTh scope="col" className="govuk-table__header">
                   {t('pages.schema.properties.description')}
-                </th>
-                <th scope="col" className="govuk-table__header">
+                </CustomTh>
+                <CustomTh scope="col" className="govuk-table__header">
                   {t('pages.schema.properties.type')}
-                </th>
+                </CustomTh>
               </tr>
             </thead>
-            <tbody className="govuk-table__body">
+            <CustomTBody className="govuk-table__body">
 
               {
               Object.keys(definition.properties).map((p) => {
@@ -69,8 +70,9 @@ const Schema = ({ definition }) => {
               })
             }
 
-            </tbody>
+            </CustomTBody>
           </CustomTable>
+          </TableWrapper>
         </div>
       </div>
 
@@ -85,11 +87,30 @@ Schema.propTypes = {
   }).isRequired,
 };
 
+const TableWrapper = styled.div`
+  height: 700px;
+  overflow: auto;
+`;
+
 const CustomTable = styled.table`
   @media (max-width: 768px) {
-     display: block;
+    display: block;
+    overflow-y: scroll;
+    height: 400px;
     overflow-x: auto;
     white-space: nowrap;
   }
 `;
+
+const CustomTh = styled.th`
+  position: sticky;
+  top: 0; 
+  background: white;
+`;
+
+const CustomTBody = styled.tbody`
+ height: 100px;       /* Just for the demo          */
+    overflow-y: auto;    /* Trigger vertical scroll    */
+    overflow-x: hidden;  /* Hide the horizontal scroll */
+`
 export default Schema;
