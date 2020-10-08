@@ -32,26 +32,26 @@ const Schema = ({ definition }) => {
       <div className="govuk-grid-row govuk-!-margin-top-3">
         <div className="govuk-grid-column-full">
           <TableWrapper>
-          <CustomTable className="govuk-table">
-            <thead className="govuk-table__head">
-              <tr className="govuk-table__row">
-                <CustomTh scope="col" className="govuk-table__header">
-                  {t('pages.schema.properties.property')}
-                </CustomTh>
-                <CustomTh scope="col" className="govuk-table__header">
-                  {t('pages.schema.properties.label')}
-                </CustomTh>
-                <CustomTh scope="col" className="govuk-table__header">
-                  {t('pages.schema.properties.description')}
-                </CustomTh>
-                <CustomTh scope="col" className="govuk-table__header">
-                  {t('pages.schema.properties.type')}
-                </CustomTh>
-              </tr>
-            </thead>
-            <CustomTBody className="govuk-table__body">
+            <CustomTable className="govuk-table">
+              <thead className="govuk-table__head">
+                <tr className="govuk-table__row">
+                  <CustomTh scope="col" className="govuk-table__header">
+                    {t('pages.schema.properties.property')}
+                  </CustomTh>
+                  <CustomTh scope="col" className="govuk-table__header">
+                    {t('pages.schema.properties.label')}
+                  </CustomTh>
+                  <CustomTh scope="col" className="govuk-table__header">
+                    {t('pages.schema.properties.description')}
+                  </CustomTh>
+                  <CustomTh scope="col" className="govuk-table__header">
+                    {t('pages.schema.properties.type')}
+                  </CustomTh>
+                </tr>
+              </thead>
+              <CustomTBody className="govuk-table__body">
 
-              {
+                {
               Object.keys(definition.properties).map((p) => {
                 const { description } = definition.properties[p];
                 let parsed = description.replace(/(?:\r\n|\r|\n)/g, '');
@@ -70,8 +70,8 @@ const Schema = ({ definition }) => {
               })
             }
 
-            </CustomTBody>
-          </CustomTable>
+              </CustomTBody>
+            </CustomTable>
           </TableWrapper>
         </div>
       </div>
@@ -112,5 +112,5 @@ const CustomTBody = styled.tbody`
  height: 100px;       /* Just for the demo          */
     overflow-y: auto;    /* Trigger vertical scroll    */
     overflow-x: hidden;  /* Hide the horizontal scroll */
-`
+`;
 export default Schema;

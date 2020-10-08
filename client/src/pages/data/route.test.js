@@ -1,5 +1,5 @@
 import { createMemoryNavigation } from 'navi';
-import routes from './index';
+import routes from './routes';
 
 describe('Base routes', () => {
   beforeEach(() => {
@@ -8,12 +8,6 @@ describe('Base routes', () => {
   it.each`
       path                                                  | authenticated
       ${'/'}                                                | ${true}
-      ${'/schema/test'}                                     | ${true}
-      ${'/schema/test/data'}                                | ${true}
-      ${'/login'}                                           | ${true}
-      ${'/login'}                                           | ${false}
-      ${'/login?redirectTo=/'}                              | ${true}
-      ${'/logout'}                                          | ${true}
       `('title and views for $path should be defined', async ({ path, authenticated }) => {
   const navigation = createMemoryNavigation({
     url: `${path}`,

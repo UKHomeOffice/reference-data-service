@@ -208,7 +208,7 @@ describe('Home', () => {
       await new Promise((resolve) => setInterval(resolve, 1000));
       await wrapper.update();
     });
-    expect(mockNavigate).toBeCalledWith('/entity/behavioursigns', { replace: false });
+    expect(mockNavigate).toBeCalledWith('/schema/behavioursigns', { replace: false });
   });
 
   it('loading bar not displayed if api failure', async () => {

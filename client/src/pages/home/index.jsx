@@ -62,13 +62,13 @@ const Home = ({ entity }) => {
           entityKeys.map((k) => (
             <li key={k}>
               <CustomLink
-                href={`/entity${k}`}
+                href={`/schema${k}`}
                 active={key === k}
                 className="govuk-link"
                 onClick={async (e) => {
                   e.preventDefault();
                   setKey(k);
-                  await navigation.navigate(`/entity${k}`, {
+                  await navigation.navigate(`/schema${k}`, {
                     replace: false,
                   });
                 }}

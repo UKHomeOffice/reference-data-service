@@ -12,10 +12,11 @@ const routes = mount({
     title: context.t('pages.home.title'),
     getView: () => import('../../pages/home'),
   }))),
-  '/entity/:id': map((request, context) => withAuthentication(route({
+  '/schema/:id': map((request, context) => withAuthentication(route({
     title: context.t('pages.home.title'),
     getView: () => <Home entity={request.params.id} />,
   }))),
+  '/schema/:id/data': lazy(() => import('../data/routes')),
   '/logout': map((request, context) => withAuthentication(route({
     title: context.t('logout'),
     getView: () => import('../../components/header/Logout'),
