@@ -4,6 +4,7 @@ import moment from 'moment';
 import { v4 as uuidv4 } from 'uuid';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import * as COLOURS from 'govuk-colours';
 
 const Schema = ({ definition }) => {
   const defDesc = JSON.parse(definition.description);
@@ -105,7 +106,8 @@ const CustomTable = styled.table`
 const CustomTh = styled.th`
   position: sticky;
   top: 0; 
-  background: white;
+  background:  ${COLOURS.BLUE};
+  color: ${COLOURS.WHITE}
 `;
 
 const CustomTBody = styled.tbody`

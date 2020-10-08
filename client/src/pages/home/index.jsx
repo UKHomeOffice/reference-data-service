@@ -64,7 +64,7 @@ const Home = ({ entity }) => {
               <CustomLink
                 href={`/schema${k}`}
                 active={key === k}
-                className="govuk-link"
+                className="govuk-link govuk-link--no-visited-state"
                 onClick={async (e) => {
                   e.preventDefault();
                   setKey(k);

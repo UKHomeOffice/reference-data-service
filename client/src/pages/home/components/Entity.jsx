@@ -1,9 +1,13 @@
 import React from 'react';
 import PropTypes, { shape } from 'prop-types';
 import _ from 'lodash';
+import { useNavigation } from 'react-navi';
+import { useTranslation } from 'react-i18next';
 import Schema from './Schema';
 
 const Entity = ({ entity, definition }) => {
+  const navigation = useNavigation();
+  const { t } = useTranslation();
   const summary = JSON.parse(entity.get.summary);
   const tags = _.uniq(_.concat(entity.get.tags,
     entity.post.tags,
@@ -24,6 +28,16 @@ const Entity = ({ entity, definition }) => {
             </React.Fragment>
           ))}
           <p className="govuk-body-l">{summary.description}</p>
+          <a
+            href={`/schema/${entity.key}/data`}
+            onClick={async (e) => {
+              e.preventDefault();
+              await navigation.navigate(`/schema${entity.key}/data`);
+            }}
+            className="govuk-link govuk-link--no-visited-state govuk-!-font-size-19"
+          >
+            {t('pages.data.view-data')}
+          </a>
         </div>
       </div>
       <div className="govuk-grid-row govuk-!-margin-top-3">

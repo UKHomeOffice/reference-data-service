@@ -65,6 +65,21 @@
       }
     },
     "data" : {
+      "list" : {
+        "actions": {
+          "load": "Load data"
+        },
+        "total" : "Total records",
+        "select": {
+          "columns": "Select data fields to display",
+          "columns-all-that-apply": "Select all that apply"
+        },
+
+        "title": "Reference Data Service | Data list",
+        "dataset": "Dataset",
+        "requires-columns" : "No data fields selected. Please select fields that you are interested in."
+      },
+      "view-data" : "View data",
       "loading" : "Loading data for {{entity}}",
       "no-more-data" : "No more data for {{entity}}",
       "total" : "Total number of entries for {{entity}}",
@@ -73,7 +88,7 @@
       }
     },
     "login" : {
-      "title" : "Login"
+      "title" : "Reference Data Service | Login"
     }
   }
 }
