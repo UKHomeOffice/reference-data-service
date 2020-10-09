@@ -3,6 +3,7 @@ import React from 'react';
 import MockAdapter from 'axios-mock-adapter';
 import axios from 'axios';
 import { act } from '@testing-library/react';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import DataListPage from './DataListPage';
 
 describe('DataListPage', () => {
@@ -141,11 +142,6 @@ describe('DataListPage', () => {
   };
   beforeEach(() => {
     mockAxios.reset();
-  });
-  it('renders without crashing', () => {
-    shallow(<DataListPage entityId="test" />);
-  });
-  it('can render column boxes', async () => {
     mockAxios.onGet('/refdata').reply(200, apiResponse);
     // eslint-disable-next-line no-unused-vars
     mockAxios.onGet('/refdata/behavioursigns').reply(((config) => [
@@ -155,7 +151,11 @@ describe('DataListPage', () => {
         'content-range': '0-10/23',
       },
     ]));
-
+  });
+  it('renders without crashing', () => {
+    shallow(<DataListPage entityId="test" />);
+  });
+  it('can render column boxes', async () => {
     const wrapper = mount(<DataListPage entityId="behavioursigns" />);
 
     await act(async () => {
@@ -195,16 +195,6 @@ describe('DataListPage', () => {
   });
 
   it('can select a column', async () => {
-    mockAxios.onGet('/refdata').reply(200, apiResponse);
-    // eslint-disable-next-line no-unused-vars
-    mockAxios.onGet('/refdata/behavioursigns').reply(((config) => [
-      200,
-      [{ id: 'test' }],
-      {
-        'content-range': '0-10/23',
-      },
-    ]));
-
     const wrapper = mount(<DataListPage entityId="behavioursigns" />);
 
     await act(async () => {
@@ -219,7 +209,6 @@ describe('DataListPage', () => {
           checked: true,
         },
       });
-      await wrapper.find('button').at(0).simulate('click');
       await new Promise((resolve) => setInterval(resolve, 1000));
       await wrapper.update();
     });
@@ -234,18 +223,7 @@ describe('DataListPage', () => {
   });
 
   it('can handle data failure', async () => {
-    mockAxios.onGet('/refdata').reply(200, apiResponse);
-    // eslint-disable-next-line no-unused-vars
-    mockAxios.onGet('/refdata/behavioursigns').reply(((config) => [
-      200,
-      [{ id: 'test' }],
-      {
-        'content-range': '0-10/23',
-      },
-    ]));
-
     mockAxios.onGet('/refdata/behavioursigns').reply(500, []);
-
     const wrapper = mount(<DataListPage entityId="behavioursigns" />);
 
     await act(async () => {
@@ -260,7 +238,6 @@ describe('DataListPage', () => {
           checked: true,
         },
       });
-      await wrapper.find('button').at(0).simulate('click');
       await new Promise((resolve) => setInterval(resolve, 1000));
       await wrapper.update();
     });
@@ -272,5 +249,91 @@ describe('DataListPage', () => {
     });
 
     expect(mockAxios.history.get.length).toBe(3);
+  });
+
+  it('renders warning text if fields selected but not hit load data', async () => {
+    const wrapper = mount(<DataListPage entityId="behavioursigns" />);
+
+    await act(async () => {
+      await Promise.resolve(wrapper);
+      await new Promise((resolve) => setInterval(resolve, 1000));
+      await wrapper.update();
+    });
+
+    await act(async () => {
+      wrapper.find('.govuk-checkboxes__input').at(0).simulate('change', {
+        target: {
+          checked: true,
+        },
+      });
+      await new Promise((resolve) => setInterval(resolve, 1000));
+      await wrapper.update();
+    });
+
+    expect(wrapper.find('.govuk-warning-text').length).toBe(1);
+  });
+
+  it('displays fields selected', async () => {
+    const wrapper = mount(<DataListPage entityId="behavioursigns" />);
+
+    await act(async () => {
+      await Promise.resolve(wrapper);
+      await new Promise((resolve) => setInterval(resolve, 1000));
+      await wrapper.update();
+    });
+
+    await act(async () => {
+      wrapper.find('.govuk-checkboxes__input').at(0).simulate('change', {
+        target: {
+          checked: true,
+        },
+      });
+      await new Promise((resolve) => setInterval(resolve, 1000));
+      await wrapper.update();
+    });
+
+    await act(async () => {
+      await wrapper.find('button').at(0).simulate('click');
+      await new Promise((resolve) => setInterval(resolve, 1000));
+      await wrapper.update();
+    });
+
+    expect(wrapper.find('.govuk-warning-text').length).toBe(0);
+    expect(wrapper.find('.govuk-tag--green').length).toBe(1);
+  });
+
+  it('can perform infinite scroll next data load', async () => {
+    const wrapper = mount(<DataListPage entityId="behavioursigns" />);
+
+    await act(async () => {
+      await Promise.resolve(wrapper);
+      await new Promise((resolve) => setInterval(resolve, 1000));
+      await wrapper.update();
+    });
+
+    await act(async () => {
+      wrapper.find('.govuk-checkboxes__input').at(0).simulate('change', {
+        target: {
+          checked: true,
+        },
+      });
+      await new Promise((resolve) => setInterval(resolve, 1000));
+      await wrapper.update();
+    });
+
+    await act(async () => {
+      await wrapper.find('button').at(0).simulate('click');
+      await new Promise((resolve) => setInterval(resolve, 1000));
+      await wrapper.update();
+    });
+
+    const infiniteScroll = wrapper.find(InfiniteScroll).at(0);
+    await act(async () => {
+      infiniteScroll.props().next();
+      await new Promise((resolve) => setInterval(resolve, 1000));
+      await wrapper.update();
+    });
+
+    expect(mockAxios.history.get.length).toBe(4);
   });
 });

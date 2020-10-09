@@ -111,8 +111,8 @@ const CustomTh = styled.th`
 `;
 
 const CustomTBody = styled.tbody`
- height: 100px;       /* Just for the demo          */
-    overflow-y: auto;    /* Trigger vertical scroll    */
-    overflow-x: hidden;  /* Hide the horizontal scroll */
+  height: 100px;       
+  overflow-y: auto;    
+  overflow-x: hidden;  
 `;
 export default Schema;
