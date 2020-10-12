@@ -303,7 +303,9 @@ const DataListPage = ({ entityId }) => {
                                       {`${c.label}:`}
                                     </dt>
                                     <dd className="govuk-summary-list__value">
-                                      {data[c.key]}
+                                      {
+                                        `${data[c.key]}`
+                                      }
                                     </dd>
                                   </div>
                                 ))
