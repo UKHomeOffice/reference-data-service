@@ -19,7 +19,7 @@ const Schema = ({ definition, entity }) => {
         try {
           const countResponse = await axiosInstance({
             method: 'GET',
-            url: `/refdata/${entity}`,
+            url: `/refdata${entity}`,
             params: {
               limit: 1,
               offset: 0,

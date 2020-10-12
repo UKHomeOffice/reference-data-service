@@ -143,6 +143,14 @@ describe('Home', () => {
   };
   beforeEach(() => {
     mockAxios.reset();
+    // eslint-disable-next-line no-unused-vars
+    mockAxios.onGet('/refdata/bffunctiontypes').reply(((config) => [
+      200,
+      [{ id: 'test' }],
+      {
+        'content-range': '0-10/23',
+      },
+    ]));
   });
 
   it('renders without crashing', () => {
@@ -166,6 +174,7 @@ describe('Home', () => {
   });
 
   it('can render entities', async () => {
+
     const wrapper = mount(<Home />);
     mockAxios.onGet('/refdata').reply(200, apiResponse);
     await act(async () => {
@@ -179,7 +188,6 @@ describe('Home', () => {
   });
 
   it('can pre select entity', async () => {
-
     const wrapper = mount(<Home entity="bffunctiontypes" />);
     mockAxios.onGet('/refdata').reply(200, apiResponse);
     await act(async () => {
@@ -195,7 +203,7 @@ describe('Home', () => {
 
   it('can select entity', async () => {
     // eslint-disable-next-line no-unused-vars
-    mockAxios.onGet('/refdata/bffunctiontypes').reply(((config) => [
+    mockAxios.onGet('/refdata/behavioursigns').reply(((config) => [
       200,
       [{ id: 'test' }],
       {
@@ -221,6 +229,7 @@ describe('Home', () => {
   });
 
   it('loading bar not displayed if api failure', async () => {
+
     const wrapper = mount(<Home entity="bffunctiontypes" />);
     mockAxios.onGet('/refdata').reply(500, {});
     await act(async () => {
