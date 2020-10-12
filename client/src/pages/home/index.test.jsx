@@ -174,7 +174,6 @@ describe('Home', () => {
   });
 
   it('can render entities', async () => {
-
     const wrapper = mount(<Home />);
     mockAxios.onGet('/refdata').reply(200, apiResponse);
     await act(async () => {
@@ -229,7 +228,6 @@ describe('Home', () => {
   });
 
   it('loading bar not displayed if api failure', async () => {
-
     const wrapper = mount(<Home entity="bffunctiontypes" />);
     mockAxios.onGet('/refdata').reply(500, {});
     await act(async () => {

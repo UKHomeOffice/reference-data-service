@@ -84,7 +84,7 @@ const DataListPage = ({ entityId }) => {
     }
   }, [axiosInstance, entityData, setEntityData, entityId, selectedColumns]);
 
-  const loadData = useCallback((page) => {
+  const loadData = useCallback(() => {
     setEntityData({
       ...entityData,
       isLoading: true,
@@ -94,7 +94,7 @@ const DataListPage = ({ entityId }) => {
       url: `/refdata/${entityId}`,
       params: {
         limit: 10,
-        offset: page,
+        offset: 0,
         order: 'id.asc',
         select: selectedColumns.map((col) => col.key).toString(),
       },
@@ -106,7 +106,7 @@ const DataListPage = ({ entityId }) => {
       setEntityData({
         isLoading: false,
         data: response.data,
-        page,
+        page: 0,
         total: response.headers['content-range'].split('/')[1],
       });
     }).catch(() => {
