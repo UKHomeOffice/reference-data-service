@@ -304,7 +304,8 @@ const DataListPage = ({ entityId }) => {
                                     </dt>
                                     <dd className="govuk-summary-list__value">
                                       {
-                                        `${data[c.key]}`
+                                        // eslint-disable-next-line no-nested-ternary
+                                        _.isBoolean(data[c.key]) ? (data[c.key] ? 'Yes' : 'No') : `${data[c.key]}`
                                       }
                                     </dd>
                                   </div>
