@@ -68,8 +68,8 @@
     "data" : {
       "list" : {
         "csv" : {
-          "generate": "Generate CSV",
-          "generating": "Generating CSV..."
+          "generate": "Download to CSV",
+          "generating": "Downloading CSV..."
         },
         "not-applied-fields" : "You have selected/deselected fields that have not been applied. Please click 'Load data' to apply the changes",
         "actions": {
