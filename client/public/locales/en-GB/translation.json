@@ -57,6 +57,7 @@
     "schema": {
       "version" : "Version",
       "lastupdated": "Last updated",
+      "total" : "Total records",
       "properties": {
         "property" : "Property",
         "label" : "Label",

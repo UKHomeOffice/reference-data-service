@@ -97,7 +97,7 @@ jacoco {
 
 bootJar {
     archiveName = "reference-data-service.jar"
-    mainClassName = 'io.digitalpatterns.workflow.ui.UIApplication'
+    mainClassName = 'io.digital.patterns.ref.data.service.ReferenceServiceBootstrap'
 
     from('../client/build') {
         into 'static'

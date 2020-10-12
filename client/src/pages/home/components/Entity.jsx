@@ -42,7 +42,7 @@ const Entity = ({ entity, definition }) => {
       </div>
       <div className="govuk-grid-row govuk-!-margin-top-3">
         <div className="govuk-grid-column-full">
-          <Schema definition={definition} />
+          <Schema definition={definition} entity={entity.key} />
         </div>
       </div>
 

@@ -1,14 +1,43 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { v4 as uuidv4 } from 'uuid';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import * as COLOURS from 'govuk-colours';
+import { useAxios } from '../../../utils/hooks';
 
-const Schema = ({ definition }) => {
+const Schema = ({ definition, entity }) => {
   const defDesc = JSON.parse(definition.description);
   const { t } = useTranslation();
+  const [count, setCount] = useState(0);
+  const axiosInstance = useAxios();
+
+  useEffect(() => {
+    const loadCount = async () => {
+      if (axiosInstance) {
+        try {
+          const countResponse = await axiosInstance({
+            method: 'GET',
+            url: `/refdata/${entity}`,
+            params: {
+              limit: 1,
+              offset: 0,
+              select: 'id',
+            },
+            headers: {
+              Prefer: 'count=exact',
+            },
+          });
+          setCount(countResponse.headers['content-range'].split('/')[1]);
+          // eslint-disable-next-line no-empty
+        } catch (e) {
+        }
+      }
+    };
+    loadCount();
+  }, [axiosInstance, setCount, entity]);
+
   return (
     <>
       <dl className="govuk-summary-list">
@@ -27,6 +56,14 @@ const Schema = ({ definition }) => {
           <dd className="govuk-summary-list__value">
             {defDesc.schemalastupdated ? moment(defDesc.schemalastupdated).format('DD/MM/YYYY')
               : 'N/A'}
+          </dd>
+        </div>
+        <div className="govuk-summary-list__row">
+          <dt className="govuk-summary-list__key">
+            {t('pages.schema.total')}
+          </dt>
+          <dd className="govuk-summary-list__value">
+            <span className="govuk-!-font-weight-bold" id="totalCount">{count}</span>
           </dd>
         </div>
       </dl>
@@ -82,6 +119,7 @@ const Schema = ({ definition }) => {
 };
 
 Schema.propTypes = {
+  entity: PropTypes.string.isRequired,
   definition: PropTypes.shape({
     description: PropTypes.string,
     properties: PropTypes.shape({}),
