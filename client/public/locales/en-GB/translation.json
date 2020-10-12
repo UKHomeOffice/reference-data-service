@@ -68,7 +68,8 @@
       "list" : {
         "not-applied-fields" : "You have selected/deselected fields that have not been applied. Please click 'Load data' to apply the changes",
         "actions": {
-          "load": "Load data"
+          "load": "Load data",
+          "clear": "Clear fields"
         },
         "total" : "Total records",
         "select": {

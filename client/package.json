@@ -26,6 +26,7 @@
     "react-infinite-scroll-component": "^5.1.0",
     "react-navi": "^0.14.4",
     "react-navi-helmet": "^0.14.4",
+    "react-querybuilder": "^3.8.0",
     "react-scripts": "3.4.3",
     "search-js": "0.0.1",
     "styled-components": "^5.2.0",

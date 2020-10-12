@@ -1,4 +1,6 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {
+  useCallback, useEffect, useRef, useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { JSONPath } from 'jsonpath-plus';
 import _ from 'lodash';
@@ -13,6 +15,7 @@ const DataListPage = ({ entityId }) => {
   const [selectedColumns, setSelectedColumns] = useState([]);
   const [appliedColumns, setAppliedColumns] = useState([]);
 
+  const checkBoxRefs = useRef([]);
   const [definition, setDefinition] = useState({
     properties: {},
     description: '{}',
@@ -159,6 +162,9 @@ const DataListPage = ({ entityId }) => {
                         <div className="govuk-checkboxes__item" key={k}>
                           <input
                             className="govuk-checkboxes__input"
+                            ref={(ref) => {
+                              checkBoxRefs.current.push(ref);
+                            }}
                             onChange={(e) => {
                               if (e.target.checked) {
                                 setSelectedColumns(
@@ -173,8 +179,8 @@ const DataListPage = ({ entityId }) => {
                                 );
                               }
                             }}
-                            id={obj.label}
-                            name={obj.label}
+                            id={obj.key}
+                            name={obj.key}
                             type="checkbox"
                             value={obj.label}
                           />
@@ -188,6 +194,7 @@ const DataListPage = ({ entityId }) => {
               </div>
             </fieldset>
           </ScrollWrapper>
+
           <button
             type="button"
             data-module="govuk-button"
@@ -196,10 +203,30 @@ const DataListPage = ({ entityId }) => {
             onClick={() => {
               loadData();
             }}
-            className={`govuk-button ${entityData.isLoading ? 'govuk-button--disabled' : ''}`}
+            className={`govuk-button govuk-!-margin-right-1 ${entityData.isLoading ? 'govuk-button--disabled' : ''}`}
           >
             {t('pages.data.list.actions.load')}
           </button>
+          <button
+            type="button"
+            id="reset"
+            aria-disabled={entityData.isLoading}
+            disabled={entityData.isLoading}
+            data-module="govuk-button"
+            onClick={() => {
+              checkBoxRefs.current.forEach((r) => {
+                if (r) {
+                  // eslint-disable-next-line no-param-reassign
+                  r.checked = false;
+                }
+              });
+              setSelectedColumns([]);
+            }}
+            className={`govuk-button govuk-button--secondary ${entityData.isLoading ? 'govuk-button--disabled' : ''}`}
+          >
+            {t('pages.data.list.actions.clear')}
+          </button>
+
         </div>
 
         <div className="govuk-grid-column-three-quarters">
@@ -220,7 +247,7 @@ const DataListPage = ({ entityId }) => {
           <div>
             {selectedColumns.length === 0 && entityData.data.length === 0
               ? (
-                <div className="govuk-grid-row">
+                <div className="govuk-grid-row" id="columnWarning">
                   <div className="govuk-grid-column-full">
                     <div className="govuk-warning-text">
                       <span className="govuk-warning-text__icon" aria-hidden="true">!</span>
@@ -234,17 +261,15 @@ const DataListPage = ({ entityId }) => {
               )
               : null }
           </div>
-          {appliedColumns.map((g, index) => (
+          {appliedColumns.map((g) => (
             <strong
               key={uuidv4()}
-              className={`govuk-tag govuk-tag--green govuk-!-margin-bottom-3 
-            ${index !== 0 ? 'govuk-!-margin-left-1' : ''}`}
+              className="govuk-tag govuk-tag--green govuk-!-margin-bottom-3 govuk-!-margin-left-1"
             >
               {g.label}
             </strong>
           ))}
           <hr className="govuk-section-break govuk-section-break--visible" />
-
           <ul className="govuk-list">
             <InfiniteScroll
               next={() => {

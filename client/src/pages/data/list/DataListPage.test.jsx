@@ -336,4 +336,26 @@ describe('DataListPage', () => {
 
     expect(mockAxios.history.get.length).toBe(4);
   });
+
+  it('can clear fields', async () => {
+    const wrapper = mount(<DataListPage entityId="behavioursigns" />);
+
+    await act(async () => {
+      await Promise.resolve(wrapper);
+      await new Promise((resolve) => setInterval(resolve, 1000));
+      await wrapper.update();
+    });
+
+    let field = wrapper.find('input[type="checkbox"]').at(0);
+    field.getDOMNode().checked = true;
+
+    await act(async () => {
+      await wrapper.find('button[id="reset"]').at(0).simulate('click');
+      await new Promise((resolve) => setInterval(resolve, 1000));
+      await wrapper.update();
+    });
+
+    field = wrapper.find('input[type="checkbox"]').at(0);
+    expect(field.getDOMNode().checked).toBe(false);
+  });
 });
