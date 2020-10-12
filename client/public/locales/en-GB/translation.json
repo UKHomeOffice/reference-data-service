@@ -66,6 +66,7 @@
       }
     },
     "data" : {
+      "no-data" : "No data available",
       "list" : {
         "csv" : {
           "generate": "Download to CSV",

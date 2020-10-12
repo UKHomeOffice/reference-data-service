@@ -61,27 +61,25 @@ const DataListPage = ({ entityId }) => {
   }, [axiosInstance, setDefinition, entityId]);
 
   const loadNext = useCallback((page) => {
-    if (axiosInstance) {
-      axiosInstance({
-        method: 'GET',
-        url: `/refdata/${entityId}`,
-        params: {
-          limit: 10,
-          offset: page,
-          order: 'id.asc',
-          select: selectedColumns.map((col) => col.key).toString(),
-        },
-        headers: {
-          Prefer: 'count=exact',
-        },
-      }).then((response) => {
-        setEntityData({
-          ...entityData,
-          page,
-          data: _.union(entityData.data, response.data),
-        });
+    axiosInstance({
+      method: 'GET',
+      url: `/refdata/${entityId}`,
+      params: {
+        limit: 10,
+        offset: page,
+        order: 'id.asc',
+        select: selectedColumns.map((col) => col.key).toString(),
+      },
+      headers: {
+        Prefer: 'count=exact',
+      },
+    }).then((response) => {
+      setEntityData({
+        ...entityData,
+        page,
+        data: _.union(entityData.data, response.data),
       });
-    }
+    });
   }, [axiosInstance, entityData, setEntityData, entityId, selectedColumns]);
 
   const loadData = useCallback(() => {
@@ -115,6 +113,16 @@ const DataListPage = ({ entityId }) => {
       });
     });
   }, [axiosInstance, setEntityData, entityData, selectedColumns, entityId, setAppliedColumns]);
+
+  const resolveData = (datum) => {
+    if (!datum) {
+      return t('pages.data.no-data');
+    }
+    if (_.isBoolean(datum)) {
+      return datum ? 'Yes' : 'No';
+    }
+    return `${datum}`;
+  };
 
   return (
     <>
@@ -308,8 +316,7 @@ const DataListPage = ({ entityId }) => {
                                     </dt>
                                     <dd className="govuk-summary-list__value">
                                       {
-                                        // eslint-disable-next-line no-nested-ternary
-                                        _.isBoolean(data[c.key]) ? (data[c.key] ? 'Yes' : 'No') : `${data[c.key]}`
+                                        resolveData(data[c.key])
                                       }
                                     </dd>
                                   </div>

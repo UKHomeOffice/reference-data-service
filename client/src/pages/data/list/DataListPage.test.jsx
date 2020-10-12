@@ -151,7 +151,7 @@ describe('DataListPage', () => {
     // eslint-disable-next-line no-unused-vars
     mockAxios.onGet('/refdata/behavioursigns').reply(((config) => [
       200,
-      [{ id: 'test' }],
+      [{ id: 'test' }, { name: null }, { warning: false }, { danger: true }],
       {
         'content-range': '0-10/23',
       },
