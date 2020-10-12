@@ -9,6 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { useAxios } from '../../../utils/hooks';
+import DownloadToCSV from './components/DownloadToCSV';
 
 const DataListPage = ({ entityId }) => {
   const { t } = useTranslation();
@@ -27,7 +28,6 @@ const DataListPage = ({ entityId }) => {
     page: 0,
     total: 0,
   });
-
   const axiosInstance = useAxios();
 
   useEffect(() => {
@@ -270,6 +270,10 @@ const DataListPage = ({ entityId }) => {
             </strong>
           ))}
           <hr className="govuk-section-break govuk-section-break--visible" />
+
+          { entityData.data.length !== 0 ? (
+            <DownloadToCSV entity={entityId} appliedColumns={appliedColumns} />
+          ) : null}
           <ul className="govuk-list">
             <InfiniteScroll
               next={() => {

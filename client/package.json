@@ -19,6 +19,7 @@
     "prop-types": "^15.7.2",
     "query-string": "^6.13.5",
     "react": "^16.13.1",
+    "react-csv": "^2.0.3",
     "react-dom": "^16.13.1",
     "react-error-boundary": "^3.0.2",
     "react-global-configuration": "^1.4.0",

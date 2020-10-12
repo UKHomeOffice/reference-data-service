@@ -6,6 +6,11 @@ import { act } from '@testing-library/react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import DataListPage from './DataListPage';
 
+jest.mock('./components/DownloadToCSV', () => ({
+  __esModule: true,
+  default: () => <div />,
+}));
+
 describe('DataListPage', () => {
   const mockAxios = new MockAdapter(axios);
   const apiResponse = {
