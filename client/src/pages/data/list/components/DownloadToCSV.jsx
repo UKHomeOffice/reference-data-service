@@ -26,9 +26,6 @@ const DownloadToCSV = ({ entity, appliedColumns }) => {
         order: 'id.asc',
         select: appliedColumns.map((col) => col.key).toString(),
       },
-      headers: {
-        Prefer: 'count=exact',
-      },
     }).then((response) => {
       setCsvData({
         isGenerating: false,
