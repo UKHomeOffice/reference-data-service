@@ -11,11 +11,12 @@ acts as a reverse proxy removing the need to provide any additional configuratio
 
 ## Bootstrap configuration
 
-The following environment variables are required to load properties from the config server
+The following environment variables are required to load properties from AWS Secrets manager
 
-* CONFIG_SERVER_URL
-* CONFIG_SERVER_TOKEN
-
+* AWS_SECRETS_MANAGER_ENABLED
+* AWS_ACCESS_KEY
+* AWS_SECRET_KEY
+* AWS_REGION
 
 ### Application configuration
 
@@ -26,13 +27,13 @@ The following properties need to be configured in AWS secrets manager (example f
   "auth.realm": "elf",
   "auth.clientId": "reference-data-service",
   "formApi.url": "http://localhost:4000",
+  "refData.url": "http://localhost:3000",
   "serviceDesk.url": "service desk url",
   "uiEnvironment": "LOCAL",
   "uiVersion": "ALPHA",
   "server-port": 8004,
   "tracing.zipkin.baseUrl" : "http://localhost:9411",
-  "tracing.enabled" : true,
-  "tracing.zipkin.ui.url": "http://localhost:9411"
+  "tracing.enabled" : true
 }
 ```
 
