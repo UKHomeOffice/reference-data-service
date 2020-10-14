@@ -42,7 +42,7 @@ const DownloadToCSV = ({ entity, appliedColumns, count }) => {
           data: [],
         });
       });
-  }, [axiosInstance, appliedColumns, setCsvData, csvLinkRef, entity, csvData]);
+  }, [axiosInstance, appliedColumns, setCsvData, csvLinkRef, entity, csvData, count]);
 
   return (
     <div className="govuk-!-margin-top-3">
