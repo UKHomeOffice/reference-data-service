@@ -31,8 +31,7 @@ const Schema = ({ definition, entity }) => {
           });
           setCount(countResponse.headers['content-range'].split('/')[1]);
           // eslint-disable-next-line no-empty
-        } catch (e) {
-        }
+        } catch (e) {}
       }
     };
     loadCount();
@@ -42,28 +41,23 @@ const Schema = ({ definition, entity }) => {
     <>
       <dl className="govuk-summary-list">
         <div className="govuk-summary-list__row">
-          <dt className="govuk-summary-list__key">
-            {t('pages.schema.version')}
-          </dt>
-          <dd className="govuk-summary-list__value">
-            { defDesc.dataversion}
-          </dd>
+          <dt className="govuk-summary-list__key">{t('pages.schema.version')}</dt>
+          <dd className="govuk-summary-list__value">{defDesc.dataversion}</dd>
         </div>
         <div className="govuk-summary-list__row">
-          <dt className="govuk-summary-list__key">
-            {t('pages.schema.lastupdated')}
-          </dt>
+          <dt className="govuk-summary-list__key">{t('pages.schema.lastupdated')}</dt>
           <dd className="govuk-summary-list__value">
-            {defDesc.schemalastupdated ? moment(defDesc.schemalastupdated).format('DD/MM/YYYY')
+            {defDesc.schemalastupdated
+              ? moment(defDesc.schemalastupdated, 'DD/MM/YYYY').format('DD/MM/YYYY')
               : 'N/A'}
           </dd>
         </div>
         <div className="govuk-summary-list__row">
-          <dt className="govuk-summary-list__key">
-            {t('pages.schema.total')}
-          </dt>
+          <dt className="govuk-summary-list__key">{t('pages.schema.total')}</dt>
           <dd className="govuk-summary-list__value">
-            <span className="govuk-!-font-weight-bold" id="totalCount">{count}</span>
+            <span className="govuk-!-font-weight-bold" id="totalCount">
+              {count}
+            </span>
           </dd>
         </div>
       </dl>
@@ -88,32 +82,29 @@ const Schema = ({ definition, entity }) => {
                 </tr>
               </thead>
               <CustomTBody className="govuk-table__body">
-
-                {
-              Object.keys(definition.properties).map((p) => {
-                const { description } = definition.properties[p];
-                let parsed = description.replace(/(?:\r\n|\r|\n)/g, '');
-                if (parsed.indexOf('Note') !== -1) {
-                  parsed = parsed.substring(0, parsed.indexOf('Note'));
-                }
-                const obj = JSON.parse(parsed);
-                return (
-                  <tr className="govuk-table__row" key={uuidv4()}>
-                    <th scope="row" className="govuk-table__header">{p}</th>
-                    <td className="govuk-table__cell">{obj.label}</td>
-                    <td className="govuk-table__cell">{obj.description}</td>
-                    <td className="govuk-table__cell">{definition.properties[p].type}</td>
-                  </tr>
-                );
-              })
-            }
-
+                {Object.keys(definition.properties).map((p) => {
+                  const { description } = definition.properties[p];
+                  let parsed = description.replace(/(?:\r\n|\r|\n)/g, '');
+                  if (parsed.indexOf('Note') !== -1) {
+                    parsed = parsed.substring(0, parsed.indexOf('Note'));
+                  }
+                  const obj = JSON.parse(parsed);
+                  return (
+                    <tr className="govuk-table__row" key={uuidv4()}>
+                      <th scope="row" className="govuk-table__header">
+                        {p}
+                      </th>
+                      <td className="govuk-table__cell">{obj.label}</td>
+                      <td className="govuk-table__cell">{obj.description}</td>
+                      <td className="govuk-table__cell">{definition.properties[p].type}</td>
+                    </tr>
+                  );
+                })}
               </CustomTBody>
             </CustomTable>
           </TableWrapper>
         </div>
       </div>
-
     </>
   );
 };
@@ -143,14 +134,14 @@ const CustomTable = styled.table`
 
 const CustomTh = styled.th`
   position: sticky;
-  top: 0; 
-  background:  ${COLOURS.BLUE};
-  color: ${COLOURS.WHITE}
+  top: 0;
+  background: ${COLOURS.BLUE};
+  color: ${COLOURS.WHITE};
 `;
 
 const CustomTBody = styled.tbody`
-  height: 100px;       
-  overflow-y: auto;    
-  overflow-x: hidden;  
+  height: 100px;
+  overflow-y: auto;
+  overflow-x: hidden;
 `;
 export default Schema;
