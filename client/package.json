@@ -40,7 +40,7 @@
     "eject": "react-scripts eject",
     "test-coverage": "react-scripts test \"--coverage\" \"--watchAll=false\"",
     "test-coverage-watch": "react-scripts test \"--coverage\" \"--watchAll=true\"",
-    "lint": "eslint --ignore-pattern node_modules/ --ext .js --ext .jsx --fix src"
+    "lint": "eslint --ext .js,.jsx --fix src"
   },
   "eslintConfig": {
     "extends": [
@@ -50,9 +50,15 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run lint",
+      "pre-commit": "lint-staged",
       "pre-push": "CI=true react-scripts test"
     }
+  },
+  "lint-staged": {
+    "./src/**/*.{js,jsx}": [
+      "npx prettier --write",
+      "npm run lint"
+    ]
   },
   "proxy": "http://localhost:8100",
   "jest": {
@@ -110,6 +116,7 @@
     "eslint-plugin-react-hooks": "^4.1.2",
     "husky": "^4.3.0",
     "jest-canvas-mock": "^2.3.0",
+    "lint-staged": "^10.4.0",
     "sinon": "^9.0.3"
   }
 }
