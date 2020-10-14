@@ -1,6 +1,4 @@
-import React, {
-  useCallback, useEffect, useRef, useState,
-} from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { JSONPath } from 'jsonpath-plus';
 import _ from 'lodash';
@@ -35,9 +33,12 @@ const DataListPage = ({ entityId }) => {
       if (axiosInstance) {
         try {
           const response = await axiosInstance('/refdata');
-          setDefinition(JSONPath({
-            path: `$.definitions['${entityId}']`, json: response.data,
-          })[0]);
+          setDefinition(
+            JSONPath({
+              path: `$.definitions['${entityId}']`,
+              json: response.data,
+            })[0]
+          );
 
           const countResponse = await axiosInstance({
             method: 'GET',
@@ -53,34 +54,36 @@ const DataListPage = ({ entityId }) => {
           });
           setCount(countResponse.headers['content-range'].split('/')[1]);
           // eslint-disable-next-line no-empty
-        } catch (e) {
-        }
+        } catch (e) {}
       }
     };
     loadDefinition();
   }, [axiosInstance, setDefinition, entityId]);
 
-  const loadNext = useCallback((page) => {
-    axiosInstance({
-      method: 'GET',
-      url: `/refdata/${entityId}`,
-      params: {
-        limit: 10,
-        offset: page,
-        order: 'id.asc',
-        select: selectedColumns.map((col) => col.key).toString(),
-      },
-      headers: {
-        Prefer: 'count=exact',
-      },
-    }).then((response) => {
-      setEntityData({
-        ...entityData,
-        page,
-        data: _.union(entityData.data, response.data),
+  const loadNext = useCallback(
+    (page) => {
+      axiosInstance({
+        method: 'GET',
+        url: `/refdata/${entityId}`,
+        params: {
+          limit: 10,
+          offset: page,
+          order: 'id.asc',
+          select: selectedColumns.map((col) => col.key).toString(),
+        },
+        headers: {
+          Prefer: 'count=exact',
+        },
+      }).then((response) => {
+        setEntityData({
+          ...entityData,
+          page,
+          data: _.union(entityData.data, response.data),
+        });
       });
-    });
-  }, [axiosInstance, entityData, setEntityData, entityId, selectedColumns]);
+    },
+    [axiosInstance, entityData, setEntityData, entityId, selectedColumns]
+  );
 
   const loadData = useCallback(() => {
     setEntityData({
@@ -99,19 +102,21 @@ const DataListPage = ({ entityId }) => {
       headers: {
         Prefer: 'count=exact',
       },
-    }).then((response) => {
-      setAppliedColumns(selectedColumns);
-      setEntityData({
-        isLoading: false,
-        data: response.data,
-        page: 0,
-        total: response.headers['content-range'].split('/')[1],
+    })
+      .then((response) => {
+        setAppliedColumns(selectedColumns);
+        setEntityData({
+          isLoading: false,
+          data: response.data,
+          page: 0,
+          total: response.headers['content-range'].split('/')[1],
+        });
+      })
+      .catch(() => {
+        setEntityData({
+          ...entityData,
+        });
       });
-    }).catch(() => {
-      setEntityData({
-        ...entityData,
-      });
-    });
   }, [axiosInstance, setEntityData, entityData, selectedColumns, entityId, setAppliedColumns]);
 
   const resolveData = (datum) => {
@@ -135,70 +140,63 @@ const DataListPage = ({ entityId }) => {
             </div>
             <div className="govuk-grid-column-one-half">
               <span className="govuk-caption-l">{t('pages.data.list.total')}</span>
-              <h2 className="govuk-heading-l" id="countText">{count}</h2>
+              <h2 className="govuk-heading-l" id="countText">
+                {count}
+              </h2>
             </div>
           </div>
         </div>
       </div>
-      <p className="govuk-body-l">
-        {JSON.parse(definition.description).description}
-      </p>
+      <p className="govuk-body-l">{JSON.parse(definition.description).description}</p>
       <div className="govuk-grid-row">
         <div className="govuk-grid-column-one-quarter">
           <ScrollWrapper className="govuk-form-group">
             <fieldset className="govuk-fieldset" aria-describedby="data-fields">
-
               <legend className="govuk-fieldset__legend govuk-fieldset__legend--m">
-                <h1 className="govuk-fieldset__heading">
-                  {t('pages.data.list.select.columns')}
-                </h1>
+                <h1 className="govuk-fieldset__heading">{t('pages.data.list.select.columns')}</h1>
               </legend>
               <div id="data-fields" className="govuk-hint">
                 {t('pages.data.list.select.columns-all-that-apply')}
               </div>
 
               <div className="govuk-checkboxes govuk-!-margin-left-1 govuk-!-margin-top-1">
-                {
-                    Object.keys(definition.properties).map((k) => {
-                      const { description } = definition.properties[k];
-                      let parsed = description.replace(/(?:\r\n|\r|\n)/g, '');
-                      if (parsed.indexOf('Note') !== -1) {
-                        parsed = parsed.substring(0, parsed.indexOf('Note'));
-                      }
-                      const obj = JSON.parse(parsed);
-                      return (
-                        <div className="govuk-checkboxes__item" key={k}>
-                          <input
-                            className="govuk-checkboxes__input"
-                            ref={(ref) => {
-                              checkBoxRefs.current.push(ref);
-                            }}
-                            onChange={(e) => {
-                              if (e.target.checked) {
-                                setSelectedColumns(
-                                  _.concat(selectedColumns, {
-                                    label: obj.label,
-                                    key: k,
-                                  }),
-                                );
-                              } else {
-                                setSelectedColumns(
-                                  _.filter(selectedColumns, (c) => c.key !== k),
-                                );
-                              }
-                            }}
-                            id={obj.key}
-                            name={obj.key}
-                            type="checkbox"
-                            value={obj.label}
-                          />
-                          <label className="govuk-label govuk-checkboxes__label" htmlFor={obj.label}>
-                            {obj.label}
-                          </label>
-                        </div>
-                      );
-                    })
+                {Object.keys(definition.properties).map((k) => {
+                  const { description } = definition.properties[k];
+                  let parsed = description.replace(/(?:\r\n|\r|\n)/g, '');
+                  if (parsed.indexOf('Note') !== -1) {
+                    parsed = parsed.substring(0, parsed.indexOf('Note'));
                   }
+                  const obj = JSON.parse(parsed);
+                  return (
+                    <div className="govuk-checkboxes__item" key={k}>
+                      <input
+                        className="govuk-checkboxes__input"
+                        ref={(ref) => {
+                          checkBoxRefs.current.push(ref);
+                        }}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedColumns(
+                              _.concat(selectedColumns, {
+                                label: obj.label,
+                                key: k,
+                              })
+                            );
+                          } else {
+                            setSelectedColumns(_.filter(selectedColumns, (c) => c.key !== k));
+                          }
+                        }}
+                        id={obj.key}
+                        name={obj.key}
+                        type="checkbox"
+                        value={obj.label}
+                      />
+                      <label className="govuk-label govuk-checkboxes__label" htmlFor={obj.label}>
+                        {obj.label}
+                      </label>
+                    </div>
+                  );
+                })}
               </div>
             </fieldset>
           </ScrollWrapper>
@@ -211,7 +209,9 @@ const DataListPage = ({ entityId }) => {
             onClick={() => {
               loadData();
             }}
-            className={`govuk-button govuk-!-margin-right-1 ${entityData.isLoading ? 'govuk-button--disabled' : ''}`}
+            className={`govuk-button govuk-!-margin-right-1 ${
+              entityData.isLoading ? 'govuk-button--disabled' : ''
+            }`}
           >
             {t('pages.data.list.actions.load')}
           </button>
@@ -230,44 +230,44 @@ const DataListPage = ({ entityId }) => {
               });
               setSelectedColumns([]);
             }}
-            className={`govuk-button govuk-button--secondary ${entityData.isLoading ? 'govuk-button--disabled' : ''}`}
+            className={`govuk-button govuk-button--secondary ${
+              entityData.isLoading ? 'govuk-button--disabled' : ''
+            }`}
           >
             {t('pages.data.list.actions.clear')}
           </button>
-
         </div>
 
         <div className="govuk-grid-column-three-quarters">
           <div>
-            {
-
-              selectedColumns.length !== appliedColumns.length ? (
-                <div className="govuk-warning-text">
-                  <span className="govuk-warning-text__icon" aria-hidden="true">!</span>
-                  <strong className="govuk-warning-text__text">
-                    <span className="govuk-warning-text__assistive">Warning</span>
-                    {t('pages.data.list.not-applied-fields')}
-                  </strong>
-                </div>
-              ) : null
-            }
+            {selectedColumns.length !== appliedColumns.length ? (
+              <div className="govuk-warning-text">
+                <span className="govuk-warning-text__icon" aria-hidden="true">
+                  !
+                </span>
+                <strong className="govuk-warning-text__text">
+                  <span className="govuk-warning-text__assistive">Warning</span>
+                  {t('pages.data.list.not-applied-fields')}
+                </strong>
+              </div>
+            ) : null}
           </div>
           <div>
-            {selectedColumns.length === 0 && entityData.data.length === 0
-              ? (
-                <div className="govuk-grid-row" id="columnWarning">
-                  <div className="govuk-grid-column-full">
-                    <div className="govuk-warning-text">
-                      <span className="govuk-warning-text__icon" aria-hidden="true">!</span>
-                      <strong className="govuk-warning-text__text">
-                        <span className="govuk-warning-text__assistive">Warning</span>
-                        {t('pages.data.list.requires-columns')}
-                      </strong>
-                    </div>
+            {selectedColumns.length === 0 && entityData.data.length === 0 ? (
+              <div className="govuk-grid-row" id="columnWarning">
+                <div className="govuk-grid-column-full">
+                  <div className="govuk-warning-text">
+                    <span className="govuk-warning-text__icon" aria-hidden="true">
+                      !
+                    </span>
+                    <strong className="govuk-warning-text__text">
+                      <span className="govuk-warning-text__assistive">Warning</span>
+                      {t('pages.data.list.requires-columns')}
+                    </strong>
                   </div>
                 </div>
-              )
-              : null }
+              </div>
+            ) : null}
           </div>
           {appliedColumns.map((g) => (
             <strong
@@ -279,8 +279,12 @@ const DataListPage = ({ entityId }) => {
           ))}
           <hr className="govuk-section-break govuk-section-break--visible" />
 
-          { entityData.data.length !== 0 ? (
-            <DownloadToCSV entity={entityId} appliedColumns={appliedColumns} />
+          {entityData.data.length !== 0 ? (
+            <DownloadToCSV
+              entity={entityId}
+              appliedColumns={appliedColumns}
+              count={entityData.total}
+            />
           ) : null}
           <ul className="govuk-list">
             <InfiniteScroll
@@ -290,45 +294,37 @@ const DataListPage = ({ entityId }) => {
               dataLength={entityData.data.length}
               hasMore={appliedColumns.length !== 0 && entityData.data.length < count}
               height={700}
-              loader={(
+              loader={
                 <h5 id="loading-text" className="govuk-heading-s govuk-!-margin-top-3">
                   {t('pages.data.loading', { entity: entityId })}
                 </h5>
-                )}
-              endMessage={(
+              }
+              endMessage={
                 <h5 id="no-more-data" className="govuk-heading-s govuk-!-margin-top-3">
                   {t('pages.data.no-more-data', { entity: entityId })}
                 </h5>
-                )}
-            >
-              {
-                entityData.data.map((data) => (
-                  <li key={uuidv4()}>
-                    <div className="govuk-grid-row">
-                      <div className="govuk-grid-column-full">
-                        <Card>
-                          <dl className="govuk-summary-list govuk-summary-list--no-border">
-                            {
-                                appliedColumns.map((c) => (
-                                  <div className="govuk-summary-list__row" key={uuidv4()}>
-                                    <dt className="govuk-summary-list__key">
-                                      {`${c.label}:`}
-                                    </dt>
-                                    <dd className="govuk-summary-list__value">
-                                      {
-                                        resolveData(data[c.key])
-                                      }
-                                    </dd>
-                                  </div>
-                                ))
-                              }
-                          </dl>
-                        </Card>
-                      </div>
-                    </div>
-                  </li>
-                ))
               }
+            >
+              {entityData.data.map((data) => (
+                <li key={uuidv4()}>
+                  <div className="govuk-grid-row">
+                    <div className="govuk-grid-column-full">
+                      <Card>
+                        <dl className="govuk-summary-list govuk-summary-list--no-border">
+                          {appliedColumns.map((c) => (
+                            <div className="govuk-summary-list__row" key={uuidv4()}>
+                              <dt className="govuk-summary-list__key">{`${c.label}:`}</dt>
+                              <dd className="govuk-summary-list__value">
+                                {resolveData(data[c.key])}
+                              </dd>
+                            </div>
+                          ))}
+                        </dl>
+                      </Card>
+                    </div>
+                  </div>
+                </li>
+              ))}
             </InfiniteScroll>
           </ul>
         </div>

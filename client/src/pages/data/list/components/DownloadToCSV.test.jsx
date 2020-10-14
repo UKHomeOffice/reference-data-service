@@ -11,23 +11,30 @@ describe('DownloadToCSV', () => {
     mockAxios.reset();
   });
   it('can download to csv', async () => {
-    mockAxios.onGet('/refdata/icao', {
-      params: {
-        order: 'id.asc',
-        select: 'name',
-      },
-    }).reply(200,
-      [{ name: 'Gobernador Crespo Aeroclub Airport' },
+    mockAxios
+      .onGet('/refdata/icao', {
+        params: {
+          order: 'id.asc',
+          select: 'name',
+        },
+      })
+      .reply(200, [
+        { name: 'Gobernador Crespo Aeroclub Airport' },
         { name: 'Maybee Airport' },
         { name: 'Wonken Airport' },
-        { name: 'Dry Bay Airport' }]);
-    const wrapper = mount(<DownloadToCSV
-      appliedColumns={[{
-        label: 'Name',
-        key: 'name',
-      }]}
-      entity="icao"
-    />);
+        { name: 'Dry Bay Airport' },
+      ]);
+    const wrapper = mount(
+      <DownloadToCSV
+        appliedColumns={[
+          {
+            label: 'Name',
+            key: 'name',
+          },
+        ]}
+        entity="icao"
+      />
+    );
 
     const downloadButton = wrapper.find('button[id="download"]').at(0);
     await act(async () => {
@@ -40,27 +47,43 @@ describe('DownloadToCSV', () => {
   });
 
   it('download button disabled if already clicked', async () => {
-    mockAxios.onGet('/refdata/icao', {
-      params: {
-        order: 'id.asc',
-        select: 'name',
-      },
-    }).reply(() => new Promise((resolve) => {
-      setTimeout(() => {
-        resolve([200, [{ name: 'Gobernador Crespo Aeroclub Airport' },
-          { name: 'Maybee Airport' },
-          { name: 'Wonken Airport' },
-          { name: 'Dry Bay Airport' }]]);
-      }, 3000);
-    }));
+    mockAxios
+      .onGet('/refdata/icao', {
+        params: {
+          limit: 1000,
+          offset: 0,
+          order: 'id.asc',
+          select: 'name',
+        },
+      })
+      .reply(
+        () =>
+          new Promise((resolve) => {
+            setTimeout(() => {
+              resolve([
+                200,
+                [
+                  { name: 'Gobernador Crespo Aeroclub Airport' },
+                  { name: 'Maybee Airport' },
+                  { name: 'Wonken Airport' },
+                  { name: 'Dry Bay Airport' },
+                ],
+              ]);
+            }, 3000);
+          })
+      );
 
-    const wrapper = mount(<DownloadToCSV
-      appliedColumns={[{
-        label: 'Name',
-        key: 'name',
-      }]}
-      entity="icao"
-    />);
+    const wrapper = mount(
+      <DownloadToCSV
+        appliedColumns={[
+          {
+            label: 'Name',
+            key: 'name',
+          },
+        ]}
+        entity="icao"
+      />
+    );
 
     await act(async () => {
       await Promise.resolve(wrapper);
@@ -78,20 +101,26 @@ describe('DownloadToCSV', () => {
   });
 
   it('can handle api failure', async () => {
-    mockAxios.onGet('/refdata/icao', {
-      params: {
-        order: 'id.asc',
-        select: 'name',
-      },
-    }).reply(500, []);
+    mockAxios
+      .onGet('/refdata/icao', {
+        params: {
+          order: 'id.asc',
+          select: 'name',
+        },
+      })
+      .reply(500, []);
 
-    const wrapper = mount(<DownloadToCSV
-      appliedColumns={[{
-        label: 'Name',
-        key: 'name',
-      }]}
-      entity="icao"
-    />);
+    const wrapper = mount(
+      <DownloadToCSV
+        appliedColumns={[
+          {
+            label: 'Name',
+            key: 'name',
+          },
+        ]}
+        entity="icao"
+      />
+    );
 
     await act(async () => {
       await Promise.resolve(wrapper);

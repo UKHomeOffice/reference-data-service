@@ -5,7 +5,7 @@ import { CSVLink } from 'react-csv';
 import PropTypes from 'prop-types';
 import { useAxios } from '../../../../utils/hooks';
 
-const DownloadToCSV = ({ entity, appliedColumns }) => {
+const DownloadToCSV = ({ entity, appliedColumns, count }) => {
   const { t } = useTranslation();
   const csvLinkRef = useRef();
   const axiosInstance = useAxios();
@@ -23,21 +23,25 @@ const DownloadToCSV = ({ entity, appliedColumns }) => {
       method: 'GET',
       url: `/refdata/${entity}`,
       params: {
+        limit: count,
+        offset: 0,
         order: 'id.asc',
         select: appliedColumns.map((col) => col.key).toString(),
       },
-    }).then((response) => {
-      setCsvData({
-        isGenerating: false,
-        data: response.data,
+    })
+      .then((response) => {
+        setCsvData({
+          isGenerating: false,
+          data: response.data,
+        });
+        csvLinkRef.current.link.click();
+      })
+      .catch(() => {
+        setCsvData({
+          isGenerating: false,
+          data: [],
+        });
       });
-      csvLinkRef.current.link.click();
-    }).catch(() => {
-      setCsvData({
-        isGenerating: false,
-        data: [],
-      });
-    });
   }, [axiosInstance, appliedColumns, setCsvData, csvLinkRef, entity, csvData]);
 
   return (
@@ -52,7 +56,9 @@ const DownloadToCSV = ({ entity, appliedColumns }) => {
           loadCsvData();
         }}
       >
-        { csvData.isGenerating ? t('pages.data.list.csv.generating') : t('pages.data.list.csv.generate')}
+        {csvData.isGenerating
+          ? t('pages.data.list.csv.generating')
+          : t('pages.data.list.csv.generate')}
       </button>
       <CSVLink
         data={csvData.data}
@@ -66,11 +72,18 @@ const DownloadToCSV = ({ entity, appliedColumns }) => {
   );
 };
 
+DownloadToCSV.defaultProps = {
+  count: 1000,
+};
+
 DownloadToCSV.propTypes = {
+  count: PropTypes.number,
   entity: PropTypes.string.isRequired,
-  appliedColumns: PropTypes.arrayOf(PropTypes.shape({
-    label: PropTypes.string.isRequired,
-    key: PropTypes.string.isRequired,
-  })).isRequired,
+  appliedColumns: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      key: PropTypes.string.isRequired,
+    })
+  ).isRequired,
 };
 export default DownloadToCSV;
