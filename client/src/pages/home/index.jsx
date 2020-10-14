@@ -24,7 +24,7 @@ const Home = ({ entity }) => {
   useEffect(() => {
     const loadDataSet = async () => {
       if (axiosInstance) {
-        if (!Object.values(dataRef.current).some((x) => (x !== null))) {
+        if (!Object.values(dataRef.current).some((x) => x !== null)) {
           try {
             const response = await axiosInstance('/refdata');
             dataRef.current = response.data;
@@ -52,14 +52,8 @@ const Home = ({ entity }) => {
     const entityKeys = Object.keys(dataSets.data.paths);
     return (
       <ul className="govuk-list" id="entityList">
-        <InfiniteScroll
-          dataLength={entityKeys.length}
-          hasMore={false}
-          height={900}
-        >
-          {
-
-          entityKeys.map((k) => (
+        <InfiniteScroll dataLength={entityKeys.length} hasMore={false} height={900}>
+          {entityKeys.map((k) => (
             <li key={k}>
               <CustomLink
                 href={`/schema${k}`}
@@ -76,8 +70,7 @@ const Home = ({ entity }) => {
                 {k.replace('/', '')}
               </CustomLink>
             </li>
-          ))
-        }
+          ))}
         </InfiniteScroll>
       </ul>
     );
@@ -92,25 +85,42 @@ const Home = ({ entity }) => {
           <h1 className="govuk-heading-l">{t('pages.home.data-set-title')}</h1>
         </div>
       </div>
+      <div className="govuk-grid-row">
+        <div className="govuk-grid-column-full">
+          <button
+            id="create-new-dataset"
+            className="govuk-button"
+            type="button"
+            data-module="govuk-button"
+            onClick={async () => {
+              await navigation.navigate('/schema/new/dataset');
+            }}
+          >
+            {t('pages.new-dataset.title')}
+          </button>
+        </div>
+      </div>
       <hr className="govuk-section-break govuk-section-break--s govuk-section-break--visible" />
-      {dataSets.isLoading ? <ApplicationSpinner translationKey="pages.home.loading" position="relative" top="100px" /> : (
+      {dataSets.isLoading ? (
+        <ApplicationSpinner translationKey="pages.home.loading" position="relative" top="100px" />
+      ) : (
         <div className="govuk-grid-row">
           <div className="govuk-grid-column-one-quarter govuk-!-margin-top-3">
             <h3 className="govuk-heading-m">{t('pages.home.entities.title')}</h3>
             {renderData()}
           </div>
           <div className="govuk-grid-column-three-quarters">
-            {
-              key && (dataSets.data.paths && dataSets.data.paths[key]) ? (
-                <Entity
-                  definition={JSONPath({
-                    path: `$.definitions['${key.replace('/', '')}']`, json: dataSets.data,
-                  })[0]}
-                  entity={{ ...dataSets.data.paths[key], key }}
-                />
-
-              ) : null
-            }
+            {key && dataSets.data.paths && dataSets.data.paths[key] ? (
+              <Entity
+                definition={
+                  JSONPath({
+                    path: `$.definitions['${key.replace('/', '')}']`,
+                    json: dataSets.data,
+                  })[0]
+                }
+                entity={{ ...dataSets.data.paths[key], key }}
+              />
+            ) : null}
           </div>
         </div>
       )}
@@ -119,7 +129,11 @@ const Home = ({ entity }) => {
 };
 
 export const CustomLink = styled.a`
- ${({ active }) => active && css`background-color: #ffdd00;`}
+  ${({ active }) =>
+    active &&
+    css`
+      background-color: #ffdd00;
+    `}
 `;
 
 Home.defaultProps = {

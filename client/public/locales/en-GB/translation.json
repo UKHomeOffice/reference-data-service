@@ -45,6 +45,9 @@
     "copyright" : "© Crown copyright"
   },
   "pages" : {
+    "new-dataset" : {
+      "title": "Create a new dataset"
+    },
     "home" : {
       "title": "Reference Data Service",
       "description" : "This service allows you to view and manage reference data sets.",
