@@ -22,9 +22,10 @@ const DownloadToCSV = ({ entity, appliedColumns, count }) => {
     axiosInstance({
       method: 'GET',
       url: `/refdata/${entity}`,
+      headers: {
+        range: `0-${count}`,
+      },
       params: {
-        limit: count,
-        offset: 0,
         order: 'id.asc',
         select: appliedColumns.map((col) => col.key).toString(),
       },

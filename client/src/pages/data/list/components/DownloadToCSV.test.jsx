@@ -50,8 +50,6 @@ describe('DownloadToCSV', () => {
     mockAxios
       .onGet('/refdata/icao', {
         params: {
-          limit: 1000,
-          offset: 0,
           order: 'id.asc',
           select: 'name',
         },
