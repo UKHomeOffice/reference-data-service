@@ -1,7 +1,5 @@
 import React from 'react';
 
-const NewDataSetPage = () => {
-  return <></>;
-};
+const NewDataSetPage = () => <></>;
 
 export default NewDataSetPage;

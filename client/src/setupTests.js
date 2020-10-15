@@ -1,3 +1,4 @@
+/* eslint-disable */
 import '@testing-library/jest-dom/extend-expect';
 import config from 'react-global-configuration';
 import { configure } from 'enzyme';
