@@ -60,6 +60,14 @@ const Schema = ({ definition, entity }) => {
             </span>
           </dd>
         </div>
+        <div className="govuk-summary-list__row">
+          <dt className="govuk-summary-list__key">{t('pages.schema.owner')}</dt>
+          <dd className="govuk-summary-list__value">
+            <span className="govuk-!-font-weight-bold" id="onwer">
+              {defDesc.owner ? defDesc.owner : 'N/A'}
+            </span>
+          </dd>
+        </div>
       </dl>
       <div className="govuk-grid-row govuk-!-margin-top-3">
         <div className="govuk-grid-column-full">

@@ -18,6 +18,7 @@ const Home = ({ entity }) => {
     isLoading: true,
     data: {},
   });
+  const [entityKeys, setEntityKeys] = useState([]);
   const [key, setKey] = useState(entity);
   const axiosInstance = useAxios();
   const dataRef = useRef(dataSets.data);
@@ -32,6 +33,7 @@ const Home = ({ entity }) => {
               isLoading: false,
               data: dataRef.current,
             });
+            setEntityKeys(Object.keys(dataRef.current.paths));
             setKey(entity ? `/${entity}` : Object.keys(response.data.paths)[1]);
           } catch (e) {
             setDataSets({
@@ -43,36 +45,60 @@ const Home = ({ entity }) => {
       }
     };
     loadDataSet();
-  }, [axiosInstance, setDataSets, setKey, entity]);
+  }, [axiosInstance, setDataSets, setEntityKeys, setKey, entity]);
 
   const renderData = () => {
     if (!dataSets.data.paths) {
       return null;
     }
-    const entityKeys = Object.keys(dataSets.data.paths);
+
     return (
-      <ul className="govuk-list" id="entityList">
-        <InfiniteScroll dataLength={entityKeys.length} hasMore={false} height={900}>
-          {entityKeys.map((k) => (
-            <li key={k}>
-              <CustomLink
-                href={`/schema${k}`}
-                active={key === k}
-                className="govuk-link govuk-link--no-visited-state"
-                onClick={async (e) => {
-                  e.preventDefault();
-                  setKey(k);
-                  await navigation.navigate(`/schema${k}`, {
-                    replace: false,
-                  });
-                }}
-              >
-                {k.replace('/', '')}
-              </CustomLink>
-            </li>
-          ))}
-        </InfiniteScroll>
-      </ul>
+      <>
+        <div className="govuk-input__wrapper govuk-!-margin-top-1 govuk-!-margin-bottom-3">
+          <input
+            className="govuk-input"
+            id="filter"
+            name="filter"
+            type="text"
+            placeholder={t('pages.home.filter')}
+            onChange={(e) => {
+              if (e.target.value) {
+                setEntityKeys(
+                  Object.keys(dataSets.data.paths).filter((k) =>
+                    k.replace('/', '').toLowerCase().match(e.target.value)
+                  )
+                );
+              } else {
+                setEntityKeys(Object.keys(dataSets.data.paths));
+                setKey(Object.keys(dataSets.data.paths)[1]);
+              }
+            }}
+            spellCheck="false"
+          />
+        </div>
+        <ul className="govuk-list" id="entityList">
+          <InfiniteScroll dataLength={entityKeys.length} hasMore={false} height={900}>
+            {entityKeys.map((k) => (
+              <li key={k}>
+                <CustomLink
+                  href={`/schema${k}`}
+                  active={key === k}
+                  className="govuk-link govuk-link--no-visited-state"
+                  onClick={async (e) => {
+                    e.preventDefault();
+                    setKey(k);
+                    await navigation.navigate(`/schema${k}`, {
+                      replace: false,
+                    });
+                  }}
+                >
+                  {k.replace('/', '')}
+                </CustomLink>
+              </li>
+            ))}
+          </InfiniteScroll>
+        </ul>
+      </>
     );
   };
 
@@ -83,21 +109,6 @@ const Home = ({ entity }) => {
           <h1 className="govuk-heading-xl">{t('pages.home.title')}</h1>
           <p className="govuk-body-l">{t('pages.home.description')}</p>
           <h1 className="govuk-heading-l">{t('pages.home.data-set-title')}</h1>
-        </div>
-      </div>
-      <div className="govuk-grid-row">
-        <div className="govuk-grid-column-full">
-          <button
-            id="create-new-dataset"
-            className="govuk-button"
-            type="button"
-            data-module="govuk-button"
-            onClick={async () => {
-              await navigation.navigate('/schema/new/dataset');
-            }}
-          >
-            {t('pages.new-dataset.title')}
-          </button>
         </div>
       </div>
       <hr className="govuk-section-break govuk-section-break--s govuk-section-break--visible" />

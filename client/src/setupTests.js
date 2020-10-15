@@ -9,6 +9,7 @@ export const mockNavigate = jest.fn();
 export const mockLogout = jest.fn();
 export const mockLogin = jest.fn();
 export const mockGoBack = jest.fn();
+export const mockGetCurrentValue = jest.fn();
 
 jest.mock('@react-keycloak/web', () => ({
   KeycloakProvider: ({ children }) => children,
@@ -47,6 +48,7 @@ jest.mock('react-navi', () => ({
   useNavigation: () => ({
     navigate: mockNavigate,
     goBack: mockGoBack,
+    getCurrentValue: mockGetCurrentValue,
   }),
   NotFoundBoundary: ({ children }) => children,
   useCurrentRoute: () => ({
@@ -65,18 +67,21 @@ jest.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key) => key }),
 }));
 
-config.set({
-  serviceUrl: 'bar',
-}, { freeze: false });
+config.set(
+  {
+    serviceUrl: 'bar',
+  },
+  { freeze: false }
+);
 
 global.MutationObserver = class {
   // eslint-disable-next-line no-useless-constructor,no-unused-vars,no-empty-function
   constructor(callback) {}
 
-    disconnect = jest.fn();
+  disconnect = jest.fn();
 
-    // eslint-disable-next-line no-unused-vars
-    observe = jest.fn((target, options) => {});
+  // eslint-disable-next-line no-unused-vars
+  observe = jest.fn((target, options) => {});
 };
 
 global.URL.createObjectURL = jest.fn();

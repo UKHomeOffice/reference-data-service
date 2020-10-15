@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useCurrentRoute, useNavigation } from 'react-navi';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
 import { useKeycloak } from '@react-keycloak/web';
+import { initAll } from 'govuk-frontend';
 import Header from '../header';
 import Footer from '../footer';
 import Logger from '../../utils/logger';
@@ -24,12 +25,16 @@ const ErrorFallback = ({ resetErrorBoundary }) => {
         {t('render.error.title')}
       </h2>
       <div className="govuk-error-summary__body">
-        <button type="button" className="govuk-button govuk-button--warning" data-module="govuk-button" onClick={resetErrorBoundary}>
+        <button
+          type="button"
+          className="govuk-button govuk-button--warning"
+          data-module="govuk-button"
+          onClick={resetErrorBoundary}
+        >
           {t('render.error.retry')}
         </button>
       </div>
     </div>
-
   );
 };
 
@@ -45,6 +50,9 @@ const Layout = ({ children }) => {
   const route = useCurrentRoute();
   const navigation = useNavigation();
   const { t } = useTranslation();
+  useEffect(() => {
+    initAll();
+  });
   return (
     <>
       <Header />
@@ -83,10 +91,8 @@ const Layout = ({ children }) => {
             </AlertContextProvider>
           </main>
         </ErrorBoundary>
-
       </div>
       <Footer />
-
     </>
   );
 };

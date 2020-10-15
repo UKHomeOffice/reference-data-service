@@ -29,6 +29,7 @@
     }
   },
   "header": {
+    "menu" : "Menu",
     "service-name" : "Reference Data Platform",
     "sign-out" : "Sign out",
     "support" : "Support",
@@ -45,6 +46,9 @@
     "copyright" : "© Crown copyright"
   },
   "pages" : {
+    "change-requests" : {
+      "title" : "Change requests"
+    },
     "new-dataset" : {
       "title": "Create a new dataset"
     },
@@ -55,12 +59,14 @@
       "loading" : "Loading data sets...",
       "entities" : {
         "title" : "Data"
-      }
+      },
+      "filter" : "Filter data set"
     },
     "schema": {
       "version" : "Version",
       "lastupdated": "Last updated",
       "total" : "Total records",
+      "owner": "Data owner",
       "properties": {
         "property" : "Property",
         "label" : "Label",

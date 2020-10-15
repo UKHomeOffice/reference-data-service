@@ -8,6 +8,7 @@ import SkipLink from '../SkipLink';
 const Header = () => {
   const { t } = useTranslation();
   const navigation = useNavigation();
+  const path = navigation.getCurrentValue().url.pathname;
   return (
     <>
       <header className="govuk-header" role="banner" data-module="govuk-header">
@@ -27,6 +28,77 @@ const Header = () => {
                 >
                   {t('header.service-name')}
                 </a>
+                <>
+                  <button
+                    type="button"
+                    className="govuk-header__menu-button govuk-js-header-toggle"
+                    aria-controls="navigation"
+                    aria-label="Show or hide Top Level Navigation"
+                  >
+                    {t('header.menu')}
+                  </button>
+                  <nav>
+                    <ul
+                      id="navigation"
+                      className="govuk-header__navigation "
+                      aria-label="Top Level Navigation"
+                    >
+                      <li
+                        className={`govuk-header__navigation-item ${
+                          path === '/' || path.startsWith('/schema')
+                            ? 'govuk-header__navigation-item--active'
+                            : ''
+                        }`}
+                      >
+                        <a
+                          className="govuk-header__link"
+                          href="/"
+                          id="dataset"
+                          onClick={async (e) => {
+                            e.preventDefault();
+                            await navigation.navigate('/');
+                          }}
+                        >
+                          {t('pages.home.data-set-title')}
+                        </a>
+                      </li>
+                      <li
+                        className={`govuk-header__navigation-item ${
+                          path === '/dataset/new' ? 'govuk-header__navigation-item--active' : ''
+                        }`}
+                      >
+                        <a
+                          className="govuk-header__link"
+                          href="/dataset/new"
+                          id="newDataSet"
+                          onClick={async (e) => {
+                            e.preventDefault();
+                            await navigation.navigate('/dataset/new');
+                          }}
+                        >
+                          {t('pages.new-dataset.title')}
+                        </a>
+                      </li>
+                      <li
+                        className={`govuk-header__navigation-item ${
+                          path === '/change-requests' ? 'govuk-header__navigation-item--active' : ''
+                        }`}
+                      >
+                        <a
+                          className="govuk-header__link"
+                          href="/change-requests"
+                          id="change-requests"
+                          onClick={async (e) => {
+                            e.preventDefault();
+                            await navigation.navigate('/change-requests');
+                          }}
+                        >
+                          {t('pages.change-requests.title')}
+                        </a>
+                      </li>
+                    </ul>
+                  </nav>
+                </>
               </HeaderContent>
             </div>
             <StyledCol>
@@ -64,12 +136,15 @@ const Header = () => {
             </strong>
           </span>
           <span className="govuk-phase-banner__text">
-            {t('header.new-service-1')}
-            {' '}
-            <a className="govuk-link" href={config.get('serviceDeskUrl')} target="_blank" rel="noopener noreferrer">
+            {t('header.new-service-1')}{' '}
+            <a
+              className="govuk-link"
+              href={config.get('serviceDeskUrl')}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               {t('header.new-service-2')}
-            </a>
-            {' '}
+            </a>{' '}
             {t('header.new-service-3')}
           </span>
         </p>
@@ -80,20 +155,20 @@ const Header = () => {
 
 const StyledCol = styled.div`
   @includes govuk-grid-column-one-half;
-   font-weight: bold;
-    padding-top: 5px;
-    text-align: right;
-    padding-bottom: 10px;
-  
+  font-weight: bold;
+  padding-top: 5px;
+  margin-right: 20px;
+  text-align: right;
+  padding-bottom: 10px;
 `;
 
 const NavLink = styled.a`
-    margin-left: 20px;
+  margin-left: 20px;
 `;
 
 const HeaderContent = styled.div`
   @includes: govuk-header__content;
-   width: 100%;
+  width: 100%;
 `;
 
 export default Header;

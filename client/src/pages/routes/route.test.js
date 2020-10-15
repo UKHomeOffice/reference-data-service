@@ -11,7 +11,8 @@ describe('Base routes', () => {
     ${'/schema/test'}        | ${true}
     ${'/schema/test/data'}   | ${true}
     ${'/login'}              | ${true}
-    ${'/schema/new/dataset'} | ${true}
+    ${'/dataset/new'}        | ${true}
+    ${'/change-requests'}    | ${true}
     ${'/login'}              | ${false}
     ${'/login?redirectTo=/'} | ${true}
     ${'/logout'}             | ${true}

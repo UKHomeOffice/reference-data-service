@@ -4,6 +4,7 @@ import React from 'react';
 import { withAuthentication } from './utils';
 import Home from '../home';
 import NewDataSetPage from '../data/new/NewDataSetPage';
+import ChangeRequestsPage from '../changeRequests/ChangeRequestsPage';
 
 const routes = mount({
   '/': map((request, context) =>
@@ -22,11 +23,19 @@ const routes = mount({
       })
     )
   ),
-  '/schema/new/dataset': map((request, context) =>
+  '/dataset/new': map((request, context) =>
     withAuthentication(
       route({
         title: context.t('pages.new-dataset.title'),
         getView: () => <NewDataSetPage />,
+      })
+    )
+  ),
+  '/change-requests': map((request, context) =>
+    withAuthentication(
+      route({
+        title: context.t('pages.change-requests.title'),
+        getView: () => <ChangeRequestsPage />,
       })
     )
   ),

@@ -240,19 +240,41 @@ describe('Home', () => {
     expect(wrapper.find(ApplicationSpinner).at(0).exists()).toBe(false);
     expect(wrapper.find(CustomLink).length).toBe(0);
   });
-  it('can navigate to new data set', async () => {
-    const wrapper = mount(<Home entity="bffunctiontypes" />);
-    mockAxios.onGet('/refdata').reply(500, {});
+
+  it('can filter keys', async () => {
+    const wrapper = mount(<Home />);
+    mockAxios.onGet('/refdata').reply(200, apiResponse);
     await act(async () => {
       await Promise.resolve(wrapper);
       await new Promise((resolve) => setInterval(resolve, 1000));
       await wrapper.update();
     });
+
+    expect(wrapper.find('ul[id="entityList"]').at(0).exists()).toBe(true);
+    const filter = wrapper.find('input[id="filter"]').at(0);
+
     await act(async () => {
-      wrapper.find('button[id="create-new-dataset"]').at(0).simulate('click');
+      filter.simulate('change', {
+        target: {
+          value: 'type',
+        },
+      });
       await new Promise((resolve) => setInterval(resolve, 1000));
       await wrapper.update();
     });
-    expect(mockNavigate).toBeCalledWith('/schema/new/dataset');
+
+    expect(wrapper.find(CustomLink).length).toBe(1);
+
+    await act(async () => {
+      filter.simulate('change', {
+        target: {
+          value: null,
+        },
+      });
+      await new Promise((resolve) => setInterval(resolve, 1000));
+      await wrapper.update();
+    });
+
+    expect(wrapper.find(CustomLink).length).toBe(2);
   });
 });
