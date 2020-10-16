@@ -44,7 +44,7 @@ describe('FormErrorsAlert', () => {
       await form.update();
     });
 
-    const wrapper = mount(
+    const wrapper = await mount(
       <FormErrorsAlert
         errors={[
           {
