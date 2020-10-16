@@ -45,6 +45,9 @@ public class UIConfig implements WebMvcConfigurer {
                         jsonObject.put("serviceDeskUrl", environment.getProperty("serviceDesk.url"));
                         jsonObject.put("uiEnvironment", environment.getProperty("uiEnvironment"));
                         jsonObject.put("uiVersion", environment.getProperty("uiVersion"));
+                        jsonObject.put("newDataSetForm", environment.getRequiredProperty("newDataSetForm"));
+                        jsonObject.put("newDataSetProcess", environment.getRequiredProperty("newDataSetProcess"));
+
                         jsonObject.put("zipkinUrl", environment.getProperty("tracing.zipkin.ui.url"));
                         html = html.replace("__ENVIRONMENT_CONFIG__", jsonObject.toString());
                         return new TransformedResource(resource, html.getBytes());

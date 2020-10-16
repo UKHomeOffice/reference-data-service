@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { AlertContext } from '../../utils/AlertContext';
 import SubmissionSuccessAlert from './SubmissionSuccessAlert';
 import ApiErrorAlert from './ApiErrorAlert';
+import FormErrorsAlert from './FormErrorsAlert';
 
 const AlertBanner = () => {
   const { alertContext, setAlertContext } = useContext(AlertContext);
@@ -24,6 +25,11 @@ const AlertBanner = () => {
   }
   if (type === 'api-error') {
     return <ApiErrorAlert errors={alertContext.errors} />;
+  }
+
+  if (type === 'form-error') {
+    const { errors, form } = alertContext;
+    return <FormErrorsAlert errors={errors} form={form} />;
   }
 
   return null;

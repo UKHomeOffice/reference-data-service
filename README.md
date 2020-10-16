@@ -33,7 +33,9 @@ The following properties need to be configured in AWS secrets manager (example f
   "uiVersion": "ALPHA",
   "server-port": 8004,
   "tracing.zipkin.baseUrl" : "http://localhost:9411",
-  "tracing.enabled" : true
+  "tracing.enabled" : true,
+  "newDataSetForm" : "newDataSetRequest",
+  "newDataSetProcess" : "newDataSetRequest"
 }
 ```
 

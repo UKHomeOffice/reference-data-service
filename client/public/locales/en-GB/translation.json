@@ -46,11 +46,24 @@
     "copyright" : "© Crown copyright"
   },
   "pages" : {
+    "form": {
+      "submission" : {
+        "success-message": "Your form was successfully submitted",
+        "your-reference" : "Your reference is {{reference}}",
+        "close" : "Close confirmation"
+      },
+      "error" : {
+        "form" : {
+          "title" : "There is a problem with your form"
+        }
+      }
+    },
     "change-requests" : {
       "title" : "Change requests"
     },
     "new-dataset" : {
-      "title": "Create a new dataset"
+      "title": "Create a new dataset",
+      "submission-success": "Your new data set request has been successfully submitted."
     },
     "home" : {
       "title": "Reference Data Service",

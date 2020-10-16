@@ -7,6 +7,10 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: ${auth.url:http://localhost:8080}/auth/realms/${auth.realm:elf}
+  servlet:
+    multipart:
+      max-request-size: -1
+      max-file-size: -1
 
 server:
   ssl:
@@ -21,8 +25,6 @@ server:
     trust-store-type: ${javax.net.ssl.trustStoreType:PKCS12}
   port: ${server-port:8080}
   forward-headers-strategy: native
-
-
 zuul:
   routes:
     fileupload-service:

@@ -21,6 +21,8 @@ if (window.ENVIRONMENT_CONFIG) {
     uiEnvironment: process.env.REACT_APP_UI_ENVIRONMENT,
     uiVersion: process.env.REACT_APP_UI_VERSION,
     serviceDeskUrl: process.env.REACT_APPP_SERVICE_DESK_URL,
+    newDataSetProcess: process.env.REACT_APP_NEW_DATA_SET_PROCESS,
+    newDataSetForm: process.env.REACT_APP_NEW_DATA_SET_FORM,
   });
 }
 
@@ -42,7 +44,11 @@ const RouterView = () => {
   }
   initAll();
   return (
-    <Router hashScrollBehavior="smooth" routes={routes} context={{ t, isAuthenticated: keycloak.authenticated }}>
+    <Router
+      hashScrollBehavior="smooth"
+      routes={routes}
+      context={{ t, isAuthenticated: keycloak.authenticated }}
+    >
       <Layout>
         <View />
       </Layout>
@@ -52,10 +58,7 @@ const RouterView = () => {
 const App = () => (
   <Suspense fallback={null}>
     <HelmetProvider>
-      <KeycloakProvider
-        keycloak={keycloakInstance}
-        initConfig={keycloakProviderInitConfig}
-      >
+      <KeycloakProvider keycloak={keycloakInstance} initConfig={keycloakProviderInitConfig}>
         <RouterView />
       </KeycloakProvider>
     </HelmetProvider>
