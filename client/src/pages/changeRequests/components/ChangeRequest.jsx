@@ -24,6 +24,7 @@ const ChangeRequest = ({ request, cancelComponent }) => {
     }
     return <strong className={`govuk-tag ${colour}`}>{s.value}</strong>;
   };
+  const reason = _.find(request.variables, (v) => v.name === 'reason');
   return (
     <Card>
       <dl className="govuk-summary-list govuk-summary-list--no-border">
@@ -59,6 +60,14 @@ const ChangeRequest = ({ request, cancelComponent }) => {
           <dt className="govuk-summary-list__key">{t('pages.change-requests.labels.status')}</dt>
           <dd className="govuk-summary-list__value">{resolveStatus(request)}</dd>
         </div>
+        {reason ? (
+          <div className="govuk-summary-list__row">
+            <dt className="govuk-summary-list__key">{t('pages.change-requests.labels.message')}</dt>
+            <dd className="govuk-summary-list__value">
+              <p className="govuk-body">{reason.value}</p>
+            </dd>
+          </div>
+        ) : null}
         {!request.endTime ? cancelComponent : null}
       </dl>
     </Card>

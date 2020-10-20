@@ -79,6 +79,7 @@
         "reason-hint": "Please specify the reason for cancelling this request",
         "status": "Status",
         "open" : "Still open",
+        "message": "Message",
         "filter": {
           "by-request-type" : "Filter by request type",
           "by-requester" : "Filter by requester",
