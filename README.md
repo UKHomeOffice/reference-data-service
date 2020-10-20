@@ -106,6 +106,10 @@ These keys contain the values of the business process keys that can perform:
 ***Each of these BPMN should have a cancel event sub process with the message name "cancel-request". This allows each
 business process how to handle the cancelling of a change request***
 
+See below:
+
+![Cancel event subprocss](docs/bpmn.png "Cancel Event Sub Process")
+
 The business processes for each of these change requests should also have a status variable. This variable is created
 when a request is submitted. It is the responsibility of the bpmn to update the status variable accordingly. The
 statuses currently supported:
@@ -115,7 +119,7 @@ statuses currently supported:
 * REJECTED
 * CANCELLED
 
-And status that is not mappped will be marked with 'UNKNWON'
+And status that is not mappped will be marked with 'UNKNOWN'
 
 
 # Form Guidelines
