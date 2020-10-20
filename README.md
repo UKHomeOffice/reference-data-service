@@ -82,3 +82,46 @@ You can then run the final output with
 ```bash
   SPRING_PROFILES_ACTIVE=local java -jar server/build/libs/reference-data-service.jar
 ```
+
+
+# Workflow Guidelines
+
+This reference data service requires the following variables:
+
+* newDataSetProcess
+* deleteDataSetProcess
+* addDataRowProcess
+* editDataRowProcess
+* deleteDataRowProcess
+
+These keys contain the values of the business process keys that can perform:
+
+* Create a new data set
+* Delete an existing data set
+* Add a new data row
+* Edit an existing data row
+* Delete an existing data row
+
+
+***Each of these BPMN should have a cancel event sub process with the message name "cancel-request". This allows each
+business process how to handle the cancelling of a change request***
+
+The business processes for each of these change requests should also have a status variable. This variable is created
+when a request is submitted. It is the responsibility of the bpmn to update the status variable accordingly. The
+statuses currently supported:
+
+* SUBMITTED
+* APPROVED
+* REJECTED
+* CANCELLED
+
+And status that is not mappped will be marked with 'UNKNWON'
+
+
+# Form Guidelines
+
+The following variable is request for creating a new data set:
+
+* newDataSetForm
+
+This defines the form name that will be presented to the user if they choose to create a new data set.
