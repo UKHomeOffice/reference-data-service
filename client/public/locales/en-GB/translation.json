@@ -59,7 +59,37 @@
       }
     },
     "change-requests" : {
-      "title" : "Change requests"
+      "title" : "Change requests",
+      "loading": {
+        "request" : "Loading change requests",
+        "no-more" : "No more change requests"
+      },
+      "size" : {
+        "key":"request",
+        "key_plural": "requests",
+        "keyWithCount": "{{count}} request submitted",
+        "keyWithCount_plural": "{{count}} requests submitted"
+      },
+      "labels": {
+        "request-type" : "Request type",
+        "submitted-by" : "Submitted by",
+        "submitted-date" : "Submitted by",
+        "completed-date" : "Completed date",
+        "reason": "Reason for cancellation",
+        "reason-hint": "Please specify the reason for cancelling this request",
+        "status": "Status",
+        "open" : "Still open",
+        "filter": {
+          "by-request-type" : "Filter by request type",
+          "by-requester" : "Filter by requester",
+          "your-requests" : "Your requests",
+          "all" : "All requests"
+        },
+        "actions" : {
+          "label" : "Action(s)",
+          "cancel" : "Cancel"
+        }
+      }
     },
     "new-dataset" : {
       "title": "Create a new dataset",

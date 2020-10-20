@@ -44,6 +44,10 @@ const NewDataSetPage = () => {
   const submitDataSetRequest = useCallback(() => {
     setSubmitting(true);
     const variables = {
+      status: {
+        value: 'SUBMITTED',
+        type: 'string',
+      },
       [form.data.name]: {
         value: JSON.stringify(submissionData.data),
         type: 'json',
@@ -51,7 +55,9 @@ const NewDataSetPage = () => {
     };
     axiosInstance({
       method: 'POST',
-      url: `/camunda/engine-rest/process-definition/key/${config.get('newDataSetProcess')}/start`,
+      url: `/camunda/engine-rest/process-definition/key/${config.get(
+        'processes.newDataSetProcess'
+      )}/start`,
       data: {
         variables,
         businessKey: submissionData.data.businessKey,

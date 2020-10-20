@@ -73,7 +73,9 @@ config.set(
   {
     serviceUrl: 'bar',
     newDataSetForm: 'newDataSetForm',
-    newDataSetProcess: 'newDataSetProcess',
+    processes: {
+      newDataSetProcess: 'newDataSetProcess',
+    },
   },
   { freeze: false }
 );

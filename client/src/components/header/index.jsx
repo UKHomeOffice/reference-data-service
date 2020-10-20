@@ -81,7 +81,9 @@ const Header = () => {
                       </li>
                       <li
                         className={`govuk-header__navigation-item ${
-                          path === '/change-requests' ? 'govuk-header__navigation-item--active' : ''
+                          path.startsWith('/change-requests')
+                            ? 'govuk-header__navigation-item--active'
+                            : ''
                         }`}
                       >
                         <a

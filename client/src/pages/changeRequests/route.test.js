@@ -1,22 +1,14 @@
 import { createMemoryNavigation } from 'navi';
-import routes from './index';
+import routes from './routes';
 
 describe('Base routes', () => {
   beforeEach(() => {
     jest.spyOn(console, 'error').mockImplementation(() => {});
   });
   it.each`
-    path                            | authenticated
-    ${'/'}                          | ${true}
-    ${'/schema/test'}               | ${true}
-    ${'/schema/test/data'}          | ${true}
-    ${'/login'}                     | ${true}
-    ${'/dataset/new'}               | ${true}
-    ${'/change-requests'}           | ${true}
-    ${'/change-requests/id/cancel'} | ${true}
-    ${'/login'}                     | ${false}
-    ${'/login?redirectTo=/'}        | ${true}
-    ${'/logout'}                    | ${true}
+    path              | authenticated
+    ${'/'}            | ${true}
+    ${'/test/cancel'} | ${true}
   `('title and views for $path should be defined', async ({ path, authenticated }) => {
     const navigation = createMemoryNavigation({
       url: `${path}`,

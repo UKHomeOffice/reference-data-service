@@ -35,7 +35,11 @@ The following properties need to be configured in AWS secrets manager (example f
   "tracing.zipkin.baseUrl" : "http://localhost:9411",
   "tracing.enabled" : true,
   "newDataSetForm" : "newDataSetRequest",
-  "newDataSetProcess" : "newDataSetRequest"
+  "newDataSetProcess" : "newDataSetRequest",
+  "deleteDataSetProcess" : "deleteDataSetProcess",
+  "addDataRowProcess" : "addDataRowProcess",
+  "editDataRowProcess" : "editDataRowProcess",
+  "deleteDataRowProcess" : "deleteDataRowProcess"
 }
 ```
 

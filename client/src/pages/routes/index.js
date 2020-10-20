@@ -4,7 +4,6 @@ import React from 'react';
 import { withAuthentication } from './utils';
 import Home from '../home';
 import NewDataSetPage from '../data/new/NewDataSetPage';
-import ChangeRequestsPage from '../changeRequests/ChangeRequestsPage';
 
 const routes = mount({
   '/': map((request, context) =>
@@ -31,14 +30,7 @@ const routes = mount({
       })
     )
   ),
-  '/change-requests': map((request, context) =>
-    withAuthentication(
-      route({
-        title: context.t('pages.change-requests.title'),
-        getView: () => <ChangeRequestsPage />,
-      })
-    )
-  ),
+  '/change-requests': lazy(() => import('../changeRequests/routes')),
   '/schema/:id/data': lazy(() => import('../data/routes')),
   '/logout': map((request, context) =>
     withAuthentication(

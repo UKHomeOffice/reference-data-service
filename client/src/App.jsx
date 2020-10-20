@@ -21,8 +21,14 @@ if (window.ENVIRONMENT_CONFIG) {
     uiEnvironment: process.env.REACT_APP_UI_ENVIRONMENT,
     uiVersion: process.env.REACT_APP_UI_VERSION,
     serviceDeskUrl: process.env.REACT_APPP_SERVICE_DESK_URL,
-    newDataSetProcess: process.env.REACT_APP_NEW_DATA_SET_PROCESS,
     newDataSetForm: process.env.REACT_APP_NEW_DATA_SET_FORM,
+    processes: {
+      newDataSetProcess: process.env.REACT_APP_NEW_DATA_SET_PROCESS,
+      deleteDataSetProcess: process.env.REACT_APP_DELETE_DATA_SET_PROCESS,
+      addDataRowProcess: process.env.REACT_APP_NEW_DATA_ROW_PROCESS,
+      editDataRowProcess: process.env.REACT_APP_EDIT_DATA_ROW_PROCESS,
+      deleteDataRowProcess: process.env.REACT_APP_DELETE_DATA_ROW_PROCESS,
+    },
   });
 }
 

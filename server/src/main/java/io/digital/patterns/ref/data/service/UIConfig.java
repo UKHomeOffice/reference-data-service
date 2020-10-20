@@ -11,6 +11,7 @@ import org.springframework.web.servlet.resource.TransformedResource;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -46,7 +47,12 @@ public class UIConfig implements WebMvcConfigurer {
                         jsonObject.put("uiEnvironment", environment.getProperty("uiEnvironment"));
                         jsonObject.put("uiVersion", environment.getProperty("uiVersion"));
                         jsonObject.put("newDataSetForm", environment.getRequiredProperty("newDataSetForm"));
-                        jsonObject.put("newDataSetProcess", environment.getRequiredProperty("newDataSetProcess"));
+                        jsonObject.put("processes",
+                               Map.of("newDataSetProcess", environment.getRequiredProperty("newDataSetProcess"),
+                                     "deleteDataSetProcess",  environment.getRequiredProperty("deleteDataSetProcess"),
+                                     "addDataRowProcess", environment.getRequiredProperty("addDataRowProcess"),
+                                    "editDataRowProcess", environment.getRequiredProperty("editDataRowProcess"),
+                                    "deleteDataRowProcess",environment.getRequiredProperty("deleteDataRowProcess")));
 
                         jsonObject.put("zipkinUrl", environment.getProperty("tracing.zipkin.ui.url"));
                         html = html.replace("__ENVIRONMENT_CONFIG__", jsonObject.toString());
