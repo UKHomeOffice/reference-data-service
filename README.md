@@ -28,6 +28,7 @@ The following properties need to be configured in AWS secrets manager (example f
   "auth.clientId": "reference-data-service",
   "formApi.url": "http://localhost:4000",
   "refData.url": "http://localhost:3000",
+  "workflowApi.url" : "http://localhost:8000",
   "serviceDesk.url": "service desk url",
   "uiEnvironment": "LOCAL",
   "uiVersion": "ALPHA",
