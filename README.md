@@ -111,6 +111,8 @@ See below:
 
 ![Cancel event subprocss](docs/bpmn.png "Cancel Event Sub Process")
 
+![Cancel message](docs/cancelmessage.png "Cancel Message")
+
 The business processes for each of these change requests should also have a status variable. This variable is created
 when a request is submitted. It is the responsibility of the bpmn to update the status variable accordingly. The
 statuses currently supported:
