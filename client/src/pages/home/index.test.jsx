@@ -59,7 +59,7 @@ describe('Home', () => {
     definitions: {
       behavioursigns: {
         description:
-          '{"label": "Behaviour Signs", "description": "Behaviours Warning and Danger Signs", "schemalastupdated": "06/03/2019", "dataversion": 1}',
+          '{"label": "Behaviour Signs", "description": "Behaviours Warning and Danger Signs",  "dataversion": 1}',
         required: ['id', 'name', 'warning', 'danger'],
         properties: {
           id: {
@@ -104,7 +104,7 @@ describe('Home', () => {
       },
       bffunctiontypes: {
         description:
-          '{"label": "Border function types", "description": "Border functions type clarifications.", "schemalastupdated": "06/03/2019", "dataversion": 1}',
+          '{"label": "Border function types", "description": "Border functions type clarifications.", "schemalastupdated": "06/03/2019", "dataversion": 1, "owner" : "test"}',
         required: ['id', 'bffunction'],
         properties: {
           id: {
@@ -139,6 +139,7 @@ describe('Home', () => {
   };
   beforeEach(() => {
     mockAxios.reset();
+    mockNavigate.mockReset();
     // eslint-disable-next-line no-unused-vars
     mockAxios.onGet('/refdata/bffunctiontypes').reply((config) => [
       200,
@@ -226,6 +227,36 @@ describe('Home', () => {
       await wrapper.update();
     });
     expect(mockNavigate).toBeCalledWith('/schema/behavioursigns', { replace: false });
+  });
+
+  it('can select data', async () => {
+    // eslint-disable-next-line no-unused-vars
+    mockAxios.onGet('/refdata/behavioursigns').reply((config) => [
+      200,
+      [{ id: 'test' }],
+      {
+        'content-range': '0-10/23',
+      },
+    ]);
+    const wrapper = mount(<Home entity="bffunctiontypes" />);
+    mockAxios.onGet('/refdata').reply(200, apiResponse);
+    await act(async () => {
+      await Promise.resolve(wrapper);
+      await new Promise((resolve) => setInterval(resolve, 1000));
+      await wrapper.update();
+    });
+
+    await act(async () => {
+      wrapper
+        .find('a[id="viewData"]')
+        .at(0)
+        .simulate('click', {
+          preventDefault: () => {},
+        });
+      await new Promise((resolve) => setInterval(resolve, 1000));
+      await wrapper.update();
+    });
+    expect(mockNavigate).toBeCalledWith('/schema/bffunctiontypes/data');
   });
 
   it('loading bar not displayed if api failure', async () => {
