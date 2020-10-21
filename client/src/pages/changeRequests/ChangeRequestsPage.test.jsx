@@ -102,7 +102,7 @@ describe('ChangeRequestsPage', () => {
     });
     expect(
       mockAxios.history.get.filter((r) => r.url === '/camunda/engine-rest/history/process-instance')
-        .length
+        .length,
     ).toBe(2);
 
     await act(async () => {
@@ -117,7 +117,7 @@ describe('ChangeRequestsPage', () => {
 
     expect(
       mockAxios.history.get.filter((r) => r.url === '/camunda/engine-rest/history/process-instance')
-        .length
+        .length,
     ).toBe(3);
   });
 
@@ -145,7 +145,7 @@ describe('ChangeRequestsPage', () => {
 
     expect(
       mockAxios.history.get.filter((r) => r.url === '/camunda/engine-rest/history/process-instance')
-        .length
+        .length,
     ).toBe(3);
   });
 
@@ -166,7 +166,7 @@ describe('ChangeRequestsPage', () => {
 
     expect(
       mockAxios.history.get.filter((r) => r.url === '/camunda/engine-rest/history/process-instance')
-        .length
+        .length,
     ).toBe(2);
   });
 

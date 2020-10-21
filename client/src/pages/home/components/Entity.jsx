@@ -10,7 +10,7 @@ const Entity = ({ entity, definition }) => {
   const { t } = useTranslation();
   const summary = JSON.parse(entity.get.summary);
   const tags = _.uniq(
-    _.concat(entity.get.tags, entity.post.tags, entity.delete.tags, entity.patch.tags).flat()
+    _.concat(entity.get.tags, entity.post.tags, entity.delete.tags, entity.patch.tags).flat(),
   );
 
   return (
@@ -20,7 +20,8 @@ const Entity = ({ entity, definition }) => {
           <h3 className="govuk-heading-m">{summary.label}</h3>
           {tags.map((g) => (
             <React.Fragment key={g}>
-              <strong className="govuk-tag govuk-tag--blue govuk-!-margin-bottom-2">{g}</strong>{' '}
+              <strong className="govuk-tag govuk-tag--blue govuk-!-margin-bottom-2">{g}</strong>
+              {' '}
             </React.Fragment>
           ))}
           <p className="govuk-body-l">{summary.description}</p>

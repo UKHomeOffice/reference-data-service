@@ -1,4 +1,6 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback, useEffect, useRef, useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { JSONPath } from 'jsonpath-plus';
 import _ from 'lodash';
@@ -37,7 +39,7 @@ const DataListPage = ({ entityId }) => {
             JSONPath({
               path: `$.definitions['${entityId}']`,
               json: response.data,
-            })[0]
+            })[0],
           );
 
           const countResponse = await axiosInstance({
@@ -82,7 +84,7 @@ const DataListPage = ({ entityId }) => {
         });
       });
     },
-    [axiosInstance, entityData, setEntityData, entityId, selectedColumns]
+    [axiosInstance, entityData, setEntityData, entityId, selectedColumns],
   );
 
   const loadData = useCallback(() => {
@@ -180,7 +182,7 @@ const DataListPage = ({ entityId }) => {
                               _.concat(selectedColumns, {
                                 label: obj.label,
                                 key: k,
-                              })
+                              }),
                             );
                           } else {
                             setSelectedColumns(_.filter(selectedColumns, (c) => c.key !== k));
@@ -294,16 +296,16 @@ const DataListPage = ({ entityId }) => {
               dataLength={entityData.data.length}
               hasMore={appliedColumns.length !== 0 && entityData.data.length < count}
               height={700}
-              loader={
+              loader={(
                 <h5 id="loading-text" className="govuk-heading-s govuk-!-margin-top-3">
                   {t('pages.data.loading', { entity: entityId })}
                 </h5>
-              }
-              endMessage={
+              )}
+              endMessage={(
                 <h5 id="no-more-data" className="govuk-heading-s govuk-!-margin-top-3">
                   {t('pages.data.no-more-data', { entity: entityId })}
                 </h5>
-              }
+              )}
             >
               {entityData.data.map((data) => (
                 <li key={uuidv4()}>

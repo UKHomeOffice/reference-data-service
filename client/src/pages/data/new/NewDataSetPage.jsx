@@ -1,4 +1,6 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback, useContext, useEffect, useRef, useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { Formio, Form } from 'react-formio';
 import gds from '@digitalpatterns/formio-gds-template';
@@ -56,7 +58,7 @@ const NewDataSetPage = () => {
     axiosInstance({
       method: 'POST',
       url: `/camunda/engine-rest/process-definition/key/${config.get(
-        'processes.newDataSetProcess'
+        'processes.newDataSetProcess',
       )}/start`,
       data: {
         variables,
@@ -124,7 +126,7 @@ const NewDataSetPage = () => {
     } else {
       const errors = _.filter(
         alertContext.errors,
-        (error) => data.changed && error.component.key !== data.changed.component.key
+        (error) => data.changed && error.component.key !== data.changed.component.key,
       );
 
       if (errors.length === 0) {
@@ -186,7 +188,9 @@ const NewDataSetPage = () => {
                   showCancel: true,
                 },
                 beforeSubmit: (submission, next) => {
-                  const { versionId, id, title, name } = form;
+                  const {
+                    versionId, id, title, name,
+                  } = form;
                   // eslint-disable-next-line no-param-reassign
                   submission.data.form = {
                     formVersionId: versionId,

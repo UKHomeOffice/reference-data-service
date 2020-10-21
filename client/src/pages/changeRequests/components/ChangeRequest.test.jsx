@@ -13,15 +13,15 @@ describe('ChangeRequest', () => {
           startUserId: 'test',
           startTime: moment().toISOString(),
         }}
-        cancelComponent={
+        cancelComponent={(
           <>
             <div className="govuk-summary-list__row" id="test">
               <dt className="govuk-summary-list__key">Test</dt>
               <dd className="govuk-summary-list__value" />
             </div>
           </>
-        }
-      />
+        )}
+      />,
     );
 
     expect(wrapper.find('div[id="test"]').length).toBe(1);
@@ -37,15 +37,15 @@ describe('ChangeRequest', () => {
           startTime: moment().toISOString(),
           endTime: moment().toISOString(),
         }}
-        cancelComponent={
+        cancelComponent={(
           <>
             <div className="govuk-summary-list__row" id="test">
               <dt className="govuk-summary-list__key">Test</dt>
               <dd className="govuk-summary-list__value" />
             </div>
           </>
-        }
-      />
+        )}
+      />,
     );
 
     expect(wrapper.find('div[id="test"]').length).toBe(0);
@@ -58,24 +58,24 @@ describe('ChangeRequest', () => {
     ${'REJECTED'}  | ${'govuk-tag--red'}
     ${'CANCELLED'} | ${'govuk-tag--yellow'}
   `('renders status for $status ', async ({ status, tag }) => {
-    const wrapper = mount(
-      <ChangeRequest
-        request={{
-          id: 'id',
-          processDefinitionName: 'test',
-          startUserId: 'test',
-          startTime: moment().toISOString(),
-          variables: [
-            {
-              name: 'status',
-              value: status,
-              type: 'string',
-            },
-          ],
-        }}
-        cancelComponent={<div id="test">Test</div>}
-      />
-    );
-    expect(wrapper.find(`.${tag}`).length).toBe(1);
-  });
+  const wrapper = mount(
+    <ChangeRequest
+      request={{
+        id: 'id',
+        processDefinitionName: 'test',
+        startUserId: 'test',
+        startTime: moment().toISOString(),
+        variables: [
+          {
+            name: 'status',
+            value: status,
+            type: 'string',
+          },
+        ],
+      }}
+      cancelComponent={<div id="test">Test</div>}
+    />,
+  );
+  expect(wrapper.find(`.${tag}`).length).toBe(1);
+});
 });

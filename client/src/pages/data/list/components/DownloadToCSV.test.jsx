@@ -33,7 +33,7 @@ describe('DownloadToCSV', () => {
           },
         ]}
         entity="icao"
-      />
+      />,
     );
 
     const downloadButton = wrapper.find('button[id="download"]').at(0);
@@ -55,20 +55,19 @@ describe('DownloadToCSV', () => {
         },
       })
       .reply(
-        () =>
-          new Promise((resolve) => {
-            setTimeout(() => {
-              resolve([
-                200,
-                [
-                  { name: 'Gobernador Crespo Aeroclub Airport' },
-                  { name: 'Maybee Airport' },
-                  { name: 'Wonken Airport' },
-                  { name: 'Dry Bay Airport' },
-                ],
-              ]);
-            }, 3000);
-          })
+        () => new Promise((resolve) => {
+          setTimeout(() => {
+            resolve([
+              200,
+              [
+                { name: 'Gobernador Crespo Aeroclub Airport' },
+                { name: 'Maybee Airport' },
+                { name: 'Wonken Airport' },
+                { name: 'Dry Bay Airport' },
+              ],
+            ]);
+          }, 3000);
+        }),
       );
 
     const wrapper = mount(
@@ -80,7 +79,7 @@ describe('DownloadToCSV', () => {
           },
         ]}
         entity="icao"
-      />
+      />,
     );
 
     await act(async () => {
@@ -117,7 +116,7 @@ describe('DownloadToCSV', () => {
           },
         ]}
         entity="icao"
-      />
+      />,
     );
 
     await act(async () => {

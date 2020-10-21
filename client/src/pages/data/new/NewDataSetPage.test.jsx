@@ -81,18 +81,17 @@ describe('NewDataSetPage', () => {
 
   it('renders application spinner', async () => {
     mockAxios.onGet('/form/name/newDataSetForm').reply(
-      () =>
-        new Promise((resolve) => {
-          setTimeout(() => {
-            resolve([200, []]);
-          }, 3000);
-        })
+      () => new Promise((resolve) => {
+        setTimeout(() => {
+          resolve([200, []]);
+        }, 3000);
+      }),
     );
     const wrapper = await mount(
       <AlertContextProvider>
         <AlertBanner />
         <NewDataSetPage />
-      </AlertContextProvider>
+      </AlertContextProvider>,
     );
     await act(async () => {
       await Promise.resolve(wrapper);
@@ -109,7 +108,7 @@ describe('NewDataSetPage', () => {
       <AlertContextProvider>
         <AlertBanner />
         <NewDataSetPage />
-      </AlertContextProvider>
+      </AlertContextProvider>,
     );
     await act(async () => {
       await Promise.resolve(wrapper);
@@ -127,7 +126,7 @@ describe('NewDataSetPage', () => {
       <AlertContextProvider>
         <AlertBanner />
         <NewDataSetPage />
-      </AlertContextProvider>
+      </AlertContextProvider>,
     );
     await act(async () => {
       await Promise.resolve(wrapper);
@@ -149,7 +148,7 @@ describe('NewDataSetPage', () => {
       <AlertContextProvider>
         <AlertBanner />
         <NewDataSetPage />
-      </AlertContextProvider>
+      </AlertContextProvider>,
     );
     await act(async () => {
       await Promise.resolve(wrapper);
@@ -180,7 +179,7 @@ describe('NewDataSetPage', () => {
       <AlertContextProvider>
         <AlertBanner />
         <NewDataSetPage />
-      </AlertContextProvider>
+      </AlertContextProvider>,
     );
     await act(async () => {
       await Promise.resolve(wrapper);
@@ -204,7 +203,7 @@ describe('NewDataSetPage', () => {
       <AlertContextProvider>
         <AlertBanner />
         <NewDataSetPage />
-      </AlertContextProvider>
+      </AlertContextProvider>,
     );
     await act(async () => {
       await Promise.resolve(wrapper);
@@ -226,7 +225,7 @@ describe('NewDataSetPage', () => {
       <AlertContextProvider>
         <AlertBanner />
         <NewDataSetPage />
-      </AlertContextProvider>
+      </AlertContextProvider>,
     );
     await act(async () => {
       await Promise.resolve(wrapper);
@@ -260,7 +259,7 @@ describe('NewDataSetPage', () => {
       <AlertContextProvider>
         <AlertBanner />
         <NewDataSetPage />
-      </AlertContextProvider>
+      </AlertContextProvider>,
     );
     await act(async () => {
       await Promise.resolve(wrapper);
@@ -283,7 +282,7 @@ describe('NewDataSetPage', () => {
       <AlertContextProvider>
         <AlertBanner />
         <NewDataSetPage />
-      </AlertContextProvider>
+      </AlertContextProvider>,
     );
     await act(async () => {
       await Promise.resolve(wrapper);
@@ -311,7 +310,7 @@ describe('NewDataSetPage', () => {
       <AlertContextProvider>
         <AlertBanner />
         <NewDataSetPage />
-      </AlertContextProvider>
+      </AlertContextProvider>,
     );
     await act(async () => {
       await Promise.resolve(wrapper);
