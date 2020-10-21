@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { useCurrentRoute, useNavigation } from 'react-navi';
+import { useNavigation } from 'react-navi';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
 import { useKeycloak } from '@react-keycloak/web';
@@ -47,7 +47,6 @@ ErrorFallback.propTypes = {
 
 const Layout = ({ children }) => {
   const [keycloak] = useKeycloak();
-  const route = useCurrentRoute();
   const navigation = useNavigation();
   const { t } = useTranslation();
   useEffect(() => {
@@ -63,7 +62,7 @@ const Layout = ({ children }) => {
             Logger.error({
               token: keycloak.token,
               message: error.message,
-              path: route.url.pathname,
+              path: navigation.getCurrentValue().url.pathname,
               componentStack,
             });
           }}
@@ -75,7 +74,7 @@ const Layout = ({ children }) => {
           >
             <AlertContextProvider>
               <AlertBanner />
-              {route.url.pathname !== '/' ? (
+              {navigation.getCurrentValue().url.pathname !== '/' ? (
                 <a
                   href="/"
                   onClick={async (e) => {

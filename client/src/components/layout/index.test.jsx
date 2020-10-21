@@ -13,6 +13,12 @@ describe('Layout', () => {
     jest.spyOn(console, 'error').mockImplementation(() => {});
   });
   it('renders without crashing', () => {
+    mockGetCurrentValue.mockImplementation(() => ({
+      url: {
+        pathname: '/test',
+      },
+    }));
+
     shallow(
       <Layout>
         <div>Hello</div>
@@ -57,5 +63,20 @@ describe('Layout', () => {
         preventDefault: () => {},
       });
     expect(mockGoBack).toBeCalled();
+  });
+
+  it('no back button if current path /', () => {
+    mockGetCurrentValue.mockImplementation(() => ({
+      url: {
+        pathname: '/',
+      },
+    }));
+    const wrapper = shallow(
+      <Layout>
+        <div>Hello</div>
+      </Layout>
+    );
+
+    expect(wrapper.find('a').length).toBe(0);
   });
 });
