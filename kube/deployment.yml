@@ -1,0 +1,77 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{.WWW_REF_NAME}}
+spec:
+  selector:
+    matchLabels:
+      name: {{.WWW_REF_NAME}}
+  replicas: 3
+  revisionHistoryLimit: 3
+  template:
+    metadata:
+      labels:
+        name: {{.WWW_REF_NAME}}
+    spec:
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000
+      containers:
+      - name: {{.WWW_REF_NAME}}
+        image: {{.WWW_REF_IMAGE}}:{{.WWW_REF_TAG}}
+        command: ["/bin/sh"]
+        args: ["-c", "/app/run.sh -Djava.security.egd=file:/dev/./urandom -Djavax.net.ssl.keyStore=/etc/keystore/keystore.p12 -Djavax.net.ssl.keyStorePassword=changeit -Djavax.net.ssl.trustStore=/etc/keystore/cacerts -Djavax.net.ssl.trustStoreType=pkcs12 -Djavax.net.ssl.trustStorePassword=changeit -jar /app/reference-data-service.jar"]
+        imagePullPolicy: Always
+        securityContext:
+          runAsNonRoot: true
+        resources:
+          requests:
+            memory: "1024Mi"
+            cpu: "1000m"
+          limits:
+            memory: "1024Mi"
+            cpu: "1000m"
+        ports:
+          - name: https
+            containerPort: 8443
+            protocol: TCP
+        livenessProbe:
+          httpGet:
+            scheme: HTTPS
+            path: /actuator/info
+            port: 8443
+          initialDelaySeconds: 120
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            scheme: HTTPS
+            path: /actuator/health
+            port: 8443
+          initialDelaySeconds: 30
+          timeoutSeconds: 1
+        env:
+          - name: SPRING_PROFILES_ACTIVE
+            value: "{{.SPRING_PROFILES_ACTIVE}}"
+          - name: AWS_REGION
+            value: "{{.AWS_REGION}}"
+          - name: AWS_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{.WWW_REF_NAME}}
+                key: awsAccessKeyId
+          - name: AWS_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{.WWW_REF_NAME}}
+                key: awsSecretAccessKey
+          - name: AWS_SECRETS_MANAGER_ENABLED
+            value: "true"
+        volumeMounts:
+          - name: certs
+            mountPath: /certs
+            readOnly: true
+      volumes:
+      - name: certs
+        secret:
+          secretName: "{{.WWW_REF_NAME}}-pod-cmio"
