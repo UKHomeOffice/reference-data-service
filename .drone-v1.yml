@@ -1,0 +1,221 @@
+---
+kind: pipeline
+type: kubernetes
+name: default
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: synch_dev_secrets
+  pull: if-not-exists
+  image: quay.io/ukhomeofficedigital/cop-secrets
+  environment:
+    AWS_ACCESS_KEY_ID:
+      from_secret: DEV_DRONE_AWS_ACCESS_KEY_ID
+    AWS_SECRET_ACCESS_KEY:
+      from_secret: DEV_DRONE_AWS_SECRET_ACCESS_KEY
+    DEPLOY_ENV: dev
+    DRONE_SERVER: https://drone-gh.acp.homeoffice.gov.uk
+    DRONE_TOKEN:
+      from_secret: DRONE_PUBLIC_TOKEN
+  when:
+    event:
+    - promote
+    target:
+    - secrets
+
+- name: synch_staging_secrets
+  pull: if-not-exists
+  image: quay.io/ukhomeofficedigital/cop-secrets
+  environment:
+    AWS_ACCESS_KEY_ID:
+      from_secret: STAGING_DRONE_AWS_ACCESS_KEY_ID
+    AWS_SECRET_ACCESS_KEY:
+      from_secret: STAGING_DRONE_AWS_SECRET_ACCESS_KEY
+    DEPLOY_ENV: staging
+    DRONE_SERVER: https://drone-gh.acp.homeoffice.gov.uk
+    DRONE_TOKEN:
+      from_secret: DRONE_PUBLIC_TOKEN
+  when:
+    event:
+    - promote
+    target:
+    - secrets
+
+- name: synch_production_secrets
+  pull: if-not-exists
+  image: quay.io/ukhomeofficedigital/cop-secrets
+  environment:
+    AWS_ACCESS_KEY_ID:
+      from_secret: PRODUCTION_DRONE_AWS_ACCESS_KEY_ID
+    AWS_SECRET_ACCESS_KEY:
+      from_secret: PRODUCTION_DRONE_AWS_SECRET_ACCESS_KEY
+    DEPLOY_ENV: production
+    DRONE_SERVER: https://drone-gh.acp.homeoffice.gov.uk
+    DRONE_TOKEN:
+      from_secret: DRONE_PUBLIC_TOKEN
+  when:
+    event:
+    - promote
+    target:
+    - secrets
+
+- name: deploy_to_dev
+  pull: if-not-exists
+  image: quay.io/ukhomeofficedigital/kd
+  commands:
+  - export REFERENCE_DATA_SERVICE_NAME="reference-data-service"
+  - export REFERENCE_DATA_SERVICE_TAG=$${DRONE_COMMIT_SHA}
+  - export REFERENCE_DATA_SERVICE_SPRING_PROFILE_ACTIVE="dev"
+  - kd --insecure-skip-tls-verify -f kube/cert.yml
+  - kd --insecure-skip-tls-verify -f kube/secret.yml
+  - kd --insecure-skip-tls-verify -f kube/network-policy.yml
+  - kd --insecure-skip-tls-verify -f kube/service.yml
+  - kd --insecure-skip-tls-verify -f kube/deployment.yml
+  - kd --insecure-skip-tls-verify -f kube/ingress.yml
+  environment:
+    KUBE_NAMESPACE:
+      from_secret: DEV_KUBE_NAMESPACE_PRIVATE_COP
+    KUBE_SERVER:
+      from_secret: DEV_KUBE_SERVER
+    KUBE_TOKEN:
+      from_secret: DEV_KUBE_TOKEN
+    REFERENCE_DATA_SERVICE_AWS_ACCESS_KEY_ID:
+      from_secret: DEV_REFERENCE_DATA_SERVICE_AWS_ACCESS_KEY_ID
+    REFERENCE_DATA_SERVICE_AWS_REGION:
+      from_secret: AWS_REGION
+    REFERENCE_DATA_SERVICE_AWS_SECRET_ACCESS_KEY:
+      from_secret: DEV_REFERENCE_DATA_SERVICE_AWS_SECRET_ACCESS_KEY
+    REFERENCE_DATA_SERVICE_AWS_SECRET_MANAGER_ENABLED:
+      from_secret: DEV_REFERENCE_DATA_SERVICE_AWS_SECRET_MANAGER_ENABLED
+    REFERENCE_DATA_SERVICE_URL:
+      from_secret: DEV_REFERENCE_DATA_SERVICE_URL
+  when:
+    branch:
+    - master
+    event:
+    - promote
+    target:
+    - dev
+
+- name: deploy_to_staging
+  pull: if-not-exists
+  image: quay.io/ukhomeofficedigital/kd
+  commands:
+  - export REFERENCE_DATA_SERVICE_NAME="reference-data-service"
+  - export REFERENCE_DATA_SERVICE_TAG=$${DRONE_COMMIT_SHA}
+  - export REFERENCE_DATA_SERVICE_SPRING_PROFILE_ACTIVE="staging"
+  - kd --insecure-skip-tls-verify -f kube/cert.yml
+  - kd --insecure-skip-tls-verify -f kube/secret.yml
+  - kd --insecure-skip-tls-verify -f kube/network-policy.yml
+  - kd --insecure-skip-tls-verify -f kube/service.yml
+  - kd --insecure-skip-tls-verify -f kube/deployment.yml
+  - kd --insecure-skip-tls-verify -f kube/ingress.yml
+  environment:
+    KUBE_NAMESPACE:
+      from_secret: STAGING_KUBE_NAMESPACE_PRIVATE_COP
+    KUBE_SERVER:
+      from_secret: STAGING_KUBE_SERVER
+    KUBE_TOKEN:
+      from_secret: STAGING_KUBE_TOKEN
+    REFERENCE_DATA_SERVICE_AWS_ACCESS_KEY_ID:
+      from_secret: STAGING_REFERENCE_DATA_SERVICE_AWS_ACCESS_KEY_ID
+    REFERENCE_DATA_SERVICE_AWS_REGION:
+      from_secret: AWS_REGION
+    REFERENCE_DATA_SERVICE_AWS_SECRET_ACCESS_KEY:
+      from_secret: STAGING_REFERENCE_DATA_SERVICE_AWS_SECRET_ACCESS_KEY
+    REFERENCE_DATA_SERVICE_AWS_SECRET_MANAGER_ENABLED:
+      from_secret: STAGING_REFERENCE_DATA_SERVICE_AWS_SECRET_MANAGER_ENABLED
+    REFERENCE_DATA_SERVICE_URL:
+      from_secret: STAGING_REFERENCE_DATA_SERVICE_URL
+  when:
+    branch:
+    - master
+    event:
+    - promote
+    target:
+    - staging
+
+- name: deploy_to_production
+  pull: if-not-exists
+  image: quay.io/ukhomeofficedigital/kd
+  commands:
+  - export REFERENCE_DATA_SERVICE_NAME="reference-data-service"
+  - export REFERENCE_DATA_SERVICE_TAG=$${DRONE_COMMIT_SHA}
+  - export REFERENCE_DATA_SERVICE_SPRING_PROFILE_ACTIVE="production"
+  - kd --insecure-skip-tls-verify -f kube/cert.yml
+  - kd --insecure-skip-tls-verify -f kube/secret.yml
+  - kd --insecure-skip-tls-verify -f kube/network-policy.yml
+  - kd --insecure-skip-tls-verify -f kube/service.yml
+  - kd --insecure-skip-tls-verify -f kube/deployment.yml
+  - kd --insecure-skip-tls-verify -f kube/ingress.yml
+  environment:
+    KUBE_NAMESPACE:
+      from_secret: PRODUCTION_KUBE_NAMESPACE_PRIVATE_COP
+    KUBE_SERVER:
+      from_secret: PRODUCTION_KUBE_SERVER
+    KUBE_TOKEN:
+      from_secret: PRODUCTION_KUBE_TOKEN
+    REFERENCE_DATA_SERVICE_AWS_ACCESS_KEY_ID:
+      from_secret: PRODUCTION_REFERENCE_DATA_SERVICE_AWS_ACCESS_KEY_ID
+    REFERENCE_DATA_SERVICE_AWS_REGION:
+      from_secret: AWS_REGION
+    REFERENCE_DATA_SERVICE_AWS_SECRET_ACCESS_KEY:
+      from_secret: PRODUCTION_REFERENCE_DATA_SERVICE_AWS_SECRET_ACCESS_KEY
+    REFERENCE_DATA_SERVICE_AWS_SECRET_MANAGER_ENABLED:
+      from_secret: PRODUCTION_REFERENCE_DATA_SERVICE_AWS_SECRET_MANAGER_ENABLED
+    REFERENCE_DATA_SERVICE_URL:
+      from_secret: PRODUCTION_REFERENCE_DATA_SERVICE_URL
+  when:
+    branch:
+    - master
+    event:
+    - promote
+    target:
+    - production
+
+- name: notify
+  pull: if-not-exists
+  image: plugins/slack
+  settings:
+    channel: cop-deployments
+    template: "{{#build.deployTo}}\n  *{{repo.name}} - Build {{build.number}} - {{uppercasefirst build.deployTo}} - {{uppercase build.status}}*\n  {{build.link}}\n{{else}}\n  *{{repo.name}} - Build {{build.number}} - Development - {{uppercase build.status}}*\n  {{build.link}}\n{{/build.deployTo}}\n"
+    username: Drone Build Watcher
+  environment:
+    SLACK_WEBHOOK:
+      from_secret: SLACK_WEBHOOK
+  when:
+    branch:
+    - master
+    event:
+    - push
+    - promote
+    status:
+    - success
+    - failure
+
+services:
+- name: docker
+  image: docker:19.03.12-dind
+  volumes:
+  - name: dockersock
+    path: /var/run
+
+- name: anchore-submission-server
+  image: docker.digital.homeoffice.gov.uk/acp-anchore-submission:latest
+  commands:
+  - /anchore-submission server
+  environment:
+    ANCHORE_URL: acp-anchore.acp.homeoffice.gov.uk
+    REGISTRY_URL: acp-ephemeral-registry.acp.homeoffice.gov.uk
+  volumes:
+  - name: dockersock
+    path: /var/run
+
+volumes:
+- name: dockersock
+  temp: {}
+
+...
