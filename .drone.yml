@@ -56,22 +56,47 @@ pipeline:
         target: REFERENCE_DATA_SERVICE_AWS_SECRET_MANAGER_ENABLED
       - source: AWS_REGION
         target: REFERENCE_DATA_SERVICE_AWS_REGION
-      - source: DEV_REFERENCE_DATA_SERVICE_URL
-        target: REFERENCE_DATA_SERVICE_URL
       - source: DEV_REFERENCE_DATA_SERVICE_AWS_ACCESS_KEY_ID
         target: REFERENCE_DATA_SERVICE_AWS_ACCESS_KEY_ID
       - source: DEV_REFERENCE_DATA_SERVICE_AWS_SECRET_ACCESS_KEY
         target: REFERENCE_DATA_SERVICE_AWS_SECRET_ACCESS_KEY
+      - source: PROTOCOL_HTTPS
+        target: API_REF_PROTOCOL
+      - source: DEV_API_REF_URL
+        target: API_REF_URL
+      - source: DEV_ENVIRONMENT
+        target: ENVIRONMENT
+      - source: PROTOCOL_HTTPS
+        target: KEYCLOAK_PROTOCOL
+      - source: DEV_KEYCLOAK_REALM
+        target: KEYCLOAK_REALM
+      - source: DEV_KEYCLOAK_URL
+        target: KEYCLOAK_URL
       - source: DEV_KUBE_SERVER
         target: KUBE_SERVER
-      - source: DEV_KUBE_TOKEN
+      - source: DEV_API_REF_KUBE_TOKEN
         target: KUBE_TOKEN
-      - source: DEV_KUBE_NAMESPACE_PRIVATE_COP
+      - source: WWW_REF_IMAGE
+        target: WWW_REF_IMAGE
+      - source: WWW_REF_KEYCLOAK_CLIENT_ID
+        target: KEYCLOAK_CLIENT_ID
+      - source: DEV_KUBE_NAMESPACE_REFDATA
         target: KUBE_NAMESPACE
+      - source: WWW_REF_NAME
+        target: WWW_REF_NAME
+      - source: WWW_REF_PORT
+        target: WWW_REF_PORT
+      - source: PROTOCOL_HTTPS
+        target: WWW_REF_PROTOCOL
+      - source: DEV_WWW_REF_READ_ONLY_MODE
+        target: WWW_REF_READ_ONLY_MODE
+      - source: DEV_WWW_REF_URL
+        target: WWW_REF_URL
     commands:
       - export REFERENCE_DATA_SERVICE_NAME="reference-data-service"
       - export REFERENCE_DATA_SERVICE_TAG=$${DRONE_COMMIT_SHA}
       - export REFERENCE_DATA_SERVICE_SPRING_PROFILE_ACTIVE="dev"
+      - export WWW_REF_TAG=$${DRONE_COMMIT_SHA}
       - kd --insecure-skip-tls-verify -f kube/cert.yml
       - kd --insecure-skip-tls-verify -f kube/secret.yml
       - kd --insecure-skip-tls-verify -f kube/network-policy.yml
@@ -90,22 +115,47 @@ pipeline:
         target: REFERENCE_DATA_SERVICE_AWS_SECRET_MANAGER_ENABLED
       - source: AWS_REGION
         target: REFERENCE_DATA_SERVICE_AWS_REGION
-      - source: STAGING_REFERENCE_DATA_SERVICE_URL
-        target: REFERENCE_DATA_SERVICE_URL
       - source: STAGING_REFERENCE_DATA_SERVICE_AWS_ACCESS_KEY_ID
         target: REFERENCE_DATA_SERVICE_AWS_ACCESS_KEY_ID
       - source: STAGING_REFERENCE_DATA_SERVICE_AWS_SECRET_ACCESS_KEY
         target: REFERENCE_DATA_SERVICE_AWS_SECRET_ACCESS_KEY
+      - source: PROTOCOL_HTTPS
+        target: API_REF_PROTOCOL
+      - source: STAGING_API_REF_URL
+        target: API_REF_URL
+      - source: STAGING_ENVIRONMENT
+        target: ENVIRONMENT
+      - source: PROTOCOL_HTTPS
+        target: KEYCLOAK_PROTOCOL
+      - source: STAGING_KEYCLOAK_REALM
+        target: KEYCLOAK_REALM
+      - source: STAGING_KEYCLOAK_URL
+        target: KEYCLOAK_URL
       - source: STAGING_KUBE_SERVER
         target: KUBE_SERVER
-      - source: STAGING_KUBE_TOKEN
+      - source: STAGING_API_REF_KUBE_TOKEN
         target: KUBE_TOKEN
-      - source: STAGING_KUBE_NAMESPACE_PRIVATE_COP
+      - source: WWW_REF_IMAGE
+        target: WWW_REF_IMAGE
+      - source: WWW_REF_KEYCLOAK_CLIENT_ID
+        target: KEYCLOAK_CLIENT_ID
+      - source: STAGING_KUBE_NAMESPACE_REFDATA
         target: KUBE_NAMESPACE
+      - source: WWW_REF_NAME
+        target: WWW_REF_NAME
+      - source: WWW_REF_PORT
+        target: WWW_REF_PORT
+      - source: PROTOCOL_HTTPS
+        target: WWW_REF_PROTOCOL
+      - source: STAGING_WWW_REF_READ_ONLY_MODE
+        target: WWW_REF_READ_ONLY_MODE
+      - source: STAGING_WWW_REF_URL
+        target: WWW_REF_URL
     commands:
       - export REFERENCE_DATA_SERVICE_NAME="reference-data-service"
       - export REFERENCE_DATA_SERVICE_TAG=$${DRONE_COMMIT_SHA}
       - export REFERENCE_DATA_SERVICE_SPRING_PROFILE_ACTIVE="staging"
+      - export WWW_REF_TAG=$${DRONE_COMMIT_SHA}
       - kd --insecure-skip-tls-verify -f kube/cert.yml
       - kd --insecure-skip-tls-verify -f kube/secret.yml
       - kd --insecure-skip-tls-verify -f kube/network-policy.yml
@@ -124,19 +174,44 @@ pipeline:
         target: REFERENCE_DATA_SERVICE_AWS_SECRET_MANAGER_ENABLED
       - source: AWS_REGION
         target: REFERENCE_DATA_SERVICE_AWS_REGION
-      - source: PRODUCTION_REFERENCE_DATA_SERVICE_URL
-        target: REFERENCE_DATA_SERVICE_URL
       - source: PRODUCTION_REFERENCE_DATA_SERVICE_AWS_ACCESS_KEY_ID
         target: REFERENCE_DATA_SERVICE_AWS_ACCESS_KEY_ID
       - source: PRODUCTION_REFERENCE_DATA_SERVICE_AWS_SECRET_ACCESS_KEY
         target: REFERENCE_DATA_SERVICE_AWS_SECRET_ACCESS_KEY
+      - source: PROTOCOL_HTTPS
+        target: API_REF_PROTOCOL
+      - source: PRODUCTION_API_REF_URL
+        target: API_REF_URL
+      - source: PRODUCTION_ENVIRONMENT
+        target: ENVIRONMENT
+      - source: PROTOCOL_HTTPS
+        target: KEYCLOAK_PROTOCOL
+      - source: PRODUCTION_KEYCLOAK_REALM
+        target: KEYCLOAK_REALM
+      - source: PRODUCTION_KEYCLOAK_URL
+        target: KEYCLOAK_URL
       - source: PRODUCTION_KUBE_SERVER
         target: KUBE_SERVER
-      - source: PRODUCTION_KUBE_TOKEN
+      - source: PRODUCTION_API_REF_KUBE_TOKEN
         target: KUBE_TOKEN
-      - source: PRODUCTION_KUBE_NAMESPACE_PRIVATE_COP
+      - source: WWW_REF_IMAGE
+        target: WWW_REF_IMAGE
+      - source: WWW_REF_KEYCLOAK_CLIENT_ID
+        target: KEYCLOAK_CLIENT_ID
+      - source: PRODUCTION_KUBE_NAMESPACE_REFDATA
         target: KUBE_NAMESPACE
+      - source: WWW_REF_NAME
+        target: WWW_REF_NAME
+      - source: WWW_REF_PORT
+        target: WWW_REF_PORT
+      - source: PROTOCOL_HTTPS
+        target: WWW_REF_PROTOCOL
+      - source: PRODUCTION_WWW_REF_READ_ONLY_MODE
+        target: WWW_REF_READ_ONLY_MODE
+      - source: PRODUCTION_WWW_REF_URL
+        target: WWW_REF_URL
     commands:
+      - export WWW_REF_TAG=$${DRONE_COMMIT_SHA}
       - export REFERENCE_DATA_SERVICE_NAME="reference-data-service"
       - export REFERENCE_DATA_SERVICE_TAG=$${DRONE_COMMIT_SHA}
       - export REFERENCE_DATA_SERVICE_SPRING_PROFILE_ACTIVE="production"
