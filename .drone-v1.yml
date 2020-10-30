@@ -120,7 +120,7 @@ steps:
       from_secret: DEV_WWW_REF_READ_ONLY_MODE
     WWW_REF_URL:
       from_secret: DEV_WWW_REF_URL
-    WWW_REF_URL:
+    SPRING_PROFILES_ACTIVE:
       from_secret: DEV_REFERENCE_DATA_SERVICE_SPRING_PROFILES_ACTIVE
   when:
     branch:
