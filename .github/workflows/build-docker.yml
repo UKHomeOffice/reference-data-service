@@ -44,7 +44,7 @@ jobs:
           registry: quay.io
           cache: true
           snapshot: true
-          tags: "latest"
+          tags: "${{ github.sha }}"
       - uses: 8398a7/action-slack@v2
         with:
           status: ${{ job.status }}
