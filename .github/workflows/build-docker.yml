@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       IMAGE: 'reference-data-service'
-      IMAGE_DOCKER_HUB: 'quay.io/ukhomeofficedigital/reference-data-service'
+      IMAGE_DOCKER_HUB: 'ukhomeofficedigital/reference-data-service'
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
