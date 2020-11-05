@@ -77,7 +77,7 @@ steps:
   - kd --insecure-skip-tls-verify -f kube/secret.yml
   - kd --insecure-skip-tls-verify -f kube/network-policy.yml
   - kd --insecure-skip-tls-verify -f kube/service.yml
-  - kd --insecure-skip-tls-verify -f kube/deployment.yml
+  - kd --insecure-skip-tls-verify -f kube/deployment.yml --timeout 5m
   - kd --insecure-skip-tls-verify -f kube/ingress.yml
   environment:
     API_REF_PROTOCOL:
@@ -142,7 +142,7 @@ steps:
   - kd --insecure-skip-tls-verify -f kube/secret.yml
   - kd --insecure-skip-tls-verify -f kube/network-policy.yml
   - kd --insecure-skip-tls-verify -f kube/service.yml
-  - kd --insecure-skip-tls-verify -f kube/deployment.yml
+  - kd --insecure-skip-tls-verify -f kube/deployment.yml --timeout 5m
   - kd --insecure-skip-tls-verify -f kube/ingress.yml
   environment:
     API_REF_PROTOCOL:
@@ -205,7 +205,7 @@ steps:
   - kd --insecure-skip-tls-verify -f kube/secret.yml
   - kd --insecure-skip-tls-verify -f kube/network-policy.yml
   - kd --insecure-skip-tls-verify -f kube/service.yml
-  - kd --insecure-skip-tls-verify -f kube/deployment.yml
+  - kd --insecure-skip-tls-verify -f kube/deployment.yml --timeout 5m
   - kd --insecure-skip-tls-verify -f kube/ingress.yml
   environment:
     API_REF_PROTOCOL:
