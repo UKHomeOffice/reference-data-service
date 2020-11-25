@@ -10,6 +10,7 @@ import { useNavigation } from 'react-navi';
 import { useAxios } from '../../../utils/hooks';
 import DownloadToCSV from './components/DownloadToCSV';
 import { RefDataSetContext } from '../../../utils/RefDataSetContext';
+import { getDescription } from '../../../utils/schemaUtil';
 
 const DataListPage = ({ entityId }) => {
   const { t } = useTranslation();
@@ -197,12 +198,7 @@ const DataListPage = ({ entityId }) => {
 
               <div className="govuk-checkboxes govuk-!-margin-left-1 govuk-!-margin-top-1">
                 {Object.keys(definition.properties).map((k) => {
-                  const { description } = definition.properties[k];
-                  let parsed = description.replace(/(?:\r\n|\r|\n)/g, '');
-                  if (parsed.indexOf('Note') !== -1) {
-                    parsed = parsed.substring(0, parsed.indexOf('Note'));
-                  }
-                  const obj = JSON.parse(parsed);
+                  const obj = getDescription(k, definition);
                   return (
                     <div className="govuk-checkboxes__item" key={k}>
                       <input
@@ -370,11 +366,13 @@ const DataListPage = ({ entityId }) => {
                             <dt className="govuk-summary-list__key" />
                             <dd className="govuk-summary-list__value">
                               <a
-                                href={`/schema/${entityId}/data/${data.id}`}
+                                href={`/schema/${entityId}/data/${data.id}/pkName/${primaryKey.key}`}
                                 onClick={async (e) => {
                                   e.preventDefault();
                                   await navigation.navigate(
-                                    `/schema/${entityId}/data/${data[primaryKey.key]}`
+                                    `/schema/${entityId}/data/${data[primaryKey.key]}/pkName/${
+                                      primaryKey.key
+                                    }`
                                   );
                                 }}
                                 className="govuk-link govuk-link--no-visited-state"

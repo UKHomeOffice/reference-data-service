@@ -4,6 +4,6 @@ import DataPage from './DataPage';
 
 describe('DataPage', () => {
   it('renders with crashing', () => {
-    shallow(<DataPage entityId="test" dataId="test" />);
+    shallow(<DataPage entityId="test" dataId="test" primaryKey="test" />);
   });
 });

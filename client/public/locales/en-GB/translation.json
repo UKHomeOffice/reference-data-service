@@ -122,6 +122,15 @@
       "view" : "View",
       "view-record" : "{{entity}} | {{dataId}}",
       "no-data" : "No data available",
+      "record": {
+        "actions" : {
+          "data" : "Data record",
+          "change-requests": "Change requests",
+          "history" : "History",
+          "edit" : "Edit",
+          "delete" : "Delete"
+        }
+      },
       "list" : {
         "csv" : {
           "generate": "Download to CSV",
