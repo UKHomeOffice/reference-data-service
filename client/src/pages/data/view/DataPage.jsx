@@ -67,6 +67,7 @@ const DataPage = ({ entityId, dataId, primaryKey }) => {
                 active={selectedOption === 'data'}
                 className="govuk-link govuk-link--no-visited-state"
                 href="#"
+                id="data"
                 onClick={(e) => {
                   e.preventDefault();
                   setSelectedOption('data');
@@ -79,6 +80,7 @@ const DataPage = ({ entityId, dataId, primaryKey }) => {
               <CustomLink
                 active={selectedOption === 'history'}
                 className="govuk-link govuk-link--no-visited-state"
+                id="history"
                 href="#"
                 onClick={(e) => {
                   e.preventDefault();
@@ -93,6 +95,7 @@ const DataPage = ({ entityId, dataId, primaryKey }) => {
                 active={selectedOption === 'edit'}
                 className="govuk-link"
                 href="#"
+                id="edit"
                 onClick={(e) => {
                   e.preventDefault();
                   setSelectedOption('edit');
@@ -106,6 +109,7 @@ const DataPage = ({ entityId, dataId, primaryKey }) => {
                 className="govuk-link"
                 active={selectedOption === 'delete'}
                 href="#"
+                id="delete"
                 onClick={(e) => {
                   e.preventDefault();
                   setSelectedOption('delete');
@@ -116,6 +120,7 @@ const DataPage = ({ entityId, dataId, primaryKey }) => {
             </li>
             <li>
               <CustomLink
+                id="change-requests"
                 active={selectedOption === 'change-requests'}
                 className="govuk-link"
                 href="#"
