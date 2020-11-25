@@ -1,6 +1,4 @@
-import React, {
-  useCallback, useEffect, useRef, useState,
-} from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { JSONPath } from 'jsonpath-plus';
 import _ from 'lodash';
@@ -8,19 +6,28 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { v4 as uuidv4 } from 'uuid';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
+import { useNavigation } from 'react-navi';
 import { useAxios } from '../../../utils/hooks';
 import DownloadToCSV from './components/DownloadToCSV';
+import { RefDataSetContext } from '../../../utils/RefDataSetContext';
 
 const DataListPage = ({ entityId }) => {
   const { t } = useTranslation();
+
+  const { dataSetContext } = useContext(RefDataSetContext);
+
+  const navigation = useNavigation();
+
   const [selectedColumns, setSelectedColumns] = useState([]);
   const [appliedColumns, setAppliedColumns] = useState([]);
 
   const checkBoxRefs = useRef([]);
-  const [definition, setDefinition] = useState({
-    properties: {},
-    description: '{}',
-  });
+  const [definition, setDefinition] = useState(
+    JSONPath({
+      path: `$.definitions['${entityId}']`,
+      json: dataSetContext,
+    })[0]
+  );
   const [count, setCount] = useState(0);
   const [entityData, setEntityData] = useState({
     isLoading: false,
@@ -28,20 +35,30 @@ const DataListPage = ({ entityId }) => {
     page: 0,
     total: 0,
   });
+
+  let primaryKey;
+  Object.keys(definition.properties).forEach((k) => {
+    const property = definition.properties[k];
+    const { description } = property;
+    let parsed = description.replace(/(?:\r\n|\r|\n)/g, '');
+    if (parsed.indexOf('Note') !== -1) {
+      parsed = parsed.substring(0, parsed.indexOf('Note'));
+    }
+    const field = JSON.parse(parsed);
+    if (field.primarykey === 'true') {
+      primaryKey = {
+        key: k,
+        label: field.label,
+      };
+    }
+  });
+
   const axiosInstance = useAxios();
 
   useEffect(() => {
     const loadDefinition = async () => {
       if (axiosInstance) {
         try {
-          const response = await axiosInstance('/refdata');
-          setDefinition(
-            JSONPath({
-              path: `$.definitions['${entityId}']`,
-              json: response.data,
-            })[0],
-          );
-
           const countResponse = await axiosInstance({
             method: 'GET',
             url: `/refdata/${entityId}`,
@@ -64,6 +81,10 @@ const DataListPage = ({ entityId }) => {
 
   const loadNext = useCallback(
     (page) => {
+      const modified = [].concat(selectedColumns);
+      if (!modified.find((c) => c.key === primaryKey.key)) {
+        modified.push(primaryKey);
+      }
       axiosInstance({
         method: 'GET',
         url: `/refdata/${entityId}`,
@@ -71,7 +92,7 @@ const DataListPage = ({ entityId }) => {
           limit: 10,
           offset: page,
           order: 'id.asc',
-          select: selectedColumns.map((col) => col.key).toString(),
+          select: modified.map((col) => col.key).toString(),
         },
         headers: {
           Prefer: 'count=exact',
@@ -84,7 +105,7 @@ const DataListPage = ({ entityId }) => {
         });
       });
     },
-    [axiosInstance, entityData, setEntityData, entityId, selectedColumns],
+    [axiosInstance, entityData, setEntityData, entityId, selectedColumns]
   );
 
   const loadData = useCallback(() => {
@@ -92,6 +113,11 @@ const DataListPage = ({ entityId }) => {
       ...entityData,
       isLoading: true,
     });
+
+    const modified = [].concat(selectedColumns);
+    if (!modified.find((c) => c.key === primaryKey.key)) {
+      modified.push(primaryKey);
+    }
     axiosInstance({
       method: 'GET',
       url: `/refdata/${entityId}`,
@@ -99,13 +125,13 @@ const DataListPage = ({ entityId }) => {
         limit: 10,
         offset: 0,
         order: 'id.asc',
-        select: selectedColumns.map((col) => col.key).toString(),
+        select: modified.map((col) => col.key).toString(),
       },
       headers: {
         Prefer: 'count=exact',
       },
     })
-      .then((response) => {
+      .then(async (response) => {
         setAppliedColumns(selectedColumns);
         setEntityData({
           isLoading: false,
@@ -119,7 +145,15 @@ const DataListPage = ({ entityId }) => {
           ...entityData,
         });
       });
-  }, [axiosInstance, setEntityData, entityData, selectedColumns, entityId, setAppliedColumns]);
+  }, [
+    axiosInstance,
+    setEntityData,
+    entityData,
+    selectedColumns,
+    entityId,
+    setAppliedColumns,
+    navigation,
+  ]);
 
   const resolveData = (datum) => {
     if (!datum) {
@@ -182,7 +216,7 @@ const DataListPage = ({ entityId }) => {
                               _.concat(selectedColumns, {
                                 label: obj.label,
                                 key: k,
-                              }),
+                              })
                             );
                           } else {
                             setSelectedColumns(_.filter(selectedColumns, (c) => c.key !== k));
@@ -271,21 +305,27 @@ const DataListPage = ({ entityId }) => {
               </div>
             ) : null}
           </div>
-          {appliedColumns.map((g) => (
-            <strong
-              key={uuidv4()}
-              className="govuk-tag govuk-tag--green govuk-!-margin-bottom-3 govuk-!-margin-left-1"
-            >
-              {g.label}
-            </strong>
-          ))}
+          {appliedColumns.map((g) => {
+            if (!g.label) {
+              return null;
+            }
+            return (
+              <strong
+                key={uuidv4()}
+                className="govuk-tag govuk-tag--green govuk-!-margin-bottom-3 govuk-!-margin-left-1"
+              >
+                {g.label}
+              </strong>
+            );
+          })}
           <hr className="govuk-section-break govuk-section-break--visible" />
 
           {entityData.data.length !== 0 ? (
             <DownloadToCSV
               entity={entityId}
               appliedColumns={appliedColumns}
-              count={entityData.total}
+              /* eslint-disable-next-line radix */
+              count={Number.parseInt(entityData.total)}
             />
           ) : null}
           <ul className="govuk-list">
@@ -296,16 +336,16 @@ const DataListPage = ({ entityId }) => {
               dataLength={entityData.data.length}
               hasMore={appliedColumns.length !== 0 && entityData.data.length < count}
               height={700}
-              loader={(
+              loader={
                 <h5 id="loading-text" className="govuk-heading-s govuk-!-margin-top-3">
                   {t('pages.data.loading', { entity: entityId })}
                 </h5>
-              )}
-              endMessage={(
+              }
+              endMessage={
                 <h5 id="no-more-data" className="govuk-heading-s govuk-!-margin-top-3">
                   {t('pages.data.no-more-data', { entity: entityId })}
                 </h5>
-              )}
+              }
             >
               {entityData.data.map((data) => (
                 <li key={uuidv4()}>
@@ -313,14 +353,36 @@ const DataListPage = ({ entityId }) => {
                     <div className="govuk-grid-column-full">
                       <Card>
                         <dl className="govuk-summary-list govuk-summary-list--no-border">
-                          {appliedColumns.map((c) => (
-                            <div className="govuk-summary-list__row" key={uuidv4()}>
-                              <dt className="govuk-summary-list__key">{`${c.label}:`}</dt>
-                              <dd className="govuk-summary-list__value">
-                                {resolveData(data[c.key])}
-                              </dd>
-                            </div>
-                          ))}
+                          {appliedColumns.map((c) => {
+                            if (!c.label) {
+                              return null;
+                            }
+                            return (
+                              <div className="govuk-summary-list__row" key={uuidv4()}>
+                                <dt className="govuk-summary-list__key">{`${c.label}:`}</dt>
+                                <dd className="govuk-summary-list__value">
+                                  {resolveData(data[c.key])}
+                                </dd>
+                              </div>
+                            );
+                          })}
+                          <div className="govuk-summary-list__row" key={uuidv4()}>
+                            <dt className="govuk-summary-list__key" />
+                            <dd className="govuk-summary-list__value">
+                              <a
+                                href={`/schema/${entityId}/data/${data.id}`}
+                                onClick={async (e) => {
+                                  e.preventDefault();
+                                  await navigation.navigate(
+                                    `/schema/${entityId}/data/${data[primaryKey.key]}`
+                                  );
+                                }}
+                                className="govuk-link govuk-link--no-visited-state"
+                              >
+                                {t('pages.data.view')}
+                              </a>
+                            </dd>
+                          </div>
                         </dl>
                       </Card>
                     </div>

@@ -119,6 +119,8 @@
       }
     },
     "data" : {
+      "view" : "View",
+      "view-record" : "{{entity}} | {{dataId}}",
       "no-data" : "No data available",
       "list" : {
         "csv" : {

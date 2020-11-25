@@ -6,9 +6,11 @@ import { act } from '@testing-library/react';
 import Home, { CustomLink } from './index';
 import ApplicationSpinner from '../../components/ApplicationSpinner';
 import { mockNavigate } from '../../setupTests';
+import { RefDataSetContextProvider } from '../../utils/RefDataSetContext';
 
 describe('Home', () => {
   const mockAxios = new MockAdapter(axios);
+
   const apiResponse = {
     paths: {
       '/behavioursigns': {
@@ -151,11 +153,14 @@ describe('Home', () => {
   });
 
   it('renders without crashing', () => {
-    shallow(<Home />);
+    shallow(
+      <RefDataSetContextProvider>
+        <Home />
+      </RefDataSetContextProvider>
+    );
   });
 
   it('can render loading bar', async () => {
-    const wrapper = mount(<Home />);
     mockAxios.onGet('/refdata').reply(
       () =>
         new Promise((resolve) => {
@@ -163,6 +168,11 @@ describe('Home', () => {
             resolve([200, apiResponse]);
           }, 2000);
         })
+    );
+    const wrapper = mount(
+      <RefDataSetContextProvider>
+        <Home />
+      </RefDataSetContextProvider>
     );
     await act(async () => {
       await Promise.resolve(wrapper);
@@ -173,8 +183,13 @@ describe('Home', () => {
   });
 
   it('can render entities', async () => {
-    const wrapper = mount(<Home />);
     mockAxios.onGet('/refdata').reply(200, apiResponse);
+    const wrapper = mount(
+      <RefDataSetContextProvider>
+        <Home />
+      </RefDataSetContextProvider>
+    );
+
     await act(async () => {
       await Promise.resolve(wrapper);
       await new Promise((resolve) => setInterval(resolve, 1000));
@@ -186,8 +201,13 @@ describe('Home', () => {
   });
 
   it('can pre select entity', async () => {
-    const wrapper = mount(<Home entity="bffunctiontypes" />);
     mockAxios.onGet('/refdata').reply(200, apiResponse);
+    const wrapper = mount(
+      <RefDataSetContextProvider>
+        <Home entity="bffunctiontypes" />
+      </RefDataSetContextProvider>
+    );
+
     await act(async () => {
       await Promise.resolve(wrapper);
       await new Promise((resolve) => setInterval(resolve, 1000));
@@ -200,6 +220,7 @@ describe('Home', () => {
   });
 
   it('can select entity', async () => {
+    mockAxios.onGet('/refdata').reply(200, apiResponse);
     // eslint-disable-next-line no-unused-vars
     mockAxios.onGet('/refdata/behavioursigns').reply((config) => [
       200,
@@ -208,8 +229,12 @@ describe('Home', () => {
         'content-range': '0-10/23',
       },
     ]);
-    const wrapper = mount(<Home entity="bffunctiontypes" />);
-    mockAxios.onGet('/refdata').reply(200, apiResponse);
+    const wrapper = mount(
+      <RefDataSetContextProvider>
+        <Home entity="bffunctiontypes" />
+      </RefDataSetContextProvider>
+    );
+
     await act(async () => {
       await Promise.resolve(wrapper);
       await new Promise((resolve) => setInterval(resolve, 1000));
@@ -230,6 +255,7 @@ describe('Home', () => {
   });
 
   it('can select data', async () => {
+    mockAxios.onGet('/refdata').reply(200, apiResponse);
     // eslint-disable-next-line no-unused-vars
     mockAxios.onGet('/refdata/behavioursigns').reply((config) => [
       200,
@@ -238,8 +264,12 @@ describe('Home', () => {
         'content-range': '0-10/23',
       },
     ]);
-    const wrapper = mount(<Home entity="bffunctiontypes" />);
-    mockAxios.onGet('/refdata').reply(200, apiResponse);
+    const wrapper = mount(
+      <RefDataSetContextProvider>
+        <Home entity="bffunctiontypes" />
+      </RefDataSetContextProvider>
+    );
+
     await act(async () => {
       await Promise.resolve(wrapper);
       await new Promise((resolve) => setInterval(resolve, 1000));
@@ -260,8 +290,13 @@ describe('Home', () => {
   });
 
   it('loading bar not displayed if api failure', async () => {
-    const wrapper = mount(<Home entity="bffunctiontypes" />);
     mockAxios.onGet('/refdata').reply(500, {});
+    const wrapper = mount(
+      <RefDataSetContextProvider>
+        <Home entity="bffunctiontypes" />
+      </RefDataSetContextProvider>
+    );
+
     await act(async () => {
       await Promise.resolve(wrapper);
       await new Promise((resolve) => setInterval(resolve, 1000));
@@ -273,8 +308,13 @@ describe('Home', () => {
   });
 
   it('can filter keys', async () => {
-    const wrapper = mount(<Home />);
     mockAxios.onGet('/refdata').reply(200, apiResponse);
+    const wrapper = mount(
+      <RefDataSetContextProvider>
+        <Home />
+      </RefDataSetContextProvider>
+    );
+
     await act(async () => {
       await Promise.resolve(wrapper);
       await new Promise((resolve) => setInterval(resolve, 1000));

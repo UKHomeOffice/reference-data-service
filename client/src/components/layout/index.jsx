@@ -10,6 +10,7 @@ import Footer from '../footer';
 import Logger from '../../utils/logger';
 import AlertBanner from '../alert/AlertBanner';
 import { AlertContextProvider } from '../../utils/AlertContext';
+import { RefDataSetContextProvider } from '../../utils/RefDataSetContext';
 
 const ErrorFallback = ({ resetErrorBoundary }) => {
   const { t } = useTranslation();
@@ -86,7 +87,8 @@ const Layout = ({ children }) => {
                   {t('back')}
                 </a>
               ) : null}
-              {children}
+
+              <RefDataSetContextProvider>{children}</RefDataSetContextProvider>
             </AlertContextProvider>
           </main>
         </ErrorBoundary>
