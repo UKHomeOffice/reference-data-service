@@ -6,7 +6,6 @@ import { JSONPath } from 'jsonpath-plus';
 import _ from 'lodash';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { v4 as uuidv4 } from 'uuid';
-import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { useNavigation } from 'react-navi';
 import moment from 'moment';
@@ -14,6 +13,7 @@ import { useAxios } from '../../../utils/hooks';
 import DownloadToCSV from './components/DownloadToCSV';
 import { RefDataSetContext } from '../../../utils/RefDataSetContext';
 import { getDescription } from '../../../utils/schemaUtil';
+import {Card, ScrollWrapper} from '../../../components/styles';
 
 const DataListPage = ({ entityId }) => {
   const { t } = useTranslation();
@@ -403,15 +403,6 @@ const DataListPage = ({ entityId }) => {
   );
 };
 
-const ScrollWrapper = styled.div`
-  max-height: 600px;
-  overflow: auto;
-`;
-
-const Card = styled.div`
-  border-bottom: 3px solid #005ea5;
-  box-sizing: border-box;
-`;
 DataListPage.propTypes = {
   entityId: PropTypes.string.isRequired,
 };

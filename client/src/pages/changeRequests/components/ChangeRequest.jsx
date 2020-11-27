@@ -1,9 +1,9 @@
 import React from 'react';
-import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { Card } from '../../../components/styles';
 
 const ChangeRequest = ({ request, cancelComponent }) => {
   const { t } = useTranslation();
@@ -73,11 +73,6 @@ const ChangeRequest = ({ request, cancelComponent }) => {
     </Card>
   );
 };
-
-const Card = styled.div`
-  border-bottom: 3px solid #005ea5;
-  box-sizing: border-box;
-`;
 
 ChangeRequest.propTypes = {
   cancelComponent: PropTypes.element.isRequired,

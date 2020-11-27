@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { v4 as uuidv4 } from 'uuid';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import moment from 'moment';
 import ApplicationSpinner from '../../../../components/ApplicationSpinner';
 import { useAxios } from '../../../../utils/hooks';
 import { getDescription } from '../../../../utils/schemaUtil';
-import moment from "moment";
+import { Card } from '../../../../components/styles';
 
 const FullData = ({
   dataId, entityId, primaryKey, definition,
@@ -82,11 +82,6 @@ const FullData = ({
     </>
   );
 };
-
-const Card = styled.div`
-  border-bottom: 3px solid #005ea5;
-  box-sizing: border-box;
-`;
 
 FullData.propTypes = {
   definition: PropTypes.shape({

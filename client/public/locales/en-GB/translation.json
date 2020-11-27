@@ -120,6 +120,8 @@
     },
     "data" : {
       "history" : {
+        "loading": "Loading versions for {{dataId}}",
+        "no-more": "No more versions for {{dataId}}",
         "size" : {
           "key":"version",
           "key_plural": "versions",
