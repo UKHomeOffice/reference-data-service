@@ -6,11 +6,26 @@ on:
   schedule:
     - cron: '0 2 * * 0' # Weekly on Sundays at 02:00
 jobs:
-  build:
+  test-ui-server:
     runs-on: ubuntu-latest
-    env:
-      IMAGE: 'digitalpatterns/reference-data-service/reference-data-service-master'
-      IMAGE_DOCKER_HUB: 'digitalpatterns/reference-data-service'
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: 11
+      - name: Grant execute permission for gradlew
+        working-directory: ./server
+        run: chmod +x gradlew
+      - name: Run tests
+        working-directory: ./server
+        run: ./gradlew clean test
+
+  test-react-ui:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [13.x]
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
@@ -25,25 +40,28 @@ jobs:
         run: npm run test-coverage
         env:
           CI: true
-      - uses: joschi/setup-jdk@v1
+
+  build:
+    needs: [test-react-ui, test-ui-server]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
         with:
-          java-version: 'openjdk14'
-          architecture: 'x64'
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-      - name: Run build
-        run: ./gradlew clean assemble
-      - name: Build the Docker image
-        run: docker build . --file Dockerfile --tag ${{ env.IMAGE }}:latest
-      - name: Publish to Docker Registry
-        uses: elgohr/Publish-Docker-Github-Action@master
-        with:
-          name: ${{ env.IMAGE_DOCKER_HUB }}
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-          cache: true
-          snapshot: true
-          tags: "latest"
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          platforms: linux/arm/v7,linux/arm64/v8,linux/amd64
+          tags: "digitalpatterns/reference-data-service:latest,digitalpatterns/reference-data-service:${{ github.sha }}"
       - uses: 8398a7/action-slack@v2
         with:
           status: ${{ job.status }}
