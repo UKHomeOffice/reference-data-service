@@ -77,7 +77,7 @@ describe('DataPage', () => {
             format: 'integer',
             type: 'integer',
             description:
-              '{"label": "Identifier", "description": "Unique identifying column.", "summaryview": "false", "primarykey" : "true"}\n\nNote:\nThis is a Primary Key.<pk/>',
+              '{"label": "Identifier", "description": "Unique identifying column.", "summaryview": "false", "businesskey" : "true"}\n\nNote:\nThis is a Primary Key.<pk/>',
           },
           name: {
             maxLength: 30,
@@ -122,7 +122,7 @@ describe('DataPage', () => {
             format: 'uuid',
             type: 'string',
             description:
-              '{"label": "Identifier", "description": "Unique identifying column.", "summaryview": "false", "primarykey" : "true"}\n\nNote:\nThis is a Primary Key.<pk/>',
+              '{"label": "Identifier", "description": "Unique identifying column.", "summaryview": "false", "businesskey" : "true"}\n\nNote:\nThis is a Primary Key.<pk/>',
           },
           bffunction: {
             maxLength: 20,
@@ -161,7 +161,7 @@ describe('DataPage', () => {
     const wrapper = mount(
       <RefDataSetContextProvider>
         <DataPage primaryKey="id" entityId="behavioursigns" dataId="id" />
-      </RefDataSetContextProvider>,
+      </RefDataSetContextProvider>
     );
 
     await act(async () => {
@@ -177,7 +177,7 @@ describe('DataPage', () => {
     const wrapper = mount(
       <RefDataSetContextProvider>
         <DataPage primaryKey="id" entityId="behavioursigns" dataId="id" />
-      </RefDataSetContextProvider>,
+      </RefDataSetContextProvider>
     );
 
     await act(async () => {

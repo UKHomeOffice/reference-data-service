@@ -8,9 +8,7 @@ import { useAxios } from '../../../../utils/hooks';
 import { getDescription } from '../../../../utils/schemaUtil';
 import { Card } from '../../../../components/styles';
 
-const FullData = ({
-  dataId, entityId, primaryKey, definition,
-}) => {
+const FullData = ({ dataId, entityId, businessKey, definition }) => {
   const { t } = useTranslation();
   const [data, setData] = useState({
     isLoading: true,
@@ -29,7 +27,7 @@ const FullData = ({
         params: {
           and: `(or(validfrom.is.null,validfrom.lt.${moment().toISOString()}),or(validto.is.null,validto.gt.${moment().toISOString()}))`,
         },
-        url: `/refdata/${entityId}?${primaryKey}=eq.${dataId}`,
+        url: `/refdata/${entityId}?${businessKey}=eq.${dataId}`,
       })
         .then((response) => {
           setData({
@@ -45,7 +43,7 @@ const FullData = ({
           });
         });
     }
-  }, [axiosInstance, entityId, dataId, primaryKey]);
+  }, [axiosInstance, entityId, dataId, businessKey]);
 
   if (data.isLoading) {
     return <ApplicationSpinner />;
@@ -58,9 +56,7 @@ const FullData = ({
   return (
     <>
       <Card>
-        <h2 className="govuk-heading-l">
-          {t('pages.data.record.actions.data')}
-        </h2>
+        <h2 className="govuk-heading-l">{t('pages.data.record.actions.data')}</h2>
         <dl className="govuk-summary-list govuk-summary-list--no-border">
           <div className="govuk-summary-list__row" key={uuidv4()}>
             <dt className="govuk-summary-list__key">Version</dt>
@@ -87,7 +83,7 @@ FullData.propTypes = {
   definition: PropTypes.shape({
     properties: PropTypes.shape({}).isRequired,
   }).isRequired,
-  primaryKey: PropTypes.string.isRequired,
+  businessKey: PropTypes.string.isRequired,
   dataId: PropTypes.string.isRequired,
   entityId: PropTypes.string.isRequired,
 };

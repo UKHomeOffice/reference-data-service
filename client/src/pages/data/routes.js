@@ -15,7 +15,7 @@ const routes = mount({
       })
     )
   ),
-  '/:dataId/pkName/:primaryKey': map((request, context) =>
+  '/:dataId/pkName/:businessKey': map((request, context) =>
     withAuthentication(
       route({
         title: context.t('pages.data.view-record', {
@@ -26,7 +26,7 @@ const routes = mount({
           <DataPage
             entityId={request.params.id}
             dataId={request.params.dataId}
-            primaryKey={request.params.primaryKey}
+            businessKey={request.params.businessKey}
           />
         ),
       })

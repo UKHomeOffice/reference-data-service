@@ -7,7 +7,7 @@ import FullData from './components/FullData';
 import { RefDataSetContext } from '../../../utils/RefDataSetContext';
 import History from './components/History';
 
-const DataPage = ({ entityId, dataId, primaryKey }) => {
+const DataPage = ({ entityId, dataId, businessKey }) => {
   const [selectedOption, setSelectedOption] = useState('data');
 
   const { dataSetContext } = useContext(RefDataSetContext);
@@ -25,7 +25,7 @@ const DataPage = ({ entityId, dataId, primaryKey }) => {
             {...{
               entityId,
               dataId,
-              primaryKey,
+              businessKey,
               definition,
             }}
           />
@@ -36,7 +36,7 @@ const DataPage = ({ entityId, dataId, primaryKey }) => {
             {...{
               entityId,
               dataId,
-              primaryKey,
+              businessKey,
               definition,
             }}
           />
@@ -53,7 +53,7 @@ const DataPage = ({ entityId, dataId, primaryKey }) => {
             {...{
               entityId,
               dataId,
-              primaryKey,
+              businessKey,
               definition,
             }}
           />
@@ -151,14 +151,15 @@ const DataPage = ({ entityId, dataId, primaryKey }) => {
 };
 
 export const CustomLink = styled.a`
-  ${({ active }) => active
-    && css`
+  ${({ active }) =>
+    active &&
+    css`
       background-color: #ffdd00;
     `}
 `;
 
 DataPage.propTypes = {
-  primaryKey: PropTypes.string.isRequired,
+  businessKey: PropTypes.string.isRequired,
   entityId: PropTypes.string.isRequired,
   dataId: PropTypes.string.isRequired,
 };

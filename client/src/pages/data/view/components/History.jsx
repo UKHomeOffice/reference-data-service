@@ -9,9 +9,7 @@ import { useAxios } from '../../../../utils/hooks';
 import { Card } from '../../../../components/styles';
 import { getDescription } from '../../../../utils/schemaUtil';
 
-const History = ({
-  entityId, dataId, definition, primaryKey,
-}) => {
+const History = ({ entityId, dataId, definition, businessKey }) => {
   const { t } = useTranslation();
   const [count, setCount] = useState(0);
   const [data, setData] = useState({
@@ -33,7 +31,7 @@ const History = ({
           limit: 1,
           offset: 0,
           select: 'id',
-          [`${primaryKey}`]: `eq.${dataId}`,
+          [`${businessKey}`]: `eq.${dataId}`,
         },
         headers: {
           Prefer: 'count=exact',
@@ -46,7 +44,7 @@ const History = ({
         method: 'GET',
         url: `/refdata/${entityId}`,
         params: {
-          [`${primaryKey}`]: `eq.${dataId}`,
+          [`${businessKey}`]: `eq.${dataId}`,
           limit: 10,
           offset: 0,
         },
@@ -70,26 +68,29 @@ const History = ({
           });
         });
     }
-  }, [axiosInstance, setData, setCount, primaryKey, dataId, entityId]);
+  }, [axiosInstance, setData, setCount, businessKey, dataId, entityId]);
 
-  const loadNext = useCallback((page) => {
-    axiosInstance({
-      method: 'GET',
-      url: `/refdata/${entityId}`,
-      params: {
-        limit: 10,
-        offset: page,
-        order: 'id.asc',
-        [`${primaryKey}`]: `eq.${dataId}`,
-      },
-    }).then((response) => {
-      setData({
-        ...data,
-        page,
-        content: _.union(data.content, response.data),
+  const loadNext = useCallback(
+    (page) => {
+      axiosInstance({
+        method: 'GET',
+        url: `/refdata/${entityId}`,
+        params: {
+          limit: 10,
+          offset: page,
+          order: 'id.asc',
+          [`${businessKey}`]: `eq.${dataId}`,
+        },
+      }).then((response) => {
+        setData({
+          ...data,
+          page,
+          content: _.union(data.content, response.data),
+        });
       });
-    });
-  }, [axiosInstance, setData, data, primaryKey, entityId, dataId]);
+    },
+    [axiosInstance, setData, data, businessKey, entityId, dataId]
+  );
 
   if (data.isLoading) {
     return <ApplicationSpinner />;
@@ -101,13 +102,8 @@ const History = ({
 
   return (
     <>
-      <h2 className="govuk-heading-l">
-        {t('pages.data.record.actions.history')}
-      </h2>
-      <h3 className="govuk-heading-m">
-        {' '}
-        {t('pages.data.history.size.keyWithCount', { count })}
-      </h3>
+      <h2 className="govuk-heading-l">{t('pages.data.record.actions.history')}</h2>
+      <h3 className="govuk-heading-m"> {t('pages.data.history.size.keyWithCount', { count })}</h3>
       <hr className="govuk-section-break govuk-section-break--m govuk-section-break--visible" />
       <ul className="govuk-list">
         <InfiniteScroll
@@ -117,16 +113,16 @@ const History = ({
           dataLength={data.content.length}
           hasMore={data.content.length < count}
           height={700}
-          loader={(
+          loader={
             <h5 id="loading-text" className="govuk-heading-s govuk-!-margin-top-3">
               {t('pages.data.history.loading', { dataId })}
             </h5>
-            )}
-          endMessage={(
+          }
+          endMessage={
             <h5 id="no-more-data" className="govuk-heading-s govuk-!-margin-top-3">
               {t('pages.data.history.no-more', { dataId })}
             </h5>
-            )}
+          }
         >
           {data.content.map((d) => (
             <li key={uuidv4()}>
@@ -145,14 +141,12 @@ const History = ({
                       })}
                     </dl>
                   </Card>
-
                 </div>
               </div>
             </li>
           ))}
         </InfiniteScroll>
       </ul>
-
     </>
   );
 };
@@ -161,7 +155,7 @@ History.propTypes = {
   definition: PropTypes.shape({
     properties: PropTypes.shape({}).isRequired,
   }).isRequired,
-  primaryKey: PropTypes.string.isRequired,
+  businessKey: PropTypes.string.isRequired,
   dataId: PropTypes.string.isRequired,
   entityId: PropTypes.string.isRequired,
 };

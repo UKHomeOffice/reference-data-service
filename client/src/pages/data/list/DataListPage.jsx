@@ -1,6 +1,4 @@
-import React, {
-  useCallback, useContext, useEffect, useRef, useState,
-} from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { JSONPath } from 'jsonpath-plus';
 import _ from 'lodash';
@@ -13,7 +11,7 @@ import { useAxios } from '../../../utils/hooks';
 import DownloadToCSV from './components/DownloadToCSV';
 import { RefDataSetContext } from '../../../utils/RefDataSetContext';
 import { getDescription } from '../../../utils/schemaUtil';
-import {Card, ScrollWrapper} from '../../../components/styles';
+import { Card, ScrollWrapper } from '../../../components/styles';
 
 const DataListPage = ({ entityId }) => {
   const { t } = useTranslation();
@@ -30,7 +28,7 @@ const DataListPage = ({ entityId }) => {
     JSONPath({
       path: `$.definitions['${entityId}']`,
       json: dataSetContext,
-    })[0],
+    })[0]
   );
 
   const [count, setCount] = useState(0);
@@ -41,7 +39,7 @@ const DataListPage = ({ entityId }) => {
     total: 0,
   });
 
-  let primaryKey;
+  let businessKey;
   Object.keys(definition.properties).forEach((k) => {
     const property = definition.properties[k];
     const { description } = property;
@@ -50,13 +48,15 @@ const DataListPage = ({ entityId }) => {
       parsed = parsed.substring(0, parsed.indexOf('Note'));
     }
     const field = JSON.parse(parsed);
-    if (field.primarykey === 'true') {
-      primaryKey = {
+    if (field.businesskey === 'true') {
+      businessKey = {
         key: k,
         label: field.label,
       };
     }
   });
+
+  console.log(definition);
 
   const axiosInstance = useAxios();
 
@@ -88,8 +88,8 @@ const DataListPage = ({ entityId }) => {
   const loadNext = useCallback(
     (page) => {
       const modified = [].concat(selectedColumns);
-      if (!modified.find((c) => c.key === primaryKey.key)) {
-        modified.push(primaryKey);
+      if (!modified.find((c) => c.key === businessKey.key)) {
+        modified.push(businessKey);
       }
       axiosInstance({
         method: 'GET',
@@ -112,7 +112,7 @@ const DataListPage = ({ entityId }) => {
         });
       });
     },
-    [axiosInstance, entityData, setEntityData, entityId, selectedColumns, primaryKey],
+    [axiosInstance, entityData, setEntityData, entityId, selectedColumns, businessKey]
   );
 
   const loadData = useCallback(() => {
@@ -122,8 +122,8 @@ const DataListPage = ({ entityId }) => {
     });
 
     const modified = [].concat(selectedColumns);
-    if (!modified.find((c) => c.key === primaryKey.key)) {
-      modified.push(primaryKey);
+    if (!modified.find((c) => c.key === businessKey.key)) {
+      modified.push(businessKey);
     }
     axiosInstance({
       method: 'GET',
@@ -134,7 +134,6 @@ const DataListPage = ({ entityId }) => {
         order: 'id.asc',
         select: modified.map((col) => col.key).toString(),
         and: `(or(validfrom.is.null,validfrom.lt.${moment().toISOString()}),or(validto.is.null,validto.gt.${moment().toISOString()}))`,
-
       },
       headers: {
         Prefer: 'count=exact',
@@ -161,7 +160,7 @@ const DataListPage = ({ entityId }) => {
     selectedColumns,
     entityId,
     setAppliedColumns,
-    primaryKey,
+    businessKey,
   ]);
 
   const resolveData = (datum) => {
@@ -220,7 +219,7 @@ const DataListPage = ({ entityId }) => {
                               _.concat(selectedColumns, {
                                 label: obj.label,
                                 key: k,
-                              }),
+                              })
                             );
                           } else {
                             setSelectedColumns(_.filter(selectedColumns, (c) => c.key !== k));
@@ -340,16 +339,16 @@ const DataListPage = ({ entityId }) => {
               dataLength={entityData.data.length}
               hasMore={appliedColumns.length !== 0 && entityData.data.length < count}
               height={700}
-              loader={(
+              loader={
                 <h5 id="loading-text" className="govuk-heading-s govuk-!-margin-top-3">
                   {t('pages.data.loading', { entity: entityId })}
                 </h5>
-              )}
-              endMessage={(
+              }
+              endMessage={
                 <h5 id="no-more-data" className="govuk-heading-s govuk-!-margin-top-3">
                   {t('pages.data.no-more-data', { entity: entityId })}
                 </h5>
-              )}
+              }
             >
               {entityData.data.map((data) => (
                 <li key={uuidv4()}>
@@ -374,13 +373,15 @@ const DataListPage = ({ entityId }) => {
                             <dt className="govuk-summary-list__key" />
                             <dd className="govuk-summary-list__value">
                               <a
-                                href={`/schema/${entityId}/data/${data[primaryKey.key]}/pkName/${primaryKey.key}`}
+                                href={`/schema/${entityId}/data/${data[businessKey.key]}/pkName/${
+                                  businessKey.key
+                                }`}
                                 onClick={async (e) => {
                                   e.preventDefault();
                                   await navigation.navigate(
-                                    `/schema/${entityId}/data/${data[primaryKey.key]}/pkName/${
-                                      primaryKey.key
-                                    }`,
+                                    `/schema/${entityId}/data/${data[businessKey.key]}/pkName/${
+                                      businessKey.key
+                                    }`
                                   );
                                 }}
                                 className="govuk-link govuk-link--no-visited-state"

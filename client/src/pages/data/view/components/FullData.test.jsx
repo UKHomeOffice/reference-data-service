@@ -23,7 +23,7 @@ describe('FullData', () => {
         format: 'integer',
         type: 'integer',
         description:
-          '{"label": "Identifier", "description": "Unique identifying column.", "summaryview": "false", "primarykey" : "true"}\n\nNote:\nThis is a Primary Key.<pk/>',
+          '{"label": "Identifier", "description": "Unique identifying column.", "summaryview": "false", "businesskey" : "true"}\n\nNote:\nThis is a Primary Key.<pk/>',
       },
       name: {
         maxLength: 30,
@@ -57,23 +57,22 @@ describe('FullData', () => {
     type: 'object',
   };
   it('renders with loading bar', async () => {
-    mockAxios
-      .onGet('/refdata/behavioursigns?id=eq.000b9094-7ef8-4036-9dd6-9699c5f465e5')
-      .reply(
-        () => new Promise((resolve) => {
+    mockAxios.onGet('/refdata/behavioursigns?id=eq.000b9094-7ef8-4036-9dd6-9699c5f465e5').reply(
+      () =>
+        new Promise((resolve) => {
           setTimeout(() => {
             resolve([200, {}]);
           }, 3000);
-        }),
-      );
+        })
+    );
 
     const wrapper = mount(
       <FullData
         definition={definition}
-        primaryKey="id"
+        businessKey="id"
         entityId="behavioursigns"
         dataId="000b9094-7ef8-4036-9dd6-9699c5f465e5"
-      />,
+      />
     );
 
     await act(async () => {
@@ -96,10 +95,10 @@ describe('FullData', () => {
     const wrapper = mount(
       <FullData
         definition={definition}
-        primaryKey="id"
+        businessKey="id"
         entityId="behavioursigns"
         dataId="000b9094-7ef8-4036-9dd6-9699c5f465e5"
-      />,
+      />
     );
 
     await act(async () => {
@@ -119,10 +118,10 @@ describe('FullData', () => {
     const wrapper = mount(
       <FullData
         definition={definition}
-        primaryKey="id"
+        businessKey="id"
         entityId="behavioursigns"
         dataId="000b9094-7ef8-4036-9dd6-9699c5f465e5"
-      />,
+      />
     );
 
     await act(async () => {

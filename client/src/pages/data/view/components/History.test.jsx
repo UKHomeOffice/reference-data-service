@@ -16,14 +16,14 @@ describe('History', () => {
   });
   const definition = {
     description:
-            '{"label": "Behaviour Signs", "description": "Behaviours Warning and Danger Signs", "schemalastupdated": "06/03/2019", "dataversion": 1}',
+      '{"label": "Behaviour Signs", "description": "Behaviours Warning and Danger Signs", "schemalastupdated": "06/03/2019", "dataversion": 1}',
     required: ['id', 'name', 'warning', 'danger'],
     properties: {
       id: {
         format: 'integer',
         type: 'integer',
         description:
-                    '{"label": "Identifier", "description": "Unique identifying column.", "summaryview": "false", "primarykey" : "true"}\n\nNote:\nThis is a Primary Key.<pk/>',
+          '{"label": "Identifier", "description": "Unique identifying column.", "summaryview": "false", "businesskey" : "true"}\n\nNote:\nThis is a Primary Key.<pk/>',
       },
       name: {
         maxLength: 30,
@@ -45,35 +45,36 @@ describe('History', () => {
         format: 'timestamp with time zone',
         type: 'string',
         description:
-                    '{"label": "Valid from date", "description": "Item valid from date.", "summaryview" : "false"}',
+          '{"label": "Valid from date", "description": "Item valid from date.", "summaryview" : "false"}',
       },
       validto: {
         format: 'timestamp with time zone',
         type: 'string',
         description:
-                    '{"label": "Valid to date", "description": "Item valid to date.", "summaryview" : "false"}',
+          '{"label": "Valid to date", "description": "Item valid to date.", "summaryview" : "false"}',
       },
     },
     type: 'object',
   };
 
   it('renders loading bar', async () => {
-    mockAxios
-      .onGet('/refdata/behavioursigns')
-      .reply(
-        () => new Promise((resolve) => {
+    mockAxios.onGet('/refdata/behavioursigns').reply(
+      () =>
+        new Promise((resolve) => {
           setTimeout(() => {
             resolve([200, {}]);
           }, 3000);
-        }),
-      );
+        })
+    );
 
-    const wrapper = mount(<History
-      definition={definition}
-      primaryKey="id"
-      entityId="behavioursigns"
-      dataId="000b9094-7ef8-4036-9dd6-9699c5f465e5"
-    />);
+    const wrapper = mount(
+      <History
+        definition={definition}
+        businessKey="id"
+        entityId="behavioursigns"
+        dataId="000b9094-7ef8-4036-9dd6-9699c5f465e5"
+      />
+    );
 
     await act(async () => {
       await Promise.resolve(wrapper);
