@@ -9,7 +9,9 @@ import { useAxios } from '../../../../utils/hooks';
 import { Card } from '../../../../components/styles';
 import { getDescription } from '../../../../utils/schemaUtil';
 
-const History = ({ entityId, dataId, definition, businessKey }) => {
+const History = ({
+  entityId, dataId, definition, businessKey,
+}) => {
   const { t } = useTranslation();
   const [count, setCount] = useState(0);
   const [data, setData] = useState({
@@ -25,22 +27,9 @@ const History = ({ entityId, dataId, definition, businessKey }) => {
   useEffect(() => {
     if (axiosInstance) {
       axiosInstance({
-        method: 'GET',
-        url: `/refdata/${entityId}`,
-        params: {
-          limit: 1,
-          offset: 0,
-          select: 'id',
-          [`${businessKey}`]: `eq.${dataId}`,
-        },
         headers: {
           Prefer: 'count=exact',
         },
-      }).then((countResponse) => {
-        setCount(countResponse.headers['content-range'].split('/')[1]);
-      });
-
-      axiosInstance({
         method: 'GET',
         url: `/refdata/${entityId}`,
         params: {
@@ -50,15 +39,18 @@ const History = ({ entityId, dataId, definition, businessKey }) => {
         },
       })
         .then((response) => {
+          const totalCount = response.headers['content-range'].split('/')[1];
+          setCount(totalCount);
           setData({
             isLoading: false,
             failed: false,
             content: response.data,
             page: 0,
-            total: response.headers['content-range'].split('/')[1],
+            total: totalCount,
           });
         })
         .catch(() => {
+          setCount(0);
           setData({
             isLoading: false,
             failed: true,
@@ -89,7 +81,7 @@ const History = ({ entityId, dataId, definition, businessKey }) => {
         });
       });
     },
-    [axiosInstance, setData, data, businessKey, entityId, dataId]
+    [axiosInstance, setData, data, businessKey, entityId, dataId],
   );
 
   if (data.isLoading) {
@@ -103,7 +95,10 @@ const History = ({ entityId, dataId, definition, businessKey }) => {
   return (
     <>
       <h2 className="govuk-heading-l">{t('pages.data.record.actions.history')}</h2>
-      <h3 className="govuk-heading-m"> {t('pages.data.history.size.keyWithCount', { count })}</h3>
+      <h3 className="govuk-heading-m">
+        {' '}
+        {t('pages.data.history.size.keyWithCount', { count })}
+      </h3>
       <hr className="govuk-section-break govuk-section-break--m govuk-section-break--visible" />
       <ul className="govuk-list">
         <InfiniteScroll
@@ -113,16 +108,16 @@ const History = ({ entityId, dataId, definition, businessKey }) => {
           dataLength={data.content.length}
           hasMore={data.content.length < count}
           height={700}
-          loader={
+          loader={(
             <h5 id="loading-text" className="govuk-heading-s govuk-!-margin-top-3">
               {t('pages.data.history.loading', { dataId })}
             </h5>
-          }
-          endMessage={
+          )}
+          endMessage={(
             <h5 id="no-more-data" className="govuk-heading-s govuk-!-margin-top-3">
               {t('pages.data.history.no-more', { dataId })}
             </h5>
-          }
+          )}
         >
           {data.content.map((d) => (
             <li key={uuidv4()}>

@@ -58,12 +58,11 @@ describe('FullData', () => {
   };
   it('renders with loading bar', async () => {
     mockAxios.onGet('/refdata/behavioursigns?id=eq.000b9094-7ef8-4036-9dd6-9699c5f465e5').reply(
-      () =>
-        new Promise((resolve) => {
-          setTimeout(() => {
-            resolve([200, {}]);
-          }, 3000);
-        })
+      () => new Promise((resolve) => {
+        setTimeout(() => {
+          resolve([200, {}]);
+        }, 3000);
+      }),
     );
 
     const wrapper = mount(
@@ -72,7 +71,7 @@ describe('FullData', () => {
         businessKey="id"
         entityId="behavioursigns"
         dataId="000b9094-7ef8-4036-9dd6-9699c5f465e5"
-      />
+      />,
     );
 
     await act(async () => {
@@ -98,7 +97,7 @@ describe('FullData', () => {
         businessKey="id"
         entityId="behavioursigns"
         dataId="000b9094-7ef8-4036-9dd6-9699c5f465e5"
-      />
+      />,
     );
 
     await act(async () => {
@@ -121,7 +120,7 @@ describe('FullData', () => {
         businessKey="id"
         entityId="behavioursigns"
         dataId="000b9094-7ef8-4036-9dd6-9699c5f465e5"
-      />
+      />,
     );
 
     await act(async () => {
