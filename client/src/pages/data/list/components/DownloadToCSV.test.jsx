@@ -12,12 +12,7 @@ describe('DownloadToCSV', () => {
   });
   it('can download to csv', async () => {
     mockAxios
-      .onGet('/refdata/icao', {
-        params: {
-          order: 'id.asc',
-          select: 'name',
-        },
-      })
+      .onGet('/refdata/icao')
       .reply(200, [
         { name: 'Gobernador Crespo Aeroclub Airport' },
         { name: 'Maybee Airport' },
@@ -48,12 +43,7 @@ describe('DownloadToCSV', () => {
 
   it('download button disabled if already clicked', async () => {
     mockAxios
-      .onGet('/refdata/icao', {
-        params: {
-          order: 'id.asc',
-          select: 'name',
-        },
-      })
+      .onGet('/refdata/icao')
       .reply(
         () => new Promise((resolve) => {
           setTimeout(() => {
@@ -99,12 +89,7 @@ describe('DownloadToCSV', () => {
 
   it('can handle api failure', async () => {
     mockAxios
-      .onGet('/refdata/icao', {
-        params: {
-          order: 'id.asc',
-          select: 'name',
-        },
-      })
+      .onGet('/refdata/icao')
       .reply(500, []);
 
     const wrapper = mount(

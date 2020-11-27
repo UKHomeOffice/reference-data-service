@@ -6,8 +6,14 @@ import { act } from '@testing-library/react';
 import DataPage from './DataPage';
 import { RefDataSetContextProvider } from '../../../utils/RefDataSetContext';
 import FullData from './components/FullData';
+import History from './components/History';
 
 jest.mock('./components/FullData', () => ({
+  __esModule: true,
+  default: () => <div />,
+}));
+
+jest.mock('./components/History', () => ({
   __esModule: true,
   default: () => <div />,
 }));
@@ -155,7 +161,7 @@ describe('DataPage', () => {
     const wrapper = mount(
       <RefDataSetContextProvider>
         <DataPage primaryKey="id" entityId="behavioursigns" dataId="id" />
-      </RefDataSetContextProvider>
+      </RefDataSetContextProvider>,
     );
 
     await act(async () => {
@@ -171,7 +177,7 @@ describe('DataPage', () => {
     const wrapper = mount(
       <RefDataSetContextProvider>
         <DataPage primaryKey="id" entityId="behavioursigns" dataId="id" />
-      </RefDataSetContextProvider>
+      </RefDataSetContextProvider>,
     );
 
     await act(async () => {
@@ -193,6 +199,7 @@ describe('DataPage', () => {
     });
 
     expect(defaultEvent).toBeCalled();
+    expect(wrapper.find(History).length).toBe(1);
 
     await act(async () => {
       wrapper.find('a[id="data"]').at(0).simulate('click', {

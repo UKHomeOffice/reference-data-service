@@ -44,10 +44,9 @@ const ChangeRequestsPage = () => {
     const fetchRequests = async () => {
       if (axiosInstance) {
         try {
-          const selectedTypes =
-            selectedRequestTypes.length !== 0
-              ? selectedRequestTypes
-              : Object.values(config.get('processes'));
+          const selectedTypes = selectedRequestTypes.length !== 0
+            ? selectedRequestTypes
+            : Object.values(config.get('processes'));
 
           const params = {
             processDefinitionKeyIn: selectedTypes.toString(),
@@ -75,23 +74,22 @@ const ChangeRequestsPage = () => {
             },
           });
 
-          const variableResponses =
-            response.data.length !== 0
-              ? await axiosInstance({
-                  method: 'GET',
-                  url: '/camunda/engine-rest/history/variable-instance',
-                  params: {
-                    deserializeValues: false,
-                    processInstanceIdIn: response.data.map((p) => p.id).toString(),
-                  },
-                })
-              : {
-                  data: [],
-                };
+          const variableResponses = response.data.length !== 0
+            ? await axiosInstance({
+              method: 'GET',
+              url: '/camunda/engine-rest/history/variable-instance',
+              params: {
+                deserializeValues: false,
+                processInstanceIdIn: response.data.map((p) => p.id).toString(),
+              },
+            })
+            : {
+              data: [],
+            };
           const transformedData = response.data.map((p) => {
             const variables = _.filter(
               variableResponses.data,
-              (v) => v.processInstanceId === p.id
+              (v) => v.processInstanceId === p.id,
             ).map((v) => ({
               type: v.type,
               valueInfo: v.valueInfo,
@@ -134,10 +132,9 @@ const ChangeRequestsPage = () => {
   const loadNext = useCallback(
     async (page) => {
       try {
-        const selectedTypes =
-          selectedRequestTypes.length !== 0
-            ? selectedRequestTypes
-            : Object.values(config.get('processes'));
+        const selectedTypes = selectedRequestTypes.length !== 0
+          ? selectedRequestTypes
+          : Object.values(config.get('processes'));
 
         const response = await axiosInstance({
           method: 'GET',
@@ -166,7 +163,7 @@ const ChangeRequestsPage = () => {
       selectedRequestTypes,
       userRequestsOnly,
       keycloak.tokenParsed.email,
-    ]
+    ],
   );
 
   return (
@@ -195,7 +192,7 @@ const ChangeRequestsPage = () => {
                           setSelectedRequestTypes(_.concat(selectedRequestTypes, [p.key]));
                         } else {
                           setSelectedRequestTypes(
-                            _.filter(selectedRequestTypes, (k) => k !== p.key)
+                            _.filter(selectedRequestTypes, (k) => k !== p.key),
                           );
                         }
                       }}
@@ -264,16 +261,16 @@ const ChangeRequestsPage = () => {
               dataLength={requests.data.length}
               hasMore={requests.data.length < requests.total}
               height={700}
-              loader={
+              loader={(
                 <h5 id="loading-text" className="govuk-heading-s govuk-!-margin-top-3">
                   {t('pages.change-requests.loading.request')}
                 </h5>
-              }
-              endMessage={
+              )}
+              endMessage={(
                 <h5 id="no-more-data" className="govuk-heading-s govuk-!-margin-top-3">
                   {t('pages.change-requests.loading.no-more')}
                 </h5>
-              }
+              )}
             >
               {requests.data.map((data) => (
                 <li key={uuidv4()}>
@@ -281,7 +278,7 @@ const ChangeRequestsPage = () => {
                     <div className="govuk-grid-column-full">
                       <ChangeRequest
                         request={data}
-                        cancelComponent={
+                        cancelComponent={(
                           <div className="govuk-summary-list__row">
                             <dt className="govuk-summary-list__key">
                               {t('pages.change-requests.labels.actions.label')}
@@ -300,7 +297,7 @@ const ChangeRequestsPage = () => {
                               </button>
                             </dd>
                           </div>
-                        }
+                        )}
                       />
                     </div>
                   </div>

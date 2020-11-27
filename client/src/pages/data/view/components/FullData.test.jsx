@@ -58,14 +58,13 @@ describe('FullData', () => {
   };
   it('renders with loading bar', async () => {
     mockAxios
-      .onGet('/refdata/behavioursigns?id=eq.000b9094-7ef8-4036-9dd6-9699c5f465e5&validto=is.null')
+      .onGet('/refdata/behavioursigns?id=eq.000b9094-7ef8-4036-9dd6-9699c5f465e5')
       .reply(
-        () =>
-          new Promise((resolve) => {
-            setTimeout(() => {
-              resolve([200, {}]);
-            }, 3000);
-          })
+        () => new Promise((resolve) => {
+          setTimeout(() => {
+            resolve([200, {}]);
+          }, 3000);
+        }),
       );
 
     const wrapper = mount(
@@ -74,7 +73,7 @@ describe('FullData', () => {
         primaryKey="id"
         entityId="behavioursigns"
         dataId="000b9094-7ef8-4036-9dd6-9699c5f465e5"
-      />
+      />,
     );
 
     await act(async () => {
@@ -88,7 +87,7 @@ describe('FullData', () => {
 
   it('renders data', async () => {
     mockAxios
-      .onGet('/refdata/behavioursigns?id=eq.000b9094-7ef8-4036-9dd6-9699c5f465e5&validto=is.null')
+      .onGet('/refdata/behavioursigns?id=eq.000b9094-7ef8-4036-9dd6-9699c5f465e5')
       .reply(200, {
         id: '000b9094-7ef8-4036-9dd6-9699c5f465e5',
         name: 'test',
@@ -100,7 +99,7 @@ describe('FullData', () => {
         primaryKey="id"
         entityId="behavioursigns"
         dataId="000b9094-7ef8-4036-9dd6-9699c5f465e5"
-      />
+      />,
     );
 
     await act(async () => {
@@ -123,7 +122,7 @@ describe('FullData', () => {
         primaryKey="id"
         entityId="behavioursigns"
         dataId="000b9094-7ef8-4036-9dd6-9699c5f465e5"
-      />
+      />,
     );
 
     await act(async () => {

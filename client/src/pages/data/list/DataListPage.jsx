@@ -1,4 +1,6 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback, useContext, useEffect, useRef, useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { JSONPath } from 'jsonpath-plus';
 import _ from 'lodash';
@@ -7,6 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { useNavigation } from 'react-navi';
+import moment from 'moment';
 import { useAxios } from '../../../utils/hooks';
 import DownloadToCSV from './components/DownloadToCSV';
 import { RefDataSetContext } from '../../../utils/RefDataSetContext';
@@ -27,8 +30,9 @@ const DataListPage = ({ entityId }) => {
     JSONPath({
       path: `$.definitions['${entityId}']`,
       json: dataSetContext,
-    })[0]
+    })[0],
   );
+
   const [count, setCount] = useState(0);
   const [entityData, setEntityData] = useState({
     isLoading: false,
@@ -67,6 +71,7 @@ const DataListPage = ({ entityId }) => {
               limit: 1,
               offset: 0,
               select: 'id',
+              and: `(or(validfrom.is.null,validfrom.lt.${moment().toISOString()}),or(validto.is.null,validto.gt.${moment().toISOString()}))`,
             },
             headers: {
               Prefer: 'count=exact',
@@ -94,6 +99,7 @@ const DataListPage = ({ entityId }) => {
           offset: page,
           order: 'id.asc',
           select: modified.map((col) => col.key).toString(),
+          and: `(or(validfrom.is.null,validfrom.lt.${moment().toISOString()}),or(validto.is.null,validto.gt.${moment().toISOString()}))`,
         },
         headers: {
           Prefer: 'count=exact',
@@ -106,7 +112,7 @@ const DataListPage = ({ entityId }) => {
         });
       });
     },
-    [axiosInstance, entityData, setEntityData, entityId, selectedColumns]
+    [axiosInstance, entityData, setEntityData, entityId, selectedColumns, primaryKey],
   );
 
   const loadData = useCallback(() => {
@@ -127,6 +133,8 @@ const DataListPage = ({ entityId }) => {
         offset: 0,
         order: 'id.asc',
         select: modified.map((col) => col.key).toString(),
+        and: `(or(validfrom.is.null,validfrom.lt.${moment().toISOString()}),or(validto.is.null,validto.gt.${moment().toISOString()}))`,
+
       },
       headers: {
         Prefer: 'count=exact',
@@ -153,7 +161,7 @@ const DataListPage = ({ entityId }) => {
     selectedColumns,
     entityId,
     setAppliedColumns,
-    navigation,
+    primaryKey,
   ]);
 
   const resolveData = (datum) => {
@@ -212,7 +220,7 @@ const DataListPage = ({ entityId }) => {
                               _.concat(selectedColumns, {
                                 label: obj.label,
                                 key: k,
-                              })
+                              }),
                             );
                           } else {
                             setSelectedColumns(_.filter(selectedColumns, (c) => c.key !== k));
@@ -332,16 +340,16 @@ const DataListPage = ({ entityId }) => {
               dataLength={entityData.data.length}
               hasMore={appliedColumns.length !== 0 && entityData.data.length < count}
               height={700}
-              loader={
+              loader={(
                 <h5 id="loading-text" className="govuk-heading-s govuk-!-margin-top-3">
                   {t('pages.data.loading', { entity: entityId })}
                 </h5>
-              }
-              endMessage={
+              )}
+              endMessage={(
                 <h5 id="no-more-data" className="govuk-heading-s govuk-!-margin-top-3">
                   {t('pages.data.no-more-data', { entity: entityId })}
                 </h5>
-              }
+              )}
             >
               {entityData.data.map((data) => (
                 <li key={uuidv4()}>
@@ -366,13 +374,13 @@ const DataListPage = ({ entityId }) => {
                             <dt className="govuk-summary-list__key" />
                             <dd className="govuk-summary-list__value">
                               <a
-                                href={`/schema/${entityId}/data/${data.id}/pkName/${primaryKey.key}`}
+                                href={`/schema/${entityId}/data/${data[primaryKey.key]}/pkName/${primaryKey.key}`}
                                 onClick={async (e) => {
                                   e.preventDefault();
                                   await navigation.navigate(
                                     `/schema/${entityId}/data/${data[primaryKey.key]}/pkName/${
                                       primaryKey.key
-                                    }`
+                                    }`,
                                   );
                                 }}
                                 className="govuk-link govuk-link--no-visited-state"

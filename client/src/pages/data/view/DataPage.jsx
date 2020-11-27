@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { JSONPath } from 'jsonpath-plus';
 import FullData from './components/FullData';
 import { RefDataSetContext } from '../../../utils/RefDataSetContext';
+import History from './components/History';
 
 const DataPage = ({ entityId, dataId, primaryKey }) => {
   const [selectedOption, setSelectedOption] = useState('data');
@@ -30,7 +31,16 @@ const DataPage = ({ entityId, dataId, primaryKey }) => {
           />
         );
       case 'history':
-        return <div>History</div>;
+        return (
+          <History
+            {...{
+              entityId,
+              dataId,
+              primaryKey,
+              definition,
+            }}
+          />
+        );
       case 'change-requests':
         return <div>Change Requests</div>;
       case 'edit':
@@ -141,9 +151,8 @@ const DataPage = ({ entityId, dataId, primaryKey }) => {
 };
 
 export const CustomLink = styled.a`
-  ${({ active }) =>
-    active &&
-    css`
+  ${({ active }) => active
+    && css`
       background-color: #ffdd00;
     `}
 `;

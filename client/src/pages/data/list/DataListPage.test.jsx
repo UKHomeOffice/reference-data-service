@@ -158,14 +158,14 @@ describe('DataListPage', () => {
     shallow(
       <RefDataSetContextProvider>
         <DataListPage entityId="test" />
-      </RefDataSetContextProvider>
+      </RefDataSetContextProvider>,
     );
   });
   it('can render column boxes', async () => {
     const wrapper = mount(
       <RefDataSetContextProvider>
         <DataListPage entityId="behavioursigns" />
-      </RefDataSetContextProvider>
+      </RefDataSetContextProvider>,
     );
 
     await act(async () => {
@@ -214,7 +214,7 @@ describe('DataListPage', () => {
     const wrapper = mount(
       <RefDataSetContextProvider>
         <DataListPage entityId="behavioursigns" />
-      </RefDataSetContextProvider>
+      </RefDataSetContextProvider>,
     );
 
     await act(async () => {
@@ -250,7 +250,7 @@ describe('DataListPage', () => {
     const wrapper = mount(
       <RefDataSetContextProvider>
         <DataListPage entityId="behavioursigns" />
-      </RefDataSetContextProvider>
+      </RefDataSetContextProvider>,
     );
 
     await act(async () => {
@@ -285,7 +285,7 @@ describe('DataListPage', () => {
     const wrapper = mount(
       <RefDataSetContextProvider>
         <DataListPage entityId="behavioursigns" />
-      </RefDataSetContextProvider>
+      </RefDataSetContextProvider>,
     );
 
     await act(async () => {
@@ -314,7 +314,7 @@ describe('DataListPage', () => {
     const wrapper = mount(
       <RefDataSetContextProvider>
         <DataListPage entityId="behavioursigns" />
-      </RefDataSetContextProvider>
+      </RefDataSetContextProvider>,
     );
 
     await act(async () => {
@@ -350,7 +350,7 @@ describe('DataListPage', () => {
     const wrapper = mount(
       <RefDataSetContextProvider>
         <DataListPage entityId="behavioursigns" />
-      </RefDataSetContextProvider>
+      </RefDataSetContextProvider>,
     );
 
     await act(async () => {
@@ -392,7 +392,7 @@ describe('DataListPage', () => {
     const wrapper = mount(
       <RefDataSetContextProvider>
         <DataListPage entityId="behavioursigns" />
-      </RefDataSetContextProvider>
+      </RefDataSetContextProvider>,
     );
 
     await act(async () => {

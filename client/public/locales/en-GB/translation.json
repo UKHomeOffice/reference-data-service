@@ -119,6 +119,14 @@
       }
     },
     "data" : {
+      "history" : {
+        "size" : {
+          "key":"version",
+          "key_plural": "versions",
+          "keyWithCount": "{{count}} version",
+          "keyWithCount_plural": "{{count}} versions"
+        }
+      },
       "view" : "View",
       "view-record" : "{{entity}} | {{dataId}}",
       "no-data" : "No data available",

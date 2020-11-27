@@ -2,11 +2,16 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { v4 as uuidv4 } from 'uuid';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 import ApplicationSpinner from '../../../../components/ApplicationSpinner';
 import { useAxios } from '../../../../utils/hooks';
 import { getDescription } from '../../../../utils/schemaUtil';
+import moment from "moment";
 
-const FullData = ({ dataId, entityId, primaryKey, definition }) => {
+const FullData = ({
+  dataId, entityId, primaryKey, definition,
+}) => {
+  const { t } = useTranslation();
   const [data, setData] = useState({
     isLoading: true,
     failed: false,
@@ -21,7 +26,10 @@ const FullData = ({ dataId, entityId, primaryKey, definition }) => {
         headers: {
           Accept: 'application/vnd.pgrst.object+json',
         },
-        url: `/refdata/${entityId}?${primaryKey}=eq.${dataId}&validto=is.null`,
+        params: {
+          and: `(or(validfrom.is.null,validfrom.lt.${moment().toISOString()}),or(validto.is.null,validto.gt.${moment().toISOString()}))`,
+        },
+        url: `/refdata/${entityId}?${primaryKey}=eq.${dataId}`,
       })
         .then((response) => {
           setData({
@@ -37,7 +45,7 @@ const FullData = ({ dataId, entityId, primaryKey, definition }) => {
           });
         });
     }
-  }, [axiosInstance]);
+  }, [axiosInstance, entityId, dataId, primaryKey]);
 
   if (data.isLoading) {
     return <ApplicationSpinner />;
@@ -50,6 +58,9 @@ const FullData = ({ dataId, entityId, primaryKey, definition }) => {
   return (
     <>
       <Card>
+        <h2 className="govuk-heading-l">
+          {t('pages.data.record.actions.data')}
+        </h2>
         <dl className="govuk-summary-list govuk-summary-list--no-border">
           <div className="govuk-summary-list__row" key={uuidv4()}>
             <dt className="govuk-summary-list__key">Version</dt>
