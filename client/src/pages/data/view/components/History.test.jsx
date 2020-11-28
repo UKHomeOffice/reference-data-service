@@ -30,7 +30,8 @@ describe('History', () => {
         maxLength: 30,
         format: 'character varying',
         type: 'string',
-        description: '{"label": "Name", "description": "Name of behaviour", "summaryview": "true",  "businesskey" : "true"}',
+        description:
+          '{"label": "Name", "description": "Name of behaviour", "summaryview": "true",  "businesskey" : "true"}',
       },
       warning: {
         format: 'boolean',
@@ -60,11 +61,12 @@ describe('History', () => {
 
   it('renders loading bar', async () => {
     mockAxios.onGet('/refdata/behavioursigns').reply(
-      () => new Promise((resolve) => {
-        setTimeout(() => {
-          resolve([200, {}]);
-        }, 3000);
-      }),
+      () =>
+        new Promise((resolve) => {
+          setTimeout(() => {
+            resolve([200, {}]);
+          }, 3000);
+        })
     );
 
     const wrapper = mount(
@@ -73,7 +75,7 @@ describe('History', () => {
         businessKey="id"
         entityId="behavioursigns"
         dataId="000b9094-7ef8-4036-9dd6-9699c5f465e5"
-      />,
+      />
     );
 
     await act(async () => {
@@ -86,9 +88,7 @@ describe('History', () => {
   });
 
   it('handles failed history', async () => {
-    mockAxios
-      .onGet('/refdata/behavioursigns')
-      .reply(500, {});
+    mockAxios.onGet('/refdata/behavioursigns').reply(500, {});
 
     const wrapper = mount(
       <History
@@ -96,7 +96,7 @@ describe('History', () => {
         businessKey="id"
         entityId="behavioursigns"
         dataId="000b9094-7ef8-4036-9dd6-9699c5f465e5"
-      />,
+      />
     );
 
     await act(async () => {
@@ -110,21 +110,25 @@ describe('History', () => {
   });
 
   it('renders history', async () => {
-    mockAxios
-      .onGet('/refdata/behavioursigns')
-      .reply(200, [{
-        id: '000b9094-7ef8-4036-9dd6-9699c5f465e5',
-        name: 'test',
-      }], {
+    mockAxios.onGet('/refdata/behavioursigns').reply(
+      200,
+      [
+        {
+          id: '000b9094-7ef8-4036-9dd6-9699c5f465e5',
+          name: 'test',
+        },
+      ],
+      {
         'content-range': '1/20',
-      });
+      }
+    );
     const wrapper = mount(
       <History
         definition={definition}
         businessKey="id"
         entityId="behavioursigns"
         dataId="000b9094-7ef8-4036-9dd6-9699c5f465e5"
-      />,
+      />
     );
 
     await act(async () => {
@@ -138,14 +142,18 @@ describe('History', () => {
   });
 
   it('can load next', async () => {
-    mockAxios
-      .onGet('/refdata/behavioursigns')
-      .reply(200, [{
-        id: '000b9094-7ef8-4036-9dd6-9699c5f465e5',
-        name: 'test',
-      }], {
+    mockAxios.onGet('/refdata/behavioursigns').reply(
+      200,
+      [
+        {
+          id: '000b9094-7ef8-4036-9dd6-9699c5f465e5',
+          name: 'test',
+        },
+      ],
+      {
         'content-range': '0-10/20',
-      });
+      }
+    );
 
     const wrapper = mount(
       <History
@@ -153,7 +161,7 @@ describe('History', () => {
         businessKey="id"
         entityId="behavioursigns"
         dataId="000b9094-7ef8-4036-9dd6-9699c5f465e5"
-      />,
+      />
     );
 
     await act(async () => {
@@ -170,5 +178,7 @@ describe('History', () => {
       await new Promise((resolve) => setInterval(resolve, 500));
       await wrapper.update();
     });
+
+    expect(mockAxios.history.get.length).toBe(2);
   });
 });

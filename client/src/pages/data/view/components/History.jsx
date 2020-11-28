@@ -9,11 +9,8 @@ import { useAxios } from '../../../../utils/hooks';
 import { Card } from '../../../../components/styles';
 import { getDescription } from '../../../../utils/schemaUtil';
 
-const History = ({
-  entityId, dataId, definition, businessKey,
-}) => {
+const History = ({ entityId, dataId, definition, businessKey }) => {
   const { t } = useTranslation();
-  const [count, setCount] = useState(0);
   const [data, setData] = useState({
     isLoading: true,
     failed: false,
@@ -36,11 +33,11 @@ const History = ({
           [`${businessKey}`]: `eq.${dataId}`,
           limit: 10,
           offset: 0,
+          order: 'validto.desc.nullsfirst',
         },
       })
         .then((response) => {
           const totalCount = response.headers['content-range'].split('/')[1];
-          setCount(totalCount);
           setData({
             isLoading: false,
             failed: false,
@@ -50,7 +47,6 @@ const History = ({
           });
         })
         .catch(() => {
-          setCount(0);
           setData({
             isLoading: false,
             failed: true,
@@ -60,7 +56,7 @@ const History = ({
           });
         });
     }
-  }, [axiosInstance, setData, setCount, businessKey, dataId, entityId]);
+  }, [axiosInstance, setData, businessKey, dataId, entityId]);
 
   const loadNext = useCallback(
     (page) => {
@@ -81,23 +77,17 @@ const History = ({
         });
       });
     },
-    [axiosInstance, setData, data, businessKey, entityId, dataId],
+    [axiosInstance, setData, data, businessKey, entityId, dataId]
   );
 
-  if (data.isLoading) {
-    return <ApplicationSpinner />;
-  }
-
-  if (data.failed) {
-    return null;
-  }
-
-  return (
+  return data.isLoading ? (
+    <ApplicationSpinner />
+  ) : (
     <>
       <h2 className="govuk-heading-l">{t('pages.data.record.actions.history')}</h2>
       <h3 className="govuk-heading-m">
         {' '}
-        {t('pages.data.history.size.keyWithCount', { count })}
+        {t('pages.data.history.size.keyWithCount', { count: data.total })}
       </h3>
       <hr className="govuk-section-break govuk-section-break--m govuk-section-break--visible" />
       <ul className="govuk-list">
@@ -106,18 +96,18 @@ const History = ({
             loadNext(data.page + 10);
           }}
           dataLength={data.content.length}
-          hasMore={data.content.length < count}
+          hasMore={data.content.length < data.total}
           height={700}
-          loader={(
+          loader={
             <h5 id="loading-text" className="govuk-heading-s govuk-!-margin-top-3">
               {t('pages.data.history.loading', { dataId })}
             </h5>
-          )}
-          endMessage={(
+          }
+          endMessage={
             <h5 id="no-more-data" className="govuk-heading-s govuk-!-margin-top-3">
               {t('pages.data.history.no-more', { dataId })}
             </h5>
-          )}
+          }
         >
           {data.content.map((d) => (
             <li key={uuidv4()}>
