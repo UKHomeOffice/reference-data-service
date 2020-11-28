@@ -57,6 +57,7 @@ const FullData = ({ dataId, entityId, businessKey, definition }) => {
     <>
       <Card>
         <h2 className="govuk-heading-l">{t('pages.data.record.actions.data')}</h2>
+        <hr className="govuk-section-break govuk-section-break--m govuk-section-break--visible" />
         <dl className="govuk-summary-list govuk-summary-list--no-border">
           <div className="govuk-summary-list__row" key={uuidv4()}>
             <dt className="govuk-summary-list__key">Version</dt>
