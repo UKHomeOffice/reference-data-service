@@ -17,7 +17,7 @@ describe('FormErrorsAlert', () => {
             },
           ],
         }}
-      />
+      />,
     );
     mount(<FormErrorsAlert errors={[]} form={form.instance()} />);
   });
@@ -35,7 +35,7 @@ describe('FormErrorsAlert', () => {
             },
           ],
         }}
-      />
+      />,
     );
 
     await act(async () => {
@@ -56,7 +56,7 @@ describe('FormErrorsAlert', () => {
           },
         ]}
         form={form.instance()}
-      />
+      />,
     );
 
     const message = wrapper.find('div[id="message"]').at(0);
