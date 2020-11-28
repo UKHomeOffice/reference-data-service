@@ -44,7 +44,7 @@
     "eject": "react-scripts eject",
     "test-coverage": "react-scripts test \"--coverage\" \"--watchAll=false\"",
     "test-coverage-watch": "react-scripts test \"--coverage\" \"--watchAll=true\"",
-    "lint": "eslint --ext .js,.jsx --fix src"
+    "lint": "eslint --fix --ext .js,.jsx src"
   },
   "eslintConfig": {
     "extends": [
