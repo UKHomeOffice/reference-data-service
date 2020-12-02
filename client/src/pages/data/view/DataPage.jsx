@@ -20,7 +20,7 @@ const DataPage = ({ entityId, dataId, businessKey }) => {
   })[0];
 
   const { t } = useTranslation();
-  const renderSwitch = (param) => {
+  const renderView = (param) => {
     switch (param) {
       case 'data':
         return (
@@ -45,7 +45,7 @@ const DataPage = ({ entityId, dataId, businessKey }) => {
           />
         );
       case 'change-requests':
-        return <ChangeRequests />
+        return <ChangeRequests />;
       case 'edit':
         return <EditData {...{
           entityId,
@@ -154,7 +154,7 @@ const DataPage = ({ entityId, dataId, businessKey }) => {
             </li>
           </ul>
         </div>
-        <div className="govuk-grid-column-three-quarters">{renderSwitch(selectedOption)}</div>
+        <div className="govuk-grid-column-three-quarters">{renderView(selectedOption)}</div>
       </div>
     </>
   );

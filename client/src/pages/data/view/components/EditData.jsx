@@ -46,6 +46,14 @@ const EditData = ({
         value: 'SUBMITTED',
         type: 'string',
       },
+      entity: {
+        value: entityId,
+        type: 'string'
+      },
+      dataId: {
+        value: dataId,
+        type: 'string'
+      },
       [formDefinition.name]: {
         value: JSON.stringify(editData),
         type: 'json',
@@ -85,16 +93,6 @@ const EditData = ({
             isFailed: false,
             ...response.data
           });
-
-          const host = `${window.location.protocol}//${window.location.hostname}${
-            window.location.port ? `:${window.location.port}` : ''
-          }`;
-
-          /* istanbul ignore next */
-          Formio.baseUrl = host;
-          Formio.projectUrl = host;
-          Formio.plugins = [augmentRequest(keycloak, response.data.id)];
-
         } catch (e) {
           setFormDefinition({
             isLoading: false,
@@ -135,11 +133,21 @@ const EditData = ({
       loadFormDefinition().then(() => {});
       loadData();
     }
-  }, [axiosInstance, setFormDefinition, businessKey, dataId, entityId, keycloak]);
+  }, [axiosInstance, setFormDefinition, businessKey, dataId, entityId]);
 
   if (formDefinition.isLoading && data.isLoading) {
     return <ApplicationSpinner/>
   }
+
+  const host = `${window.location.protocol}//${window.location.hostname}${
+    window.location.port ? `:${window.location.port}` : ''
+  }`;
+
+  /* istanbul ignore next */
+  Formio.baseUrl = host;
+  Formio.projectUrl = host;
+  Formio.plugins = [augmentRequest(keycloak, formDefinition.id)];
+
 
   const businessKeyComponent = FormioUtils.getComponent(data.components, 'businessKey');
   interpolate(data, {

@@ -78,6 +78,7 @@ config.set(
     },
     processes: {
       newDataSetProcess: 'newDataSetProcess',
+      editDataRowProcess: 'editDataRowProcess'
     },
   },
   { freeze: false }
