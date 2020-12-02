@@ -119,6 +119,9 @@
       }
     },
     "data" : {
+      "change-requests": {
+        "title"  : "Change requests | {{entity}} | {{dataId}}"
+      },
       "history" : {
         "loading": "Loading versions for {{dataId}}",
         "no-more": "No more versions for {{dataId}}",
@@ -128,6 +131,10 @@
           "keyWithCount": "{{count}} version",
           "keyWithCount_plural": "{{count}} versions"
         }
+      },
+      "edit" : {
+        "title" : "Edit",
+        "submission-success" : "Your edit request has been successfully submitted"
       },
       "view" : "View",
       "view-record" : "{{entity}} | {{dataId}}",

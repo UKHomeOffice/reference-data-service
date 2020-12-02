@@ -61,16 +61,16 @@ const CancelChangeRequestPage = ({ id }) => {
           const variableResponses =
             response.data.length !== 0
               ? await axiosInstance({
-                  method: 'GET',
-                  url: '/camunda/engine-rest/variable-instance',
-                  params: {
-                    deserializeValues: false,
-                    processInstanceIdIn: id,
-                  },
-                })
+                method: 'GET',
+                url: '/camunda/engine-rest/variable-instance',
+                params: {
+                  deserializeValues: false,
+                  processInstanceIdIn: id,
+                },
+              })
               : {
-                  data: [],
-                };
+                data: [],
+              };
           const processInstance = response.data;
 
           setRequest({

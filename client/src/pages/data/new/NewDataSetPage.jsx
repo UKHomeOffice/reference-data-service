@@ -92,7 +92,7 @@ const NewDataSetPage = () => {
     if (axiosInstance) {
       axiosInstance({
         method: 'GET',
-        url: `/form/name/${config.get('newDataSetForm')}`,
+        url: `/form/name/${config.get('forms.newDataSetForm')}`,
       })
         .then((response) => {
           setForm({

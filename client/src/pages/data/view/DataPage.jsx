@@ -6,6 +6,9 @@ import { JSONPath } from 'jsonpath-plus';
 import FullData from './components/FullData';
 import { RefDataSetContext } from '../../../utils/RefDataSetContext';
 import History from './components/History';
+import EditData from './components/EditData';
+import ChangeRequests from './components/ChangeRequests';
+import DeleteData from './components/DeleteData';
 
 const DataPage = ({ entityId, dataId, businessKey }) => {
   const [selectedOption, setSelectedOption] = useState('data');
@@ -42,11 +45,18 @@ const DataPage = ({ entityId, dataId, businessKey }) => {
           />
         );
       case 'change-requests':
-        return <div>Change Requests</div>;
+        return <ChangeRequests />
       case 'edit':
-        return <div>Edit</div>;
+        return <EditData {...{
+          entityId,
+          dataId,
+          businessKey,
+          definition,
+        }} handleOnSubmit={() => {
+          setSelectedOption('change-requests')}
+        } />;
       case 'delete':
-        return <div>Delete</div>;
+        return <DeleteData />;
       default:
         return (
           <FullData
@@ -158,7 +168,12 @@ export const CustomLink = styled.a`
     `}
 `;
 
+DataPage.defaultProps = {
+  view: 'data'
+}
+
 DataPage.propTypes = {
+  view: PropTypes.string,
   businessKey: PropTypes.string.isRequired,
   entityId: PropTypes.string.isRequired,
   dataId: PropTypes.string.isRequired,

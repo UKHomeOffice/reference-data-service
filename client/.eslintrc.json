@@ -41,11 +41,24 @@
     }
   ],
   "rules": {
+    "indent": ["error", 2, { "SwitchCase": 1, "VariableDeclarator" : 2 }],
+    "quotes": [2, "single", { "avoidEscape": true }],
     "import/no-extraneous-dependencies": ["off", {"devDependencies": ["**/setupTests.js","**/*.test.js", "**/*.spec.js"]}],
     "no-underscore-dangle": "off",
     "react/react-in-jsx-scope": "off",
     "import/prefer-default-export" : "off",
     "react/jsx-filename-extension" : [1, { "extensions": [".js", ".jsx"] }],
-    "react/jsx-props-no-spreading": ["error", {"custom": "ignore"}]
+    "react/jsx-props-no-spreading": ["error", {"custom": "ignore"}],
+    "object-curly-spacing": ["error", "always"],
+    "jsx-a11y/label-has-associated-control": [
+      "error",
+      {
+        "labelComponents": [],
+        "labelAttributes": [],
+        "controlComponents": [],
+        "assert": "either",
+        "depth": 25
+      }
+    ]
   }
 }
