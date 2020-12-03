@@ -31,8 +31,6 @@ jest.mock('./components/DeleteData', () => ({
   default: () => <div />,
 }));
 
-
-
 describe('DataPage', () => {
   const mockAxios = new MockAdapter(axios);
   const apiResponse = {
@@ -169,13 +167,13 @@ describe('DataPage', () => {
   });
 
   it('renders with crashing', () => {
-    shallow(<DataPage entityId="behavioursigns" dataId="test" primaryKey="id" />);
+    shallow(<DataPage entityId="behavioursigns" dataId="test" businessKey="id" />);
   });
 
   it('can render data component', async () => {
     const wrapper = mount(
       <RefDataSetContextProvider>
-        <DataPage primaryKey="id" entityId="behavioursigns" dataId="id" />
+        <DataPage businessKey="id" entityId="behavioursigns" dataId="id" />
       </RefDataSetContextProvider>
     );
 
@@ -191,7 +189,7 @@ describe('DataPage', () => {
   it('can click on history', async () => {
     const wrapper = mount(
       <RefDataSetContextProvider>
-        <DataPage primaryKey="id" entityId="behavioursigns" dataId="id" />
+        <DataPage businessKey="id" entityId="behavioursigns" dataId="id" />
       </RefDataSetContextProvider>
     );
 
@@ -255,5 +253,46 @@ describe('DataPage', () => {
     });
     expect(defaultEvent).toBeCalled();
     expect(wrapper.find(ChangeRequests).length).toBe(1);
+  });
+
+  it('renders warning if change request for entity exists', async () => {
+    mockAxios.onGet('/camunda/engine-rest/process-instance/count').reply(200, {
+      count: 1,
+    });
+    const wrapper = mount(
+      <RefDataSetContextProvider>
+        <DataPage businessKey="id" entityId="behavioursigns" dataId="id" />
+      </RefDataSetContextProvider>
+    );
+
+    await act(async () => {
+      await Promise.resolve(wrapper);
+      await new Promise((resolve) => setInterval(resolve, 1000));
+      await wrapper.update();
+    });
+
+    expect(wrapper.find('div[id="runningInstanceWarning"]').length).toBe(1);
+    expect(wrapper.find('a[id="edit"]').at(0).props()['aria-disabled']).toBe(true);
+    expect(wrapper.find('a[id="delete"]').at(0).props()['aria-disabled']).toBe(true);
+  });
+  it('renders warning if change request fails', async () => {
+    mockAxios.onGet('/camunda/engine-rest/process-instance/count').reply(500, {
+      count: 1,
+    });
+    const wrapper = mount(
+      <RefDataSetContextProvider>
+        <DataPage businessKey="id" entityId="behavioursigns" dataId="id" />
+      </RefDataSetContextProvider>
+    );
+
+    await act(async () => {
+      await Promise.resolve(wrapper);
+      await new Promise((resolve) => setInterval(resolve, 1000));
+      await wrapper.update();
+    });
+
+    expect(wrapper.find('div[id="runningInstanceWarning"]').length).toBe(1);
+    expect(wrapper.find('a[id="edit"]').at(0).props()['aria-disabled']).toBe(true);
+    expect(wrapper.find('a[id="delete"]').at(0).props()['aria-disabled']).toBe(true);
   });
 });

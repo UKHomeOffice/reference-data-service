@@ -14,14 +14,10 @@ import FileService from '../../../../utils/FileService';
 import { getDescription } from '../../../../utils/schemaUtil';
 import { AlertContext } from '../../../../utils/AlertContext';
 
-
 const editDataRowProcess = config.get('processes.editDataRowProcess');
 const formName = config.get('forms.editDataSetForm');
 
-const EditData = ({
-  entityId, dataId, definition, businessKey,
-  handleOnSubmit
-}) => {
+const EditData = ({ entityId, dataId, definition, businessKey, handleOnSubmit }) => {
   const formRef = useRef();
   const { t } = useTranslation();
   const axiosInstance = useAxios();
@@ -30,55 +26,60 @@ const EditData = ({
   const { setAlertContext } = useContext(AlertContext);
   const [formDefinition, setFormDefinition] = useState({
     isLoading: true,
-    isFailed: false
+    isFailed: false,
   });
 
   const [data, setData] = useState({
     isLoading: true,
-    isFailed: false
+    isFailed: false,
   });
 
   const fileService = new FileService(keycloak);
 
-  const submitForm = useCallback((editData) => {
-    const variables = {
-      status: {
-        value: 'SUBMITTED',
-        type: 'string',
-      },
-      entity: {
-        value: entityId,
-        type: 'string'
-      },
-      dataId: {
-        value: dataId,
-        type: 'string'
-      },
-      [formDefinition.name]: {
-        value: JSON.stringify(editData),
-        type: 'json',
-      },
-    };
-    axiosInstance({
-      method: 'POST',
-      url: `/camunda/engine-rest/process-definition/key/${editDataRowProcess}/start`,
-      data: {
-        variables,
-        businessKey:editData.businessKey,
-      },
-    }).then(async () => {
-      setAlertContext({
-        type: 'form-submission',
-        status: 'successful',
-        message: t('pages.data.edit.submission-success'),
-        reference: `${editData.businessKey}`,
-      });
-      setSubmitting(false);
-      handleOnSubmit()
-    }).catch(() => {
-      setSubmitting(false);
-    });
-  }, [axiosInstance, formDefinition.name, setAlertContext, t, handleOnSubmit]);
+  const submitForm = useCallback(
+    (editData) => {
+      const variables = {
+        status: {
+          value: 'SUBMITTED',
+          type: 'string',
+        },
+        entity: {
+          value: entityId,
+          type: 'string',
+        },
+        dataId: {
+          value: dataId,
+          type: 'string',
+        },
+        [formDefinition.name]: {
+          value: JSON.stringify(editData),
+          type: 'json',
+        },
+      };
+      axiosInstance({
+        method: 'POST',
+        url: `/camunda/engine-rest/process-definition/key/${editDataRowProcess}/start`,
+        data: {
+          variables,
+          businessKey: editData.businessKey,
+        },
+      })
+        .then(async () => {
+          setAlertContext({
+            type: 'form-submission',
+            status: 'successful',
+            message: t('pages.data.edit.submission-success'),
+            reference: `${editData.businessKey}`,
+          });
+          setSubmitting(false);
+          handleOnSubmit();
+        })
+        .catch(() => {
+          setSubmitting(false);
+        });
+    },
+    [axiosInstance, formDefinition.name, setAlertContext, t, handleOnSubmit, entityId, dataId]
+  );
 
   useEffect(() => {
     const loadFormDefinition = async () => {
@@ -91,15 +92,14 @@ const EditData = ({
           setFormDefinition({
             isLoading: false,
             isFailed: false,
-            ...response.data
+            ...response.data,
           });
         } catch (e) {
           setFormDefinition({
             isLoading: false,
-            isFailed: true
+            isFailed: true,
           });
         }
-
       }
     };
 
@@ -136,7 +136,7 @@ const EditData = ({
   }, [axiosInstance, setFormDefinition, businessKey, dataId, entityId]);
 
   if (formDefinition.isLoading && data.isLoading) {
-    return <ApplicationSpinner/>
+    return <ApplicationSpinner />;
   }
 
   const host = `${window.location.protocol}//${window.location.hostname}${
@@ -147,7 +147,6 @@ const EditData = ({
   Formio.baseUrl = host;
   Formio.projectUrl = host;
   Formio.plugins = [augmentRequest(keycloak, formDefinition.id)];
-
 
   const businessKeyComponent = FormioUtils.getComponent(data.components, 'businessKey');
   interpolate(data, {
@@ -167,7 +166,7 @@ const EditData = ({
     businessKey: businessKeyComponent ? businessKeyComponent.defaultValue : null,
   });
 
-  return !formDefinition.isFailed && !data.isFailed ?
+  return !formDefinition.isFailed && !data.isFailed ? (
     <>
       <h2 className="govuk-heading-l">{t('pages.data.edit.title')}</h2>
       <hr className="govuk-section-break govuk-section-break--m govuk-section-break--visible" />
@@ -178,28 +177,29 @@ const EditData = ({
             form={formDefinition}
             submission={{
               data: {
-                'properties': Object.keys(definition.properties).map((k) => {
-                  if (k === 'validto' || k === 'validfrom') {
+                properties: definition.properties
+                  ? Object.keys(definition.properties).map((k) => {
+                    if (k === 'validto' || k === 'validfrom') {
+                      return {
+                        property: {
+                          label: getDescription(k, definition).label,
+                          [k]: data[k],
+                          key: k,
+                          originalValue: data[k],
+                        },
+                      };
+                    }
                     return {
-                      'property' : {
+                      property: {
                         label: getDescription(k, definition).label,
-                        [k]: data[k],
                         key: k,
+                        value: data[k],
                         originalValue: data[k],
-                      }
-                    }
-                  }
-                  return {
-                    'property' : {
-                      label: getDescription(k, definition).label,
-                      key: k,
-                      value: data[k],
-                      originalValue: data[k],
-                    }
-                  }
-                })
-
-              }
+                      },
+                    };
+                  })
+                  : [],
+              },
             }}
             onNextPage={() => {
               window.scrollTo(0, 0);
@@ -225,15 +225,12 @@ const EditData = ({
               fileService,
               readOnly: submitting,
               hooks: {
-                beforeCancel: async () => {
-                },
+                beforeCancel: async () => {},
                 buttonSettings: {
                   showCancel: true,
                 },
                 beforeSubmit: (submission, next) => {
-                  const {
-                    versionId, id, title, name,
-                  } = formDefinition;
+                  const { versionId, id, title, name } = formDefinition;
                   // eslint-disable-next-line no-param-reassign
                   submission.data.form = {
                     formVersionId: versionId,
@@ -251,8 +248,7 @@ const EditData = ({
         </div>
       </div>
     </>
-    : null
-
+  ) : null;
 };
 
 EditData.propTypes = {
@@ -262,7 +258,7 @@ EditData.propTypes = {
     properties: PropTypes.shape({}),
   }).isRequired,
   entityId: PropTypes.string.isRequired,
-  dataId: PropTypes.string.isRequired
+  dataId: PropTypes.string.isRequired,
 };
 
 export default EditData;

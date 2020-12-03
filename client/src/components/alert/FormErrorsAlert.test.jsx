@@ -17,7 +17,7 @@ describe('FormErrorsAlert', () => {
             },
           ],
         }}
-      />,
+      />
     );
     mount(<FormErrorsAlert errors={[]} form={form.instance()} />);
   });
@@ -35,12 +35,12 @@ describe('FormErrorsAlert', () => {
             },
           ],
         }}
-      />,
+      />
     );
 
     await act(async () => {
       await Promise.resolve(form);
-      await new Promise((resolve) => setImmediate(resolve));
+      await new Promise((resolve) => setInterval(resolve, 1000));
       await form.update();
     });
 
@@ -56,7 +56,7 @@ describe('FormErrorsAlert', () => {
           },
         ]}
         form={form.instance()}
-      />,
+      />
     );
 
     const message = wrapper.find('div[id="message"]').at(0);

@@ -1,14 +1,19 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { JSONPath } from 'jsonpath-plus';
+import config from 'react-global-configuration';
 import FullData from './components/FullData';
 import { RefDataSetContext } from '../../../utils/RefDataSetContext';
 import History from './components/History';
 import EditData from './components/EditData';
 import ChangeRequests from './components/ChangeRequests';
 import DeleteData from './components/DeleteData';
+import { useAxios } from '../../../utils/hooks';
+
+const editDataRowProcess = config.get('processes.editDataRowProcess');
+const deleteDataRowProcess = config.get('processes.deleteDataRowProcess');
 
 const DataPage = ({ entityId, dataId, businessKey }) => {
   const [selectedOption, setSelectedOption] = useState('data');
@@ -20,19 +25,32 @@ const DataPage = ({ entityId, dataId, businessKey }) => {
   })[0];
 
   const { t } = useTranslation();
+
+  const axiosInstance = useAxios();
+
+  const [disableEdit, setDisableEdit] = useState(false);
+
+  useEffect(() => {
+    if (axiosInstance) {
+      axiosInstance({
+        url: '/camunda/engine-rest/process-instance/count',
+        method: 'GET',
+        params: {
+          processDefinitionKeyIn: `${editDataRowProcess},${deleteDataRowProcess}`,
+          variables: `entity_eq_${entityId},dataId_eq_${dataId}`,
+        },
+      })
+        .then((response) => {
+          setDisableEdit(response.data.count !== 0);
+        })
+        .catch(() => {
+          setDisableEdit(true);
+        });
+    }
+  }, [axiosInstance, entityId, dataId, selectedOption]);
+
   const renderView = (param) => {
     switch (param) {
-      case 'data':
-        return (
-          <FullData
-            {...{
-              entityId,
-              dataId,
-              businessKey,
-              definition,
-            }}
-          />
-        );
       case 'history':
         return (
           <History
@@ -47,14 +65,19 @@ const DataPage = ({ entityId, dataId, businessKey }) => {
       case 'change-requests':
         return <ChangeRequests />;
       case 'edit':
-        return <EditData {...{
-          entityId,
-          dataId,
-          businessKey,
-          definition,
-        }} handleOnSubmit={() => {
-          setSelectedOption('change-requests')}
-        } />;
+        return (
+          <EditData
+            {...{
+              entityId,
+              dataId,
+              businessKey,
+              definition,
+            }}
+            handleOnSubmit={() => {
+              setSelectedOption('change-requests');
+            }}
+          />
+        );
       case 'delete':
         return <DeleteData />;
       default:
@@ -79,6 +102,19 @@ const DataPage = ({ entityId, dataId, businessKey }) => {
       <span className="govuk-caption-l">{`${entityId} entity`}</span>
       <h2 className="govuk-heading-l">{dataId}</h2>
       <div className="govuk-inset-text">{JSON.parse(definition.description).description}</div>
+
+      {disableEdit ? (
+        <div className="govuk-warning-text" id="runningInstanceWarning">
+          <span className="govuk-warning-text__icon" aria-hidden="true">
+            !
+          </span>
+          <strong className="govuk-warning-text__text">
+            <span className="govuk-warning-text__assistive">Warning</span>
+            {t('pages.data.running-instance')}
+          </strong>
+        </div>
+      ) : null}
+
       <div className="govuk-grid-row">
         <div className="govuk-grid-column-one-quarter">
           <ul className="govuk-list">
@@ -113,9 +149,10 @@ const DataPage = ({ entityId, dataId, businessKey }) => {
             <li>
               <CustomLink
                 active={selectedOption === 'edit'}
-                className="govuk-link"
+                className={`govuk-link ${disableEdit ? 'disable' : ''}`}
                 href="#"
                 id="edit"
+                aria-disabled={disableEdit}
                 onClick={(e) => {
                   e.preventDefault();
                   setSelectedOption('edit');
@@ -126,9 +163,10 @@ const DataPage = ({ entityId, dataId, businessKey }) => {
             </li>
             <li>
               <CustomLink
-                className="govuk-link"
                 active={selectedOption === 'delete'}
+                className={`govuk-link ${disableEdit ? 'disable' : ''}`}
                 href="#"
+                aria-disabled={disableEdit}
                 id="delete"
                 onClick={(e) => {
                   e.preventDefault();
@@ -169,8 +207,8 @@ export const CustomLink = styled.a`
 `;
 
 DataPage.defaultProps = {
-  view: 'data'
-}
+  view: 'data',
+};
 
 DataPage.propTypes = {
   view: PropTypes.string,

@@ -119,6 +119,7 @@
       }
     },
     "data" : {
+      "running-instance": "You cannot make any changes to this record. There is an outstanding change request for this entity.",
       "change-requests": {
         "title"  : "Change requests | {{entity}} | {{dataId}}"
       },

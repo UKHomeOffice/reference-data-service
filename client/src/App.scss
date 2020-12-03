@@ -1,3 +1,8 @@
 hr[class='dataGrid-hr'] {
   display: none;
 }
+.disable {
+  pointer-events: none;
+  cursor: not-allowed;
+  text-decoration: none;
+}

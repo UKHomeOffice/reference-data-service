@@ -74,11 +74,11 @@ config.set(
     serviceUrl: 'bar',
     forms: {
       newDataSetForm: 'newDataSetForm',
-      editDataSetForm: 'editDataSetForm'
+      editDataSetForm: 'editDataSetForm',
     },
     processes: {
       newDataSetProcess: 'newDataSetProcess',
-      editDataRowProcess: 'editDataRowProcess'
+      editDataRowProcess: 'editDataRowProcess',
     },
   },
   { freeze: false }
@@ -97,3 +97,5 @@ global.MutationObserver = class {
 export const mockScrollToTop = jest.fn();
 global.URL.createObjectURL = jest.fn();
 window.scrollTo = mockScrollToTop;
+
+jest.spyOn(console, 'error').mockImplementation(() => {});
