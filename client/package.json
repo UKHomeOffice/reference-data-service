@@ -78,7 +78,8 @@
       "/node_modules/",
       "src/index.js",
       "src/serviceWorker.js",
-      "src/i18n.js"
+      "src/i18n.js",
+      "src/App.jsx"
     ],
     "coverageThreshold": {
       "global": {

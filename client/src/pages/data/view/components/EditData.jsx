@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import config from 'react-global-configuration';
 import { Form, Formio } from 'react-formio';
@@ -36,50 +36,47 @@ const EditData = ({ entityId, dataId, definition, businessKey, handleOnSubmit })
 
   const fileService = new FileService(keycloak);
 
-  const submitForm = useCallback(
-    (editData) => {
-      const variables = {
-        status: {
-          value: 'SUBMITTED',
-          type: 'string',
-        },
-        entity: {
-          value: entityId,
-          type: 'string',
-        },
-        dataId: {
-          value: dataId,
-          type: 'string',
-        },
-        [formDefinition.name]: {
-          value: JSON.stringify(editData),
-          type: 'json',
-        },
-      };
-      axiosInstance({
-        method: 'POST',
-        url: `/camunda/engine-rest/process-definition/key/${editDataRowProcess}/start`,
-        data: {
-          variables,
-          businessKey: editData.businessKey,
-        },
-      })
-        .then(async () => {
-          setAlertContext({
-            type: 'form-submission',
-            status: 'successful',
-            message: t('pages.data.edit.submission-success'),
-            reference: `${editData.businessKey}`,
-          });
-          setSubmitting(false);
-          handleOnSubmit();
-        })
-        .catch(() => {
-          setSubmitting(false);
+  const submitForm = (editData) => {
+    const variables = {
+      status: {
+        value: 'SUBMITTED',
+        type: 'string',
+      },
+      entity: {
+        value: entityId,
+        type: 'string',
+      },
+      dataId: {
+        value: dataId,
+        type: 'string',
+      },
+      [formDefinition.name]: {
+        value: JSON.stringify(editData),
+        type: 'json',
+      },
+    };
+    axiosInstance({
+      method: 'POST',
+      url: `/camunda/engine-rest/process-definition/key/${editDataRowProcess}/start`,
+      data: {
+        variables,
+        businessKey: editData.businessKey,
+      },
+    })
+      .then(async () => {
+        setAlertContext({
+          type: 'form-submission',
+          status: 'successful',
+          message: t('pages.data.edit.submission-success'),
+          reference: `${editData.businessKey}`,
         });
-    },
-    [axiosInstance, formDefinition.name, setAlertContext, t, handleOnSubmit, entityId, dataId]
-  );
+        setSubmitting(false);
+        handleOnSubmit();
+      })
+      .catch(() => {
+        setSubmitting(false);
+      });
+  };
 
   useEffect(() => {
     const loadFormDefinition = async () => {
