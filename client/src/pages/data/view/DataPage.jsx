@@ -29,19 +29,26 @@ const DataPage = ({ entityId, dataId, businessKey }) => {
   const axiosInstance = useAxios();
 
   const [disableEdit, setDisableEdit] = useState(false);
+  const [count, setCount] = useState(0);
 
   useEffect(() => {
     if (axiosInstance) {
+      const params = {
+        processDefinitionKeyIn: `${editDataRowProcess},${deleteDataRowProcess}`,
+        variables: `entity_eq_${entityId},dataId_eq_${dataId}`,
+      };
+      if (selectedOption !== 'change-requests') {
+        params.active = true;
+      }
       axiosInstance({
-        url: '/camunda/engine-rest/process-instance/count',
+        url: '/camunda/engine-rest/history/process-instance/count',
         method: 'GET',
-        params: {
-          processDefinitionKeyIn: `${editDataRowProcess},${deleteDataRowProcess}`,
-          variables: `entity_eq_${entityId},dataId_eq_${dataId}`,
-        },
+        params,
       })
         .then((response) => {
-          setDisableEdit(response.data.count !== 0);
+          const totalCount = response.data.count;
+          setDisableEdit(totalCount !== 0);
+          setCount(totalCount);
         })
         .catch(() => {
           setDisableEdit(true);
@@ -63,7 +70,19 @@ const DataPage = ({ entityId, dataId, businessKey }) => {
           />
         );
       case 'change-requests':
-        return <ChangeRequests />;
+        return (
+          <ChangeRequests
+            {...{
+              entityId,
+              dataId,
+              businessKey,
+              definition,
+              editDataRowProcess,
+              deleteDataRowProcess,
+              count,
+            }}
+          />
+        );
       case 'edit':
         return (
           <EditData
@@ -73,13 +92,25 @@ const DataPage = ({ entityId, dataId, businessKey }) => {
               businessKey,
               definition,
             }}
+            handleCancel={() => {
+              setSelectedOption('data');
+            }}
             handleOnSubmit={() => {
               setSelectedOption('change-requests');
             }}
           />
         );
       case 'delete':
-        return <DeleteData />;
+        return (
+          <DeleteData
+            {...{
+              entityId,
+              dataId,
+              businessKey,
+              definition,
+            }}
+          />
+        );
       default:
         return (
           <FullData

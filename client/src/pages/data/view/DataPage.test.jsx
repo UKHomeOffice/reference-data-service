@@ -256,7 +256,7 @@ describe('DataPage', () => {
   });
 
   it('renders warning if change request for entity exists', async () => {
-    mockAxios.onGet('/camunda/engine-rest/process-instance/count').reply(200, {
+    mockAxios.onGet('/camunda/engine-rest/history/process-instance/count').reply(200, {
       count: 1,
     });
     const wrapper = mount(
@@ -276,7 +276,7 @@ describe('DataPage', () => {
     expect(wrapper.find('a[id="delete"]').at(0).props()['aria-disabled']).toBe(true);
   });
   it('renders warning if change request fails', async () => {
-    mockAxios.onGet('/camunda/engine-rest/process-instance/count').reply(500, {
+    mockAxios.onGet('/camunda/engine-rest/history/process-instance/count').reply(500, {
       count: 1,
     });
     const wrapper = mount(

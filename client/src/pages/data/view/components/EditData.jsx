@@ -17,13 +17,14 @@ import { AlertContext } from '../../../../utils/AlertContext';
 const editDataRowProcess = config.get('processes.editDataRowProcess');
 const formName = config.get('forms.editDataSetForm');
 
-const EditData = ({ entityId, dataId, definition, businessKey, handleOnSubmit }) => {
+const EditData = ({ entityId, dataId, definition, businessKey, handleOnSubmit, handleCancel }) => {
   const formRef = useRef();
   const { t } = useTranslation();
   const axiosInstance = useAxios();
   const [keycloak] = useKeycloak();
   const [submitting, setSubmitting] = useState(false);
   const { setAlertContext } = useContext(AlertContext);
+
   const [formDefinition, setFormDefinition] = useState({
     isLoading: true,
     isFailed: false,
@@ -37,6 +38,7 @@ const EditData = ({ entityId, dataId, definition, businessKey, handleOnSubmit })
   const fileService = new FileService(keycloak);
 
   const submitForm = (editData) => {
+    setSubmitting(true);
     const variables = {
       status: {
         value: 'SUBMITTED',
@@ -63,7 +65,7 @@ const EditData = ({ entityId, dataId, definition, businessKey, handleOnSubmit })
         businessKey: editData.businessKey,
       },
     })
-      .then(async () => {
+      .then(() => {
         setAlertContext({
           type: 'form-submission',
           status: 'successful',
@@ -205,7 +207,9 @@ const EditData = ({ entityId, dataId, definition, businessKey, handleOnSubmit })
               window.scrollTo(0, 0);
             }}
             onSubmit={(editData) => {
-              submitForm(editData.data);
+              if (!submitting) {
+                submitForm(editData.data);
+              }
             }}
             onError={(errors) => {
               setAlertContext({
@@ -222,7 +226,9 @@ const EditData = ({ entityId, dataId, definition, businessKey, handleOnSubmit })
               fileService,
               readOnly: submitting,
               hooks: {
-                beforeCancel: async () => {},
+                beforeCancel: async () => {
+                  handleCancel();
+                },
                 buttonSettings: {
                   showCancel: true,
                 },
@@ -248,7 +254,12 @@ const EditData = ({ entityId, dataId, definition, businessKey, handleOnSubmit })
   ) : null;
 };
 
+EditData.defaultProps = {
+  handleCancel: () => {},
+};
+
 EditData.propTypes = {
+  handleCancel: PropTypes.func,
   handleOnSubmit: PropTypes.func.isRequired,
   businessKey: PropTypes.string.isRequired,
   definition: PropTypes.shape({
