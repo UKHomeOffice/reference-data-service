@@ -37,20 +37,26 @@ const DataPage = ({ entityId, dataId, businessKey }) => {
         processDefinitionKeyIn: `${editDataRowProcess},${deleteDataRowProcess}`,
         variables: `entity_eq_${entityId},dataId_eq_${dataId}`,
       };
-      if (selectedOption !== 'change-requests') {
-        params.active = true;
-      }
-      axiosInstance({
+      const historyCount = axiosInstance({
         url: '/camunda/engine-rest/history/process-instance/count',
         method: 'GET',
         params,
-      })
-        .then((response) => {
-          const totalCount = response.data.count;
-          setDisableEdit(totalCount !== 0);
-          setCount(totalCount);
+      });
+      const activeCount = axiosInstance({
+        url: '/camunda/engine-rest/process-instance/count',
+        method: 'GET',
+        params,
+      });
+
+      Promise.all([historyCount, activeCount])
+        .then((values) => {
+          const historyResponse = values[0];
+          const activeResponse = values[1];
+          setCount(historyResponse.data.count);
+          setDisableEdit(activeResponse.data.count !== 0);
         })
         .catch(() => {
+          setCount(0);
           setDisableEdit(true);
         });
     }
