@@ -11,7 +11,7 @@ import { useAxios } from '../../../../utils/hooks';
 import ApplicationSpinner from '../../../../components/ApplicationSpinner';
 import { augmentRequest, interpolate } from '../../../../utils/formioSupport';
 import FileService from '../../../../utils/FileService';
-import { getDescription } from '../../../../utils/schemaUtil';
+import { getDescription } from '../../../../utils/dataUtil';
 import { AlertContext } from '../../../../utils/AlertContext';
 
 const editDataRowProcess = config.get('processes.editDataRowProcess');

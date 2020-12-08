@@ -1,6 +1,4 @@
-import React, {
-  useCallback, useContext, useEffect, useRef, useState,
-} from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { JSONPath } from 'jsonpath-plus';
 import _ from 'lodash';
@@ -12,7 +10,7 @@ import moment from 'moment';
 import { useAxios } from '../../../utils/hooks';
 import DownloadToCSV from './components/DownloadToCSV';
 import { RefDataSetContext } from '../../../utils/RefDataSetContext';
-import { getDescription } from '../../../utils/schemaUtil';
+import { getDescription } from '../../../utils/dataUtil';
 import { Card, ScrollWrapper } from '../../../components/styles';
 
 const now = moment().toISOString();
@@ -32,7 +30,7 @@ const DataListPage = ({ entityId }) => {
     JSONPath({
       path: `$.definitions['${entityId}']`,
       json: dataSetContext,
-    })[0],
+    })[0]
   );
 
   const [count, setCount] = useState(0);
@@ -114,7 +112,7 @@ const DataListPage = ({ entityId }) => {
         });
       });
     },
-    [axiosInstance, entityData, setEntityData, entityId, selectedColumns, businessKey],
+    [axiosInstance, entityData, setEntityData, entityId, selectedColumns, businessKey]
   );
 
   const loadData = useCallback(() => {
@@ -221,7 +219,7 @@ const DataListPage = ({ entityId }) => {
                               _.concat(selectedColumns, {
                                 label: obj.label,
                                 key: k,
-                              }),
+                              })
                             );
                           } else {
                             setSelectedColumns(_.filter(selectedColumns, (c) => c.key !== k));
@@ -341,16 +339,16 @@ const DataListPage = ({ entityId }) => {
               dataLength={entityData.data.length}
               hasMore={appliedColumns.length !== 0 && entityData.data.length < count}
               height={700}
-              loader={(
+              loader={
                 <h5 id="loading-text" className="govuk-heading-s govuk-!-margin-top-3">
                   {t('pages.data.loading', { entity: entityId })}
                 </h5>
-              )}
-              endMessage={(
+              }
+              endMessage={
                 <h5 id="no-more-data" className="govuk-heading-s govuk-!-margin-top-3">
                   {t('pages.data.no-more-data', { entity: entityId })}
                 </h5>
-              )}
+              }
             >
               {entityData.data.map((data) => (
                 <li key={uuidv4()}>
@@ -383,7 +381,7 @@ const DataListPage = ({ entityId }) => {
                                   await navigation.navigate(
                                     `/schema/${entityId}/data/${data[businessKey.key]}/pkName/${
                                       businessKey.key
-                                    }`,
+                                    }`
                                   );
                                 }}
                                 className="govuk-link govuk-link--no-visited-state"

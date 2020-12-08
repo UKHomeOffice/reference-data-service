@@ -23,11 +23,12 @@ describe('CancelChangeRequestPage', () => {
 
   it('renders application spinner if loading request', async () => {
     mockAxios.onGet('/camunda/engine-rest/history/process-instance/test').reply(
-      () => new Promise((resolve) => {
-        setTimeout(() => {
-          resolve([200, []]);
-        }, 3000);
-      }),
+      () =>
+        new Promise((resolve) => {
+          setTimeout(() => {
+            resolve([200, []]);
+          }, 3000);
+        })
     );
     const wrapper = mount(<CancelChangeRequestPage id="test" />);
     await act(async () => {
@@ -89,7 +90,7 @@ describe('CancelChangeRequestPage', () => {
       startUserId: 'test',
       startTime: moment().toISOString(),
     });
-    mockAxios.onGet('/camunda/engine-rest/variable-instance').reply(200, [
+    mockAxios.onGet('/camunda/engine-rest/history/variable-instance').reply(200, [
       {
         name: 'status',
         value: 'SUBMITTED',

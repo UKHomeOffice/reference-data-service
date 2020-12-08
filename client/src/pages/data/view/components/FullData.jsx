@@ -5,12 +5,10 @@ import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 import ApplicationSpinner from '../../../../components/ApplicationSpinner';
 import { useAxios } from '../../../../utils/hooks';
-import { getDescription } from '../../../../utils/schemaUtil';
+import { getDescription } from '../../../../utils/dataUtil';
 import { Card } from '../../../../components/styles';
 
-const FullData = ({
-  dataId, entityId, businessKey, definition,
-}) => {
+const FullData = ({ dataId, entityId, businessKey, definition }) => {
   const { t } = useTranslation();
   const [data, setData] = useState({
     isLoading: true,

@@ -7,11 +7,9 @@ import _ from 'lodash';
 import ApplicationSpinner from '../../../../components/ApplicationSpinner';
 import { useAxios } from '../../../../utils/hooks';
 import { Card } from '../../../../components/styles';
-import { getDescription } from '../../../../utils/schemaUtil';
+import { getDescription } from '../../../../utils/dataUtil';
 
-const History = ({
-  entityId, dataId, definition, businessKey,
-}) => {
+const History = ({ entityId, dataId, definition, businessKey }) => {
   const { t } = useTranslation();
   const [data, setData] = useState({
     isLoading: true,
@@ -79,7 +77,7 @@ const History = ({
         });
       });
     },
-    [axiosInstance, setData, data, businessKey, entityId, dataId],
+    [axiosInstance, setData, data, businessKey, entityId, dataId]
   );
 
   return data.isLoading ? (
@@ -100,16 +98,16 @@ const History = ({
           dataLength={data.content.length}
           hasMore={data.content.length < data.total}
           height={700}
-          loader={(
+          loader={
             <h5 id="loading-text" className="govuk-heading-s govuk-!-margin-top-3">
               {t('pages.data.history.loading', { dataId })}
             </h5>
-          )}
-          endMessage={(
+          }
+          endMessage={
             <h5 id="no-more-data" className="govuk-heading-s govuk-!-margin-top-3">
               {t('pages.data.history.no-more', { dataId })}
             </h5>
-          )}
+          }
         >
           {data.content.map((d) => (
             <li key={uuidv4()}>
