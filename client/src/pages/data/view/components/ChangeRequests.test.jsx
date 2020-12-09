@@ -55,7 +55,7 @@ describe('ChangeRequests', () => {
 
     mockAxios.onGet('/camunda/engine-rest/history/variable-instance').reply(200, [
       {
-        name: 'editDataSetForm',
+        name: 'editDataRowForm',
         value: {},
       },
       {
@@ -95,7 +95,7 @@ describe('ChangeRequests', () => {
 
     mockAxios.onGet('/camunda/engine-rest/history/variable-instance').reply(200, [
       {
-        name: 'editDataSetForm',
+        name: 'editDataRowForm',
         value: {},
       },
       {
@@ -142,11 +142,11 @@ describe('ChangeRequests', () => {
     mockAxios.onGet('/camunda/engine-rest/history/variable-instance').reply(200, [
       {
         processInstanceId: 'processInstanceId',
-        name: 'editDataSetForm',
+        name: 'editDataRowForm',
         value: {
           form: {
             formVersionId: 'formVersionId',
-            name: 'editDataSetForm',
+            name: 'editDataRowForm',
           },
         },
       },

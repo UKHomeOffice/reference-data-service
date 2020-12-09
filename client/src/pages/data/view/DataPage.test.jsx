@@ -9,7 +9,6 @@ import FullData from './components/FullData';
 import History from './components/History';
 import ChangeRequests from './components/ChangeRequests';
 import EditData from './components/EditData';
-import DeleteData from './components/DeleteData';
 
 jest.mock('./components/FullData', () => ({
   __esModule: true,
@@ -22,11 +21,6 @@ jest.mock('./components/History', () => ({
 }));
 
 jest.mock('./components/EditData', () => ({
-  __esModule: true,
-  default: () => <div />,
-}));
-
-jest.mock('./components/DeleteData', () => ({
   __esModule: true,
   default: () => <div />,
 }));
@@ -242,7 +236,7 @@ describe('DataPage', () => {
       await wrapper.update();
     });
     expect(defaultEvent).toBeCalled();
-    expect(wrapper.find(DeleteData).length).toBe(1);
+    expect(wrapper.find(EditData).length).toBe(1);
 
     await act(async () => {
       wrapper.find('a[id="change-requests"]').at(0).simulate('click', {

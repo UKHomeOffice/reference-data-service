@@ -60,7 +60,7 @@ describe('EditData', () => {
     mockNavigate.mockReset();
   });
   it('renders application loader', async () => {
-    mockAxios.onGet('/form/name/editDataSetForm').reply(
+    mockAxios.onGet('/form/name/editDataRowForm').reply(
       () =>
         new Promise((resolve) => {
           setTimeout(() => {
@@ -85,6 +85,8 @@ describe('EditData', () => {
           definition={{}}
           dataId="test"
           entityId="id"
+          formName="editDataRowForm"
+          processName="editDataRowProcess"
         />
       </AlertContextProvider>
     );
@@ -97,7 +99,7 @@ describe('EditData', () => {
   });
 
   it('can load form and data', async () => {
-    mockAxios.onGet('/form/name/editDataSetForm').reply(200, {
+    mockAxios.onGet('/form/name/editDataRowForm').reply(200, {
       name: 'editDataSetForm',
       id: 'test',
       components: [
@@ -122,6 +124,8 @@ describe('EditData', () => {
           definition={definition}
           dataId="000b9094-7ef8-4036-9dd6-9699c5f465e5"
           entityId="behavioursigns"
+          formName="editDataRowForm"
+          processName="editDataRowProcess"
         />
       </AlertContextProvider>
     );
@@ -135,8 +139,8 @@ describe('EditData', () => {
   });
 
   it('can handle next and previous', async () => {
-    mockAxios.onGet('/form/name/editDataSetForm').reply(200, {
-      name: 'editDataSetForm',
+    mockAxios.onGet('/form/name/editDataRowForm').reply(200, {
+      name: 'editDataRowForm',
       id: 'test',
       components: [
         {
@@ -169,6 +173,8 @@ describe('EditData', () => {
           definition={definition}
           dataId="000b9094-7ef8-4036-9dd6-9699c5f465e5"
           entityId="behavioursigns"
+          formName="editDataRowForm"
+          processName="editDataRowProcess"
         />
       </AlertContextProvider>
     );
@@ -189,7 +195,7 @@ describe('EditData', () => {
   });
 
   it('can submit form', async () => {
-    mockAxios.onGet('/form/name/editDataSetForm').reply(200, {
+    mockAxios.onGet('/form/name/editDataRowForm').reply(200, {
       name: 'editDataSetForm',
       id: 'test',
       components: [
@@ -223,6 +229,8 @@ describe('EditData', () => {
           definition={definition}
           dataId="000b9094-7ef8-4036-9dd6-9699c5f465e5"
           entityId="behavioursigns"
+          formName="editDataRowForm"
+          processName="editDataRowProcess"
         />
       </AlertContextProvider>
     );

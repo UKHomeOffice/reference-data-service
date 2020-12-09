@@ -9,11 +9,13 @@ import { RefDataSetContext } from '../../../utils/RefDataSetContext';
 import History from './components/History';
 import EditData from './components/EditData';
 import ChangeRequests from './components/ChangeRequests';
-import DeleteData from './components/DeleteData';
 import { useAxios } from '../../../utils/hooks';
 
 const editDataRowProcess = config.get('processes.editDataRowProcess');
 const deleteDataRowProcess = config.get('processes.deleteDataRowProcess');
+
+const editDataRowForm = config.get('forms.editDataRowForm');
+const deleteDataRowForm = config.get('forms.deleteDataRowForm');
 
 const DataPage = ({ entityId, dataId, businessKey }) => {
   const [selectedOption, setSelectedOption] = useState('data');
@@ -37,18 +39,18 @@ const DataPage = ({ entityId, dataId, businessKey }) => {
         processDefinitionKeyIn: `${editDataRowProcess},${deleteDataRowProcess}`,
         variables: `entity_eq_${entityId},dataId_eq_${dataId}`,
       };
-      const historyCount = axiosInstance({
-        url: '/camunda/engine-rest/history/process-instance/count',
-        method: 'GET',
-        params,
-      });
-      const activeCount = axiosInstance({
-        url: '/camunda/engine-rest/process-instance/count',
-        method: 'GET',
-        params,
-      });
-
-      Promise.all([historyCount, activeCount])
+      Promise.all([
+        axiosInstance({
+          url: '/camunda/engine-rest/history/process-instance/count',
+          method: 'GET',
+          params,
+        }),
+        axiosInstance({
+          url: '/camunda/engine-rest/process-instance/count',
+          method: 'GET',
+          params,
+        }),
+      ])
         .then((values) => {
           const historyResponse = values[0];
           const activeResponse = values[1];
@@ -92,6 +94,8 @@ const DataPage = ({ entityId, dataId, businessKey }) => {
       case 'edit':
         return (
           <EditData
+            processName={editDataRowProcess}
+            formName={editDataRowForm}
             {...{
               entityId,
               dataId,
@@ -108,7 +112,15 @@ const DataPage = ({ entityId, dataId, businessKey }) => {
         );
       case 'delete':
         return (
-          <DeleteData
+          <EditData
+            handleCancel={() => {
+              setSelectedOption('data');
+            }}
+            handleOnSubmit={() => {
+              setSelectedOption('change-requests');
+            }}
+            processName={deleteDataRowProcess}
+            formName={deleteDataRowForm}
             {...{
               entityId,
               dataId,

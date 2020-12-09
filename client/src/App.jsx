@@ -23,7 +23,8 @@ if (window.ENVIRONMENT_CONFIG) {
     serviceDeskUrl: process.env.REACT_APPP_SERVICE_DESK_URL,
     forms: {
       newDataSetForm: process.env.REACT_APP_NEW_DATA_SET_FORM,
-      editDataSetForm: process.env.REACT_APP_EDIT_DATA_ROW_FORM,
+      editDataRowForm: process.env.REACT_APP_EDIT_DATA_ROW_FORM,
+      deleteDataRowForm: process.env.REACT_APP_DELETE_DATA_ROW_FORM,
     },
     processes: {
       newDataSetProcess: process.env.REACT_APP_NEW_DATA_SET_PROCESS,

@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import config from 'react-global-configuration';
 import { Form, Formio } from 'react-formio';
 import { useKeycloak } from '@react-keycloak/web';
 import moment from 'moment';
@@ -14,10 +13,16 @@ import FileService from '../../../../utils/FileService';
 import { getDescription } from '../../../../utils/dataUtil';
 import { AlertContext } from '../../../../utils/AlertContext';
 
-const editDataRowProcess = config.get('processes.editDataRowProcess');
-const formName = config.get('forms.editDataSetForm');
-
-const EditData = ({ entityId, dataId, definition, businessKey, handleOnSubmit, handleCancel }) => {
+const EditData = ({
+  entityId,
+  dataId,
+  definition,
+  businessKey,
+  handleOnSubmit,
+  processName,
+  formName,
+  handleCancel,
+}) => {
   const formRef = useRef();
   const { t } = useTranslation();
   const axiosInstance = useAxios();
@@ -59,7 +64,7 @@ const EditData = ({ entityId, dataId, definition, businessKey, handleOnSubmit, h
     };
     axiosInstance({
       method: 'POST',
-      url: `/camunda/engine-rest/process-definition/key/${editDataRowProcess}/start`,
+      url: `/camunda/engine-rest/process-definition/key/${processName}/start`,
       data: {
         variables,
         businessKey: editData.businessKey,
@@ -81,29 +86,15 @@ const EditData = ({ entityId, dataId, definition, businessKey, handleOnSubmit, h
   };
 
   useEffect(() => {
-    const loadFormDefinition = async () => {
-      if (axiosInstance) {
-        try {
-          const response = await axiosInstance({
-            method: 'GET',
-            url: `/form/name/${formName}`,
-          });
-          setFormDefinition({
-            isLoading: false,
-            isFailed: false,
-            ...response.data,
-          });
-        } catch (e) {
-          setFormDefinition({
-            isLoading: false,
-            isFailed: true,
-          });
-        }
-      }
+    const loadFormDefinition = () => {
+      return axiosInstance({
+        method: 'GET',
+        url: `/form/name/${formName}`,
+      });
     };
 
     const loadData = () => {
-      axiosInstance({
+      return axiosInstance({
         method: 'GET',
         headers: {
           Accept: 'application/vnd.pgrst.object+json',
@@ -112,12 +103,21 @@ const EditData = ({ entityId, dataId, definition, businessKey, handleOnSubmit, h
           and: `(or(validfrom.is.null,validfrom.lt.${moment().toISOString()}),or(validto.is.null,validto.gt.${moment().toISOString()}))`,
         },
         url: `/refdata/${entityId}?${businessKey}=eq.${dataId}`,
-      })
-        .then((response) => {
+      });
+    };
+
+    if (axiosInstance) {
+      Promise.all([loadFormDefinition(), loadData()])
+        .then((values) => {
+          setFormDefinition({
+            isLoading: false,
+            isFailed: false,
+            ...values[0].data,
+          });
           setData({
             isLoading: false,
             failed: false,
-            ...response.data,
+            ...values[1].data,
           });
         })
         .catch(() => {
@@ -125,14 +125,13 @@ const EditData = ({ entityId, dataId, definition, businessKey, handleOnSubmit, h
             isLoading: false,
             failed: true,
           });
+          setFormDefinition({
+            isLoading: false,
+            isFailed: true,
+          });
         });
-    };
-
-    if (axiosInstance) {
-      loadFormDefinition().then(() => {});
-      loadData();
     }
-  }, [axiosInstance, setFormDefinition, businessKey, dataId, entityId]);
+  }, [axiosInstance, setFormDefinition, businessKey, dataId, entityId, formName, processName]);
 
   if (formDefinition.isLoading && data.isLoading) {
     return <ApplicationSpinner />;
@@ -259,6 +258,8 @@ EditData.defaultProps = {
 };
 
 EditData.propTypes = {
+  processName: PropTypes.string.isRequired,
+  formName: PropTypes.string.isRequired,
   handleCancel: PropTypes.func,
   handleOnSubmit: PropTypes.func.isRequired,
   businessKey: PropTypes.string.isRequired,

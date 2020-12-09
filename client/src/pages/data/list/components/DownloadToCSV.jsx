@@ -86,7 +86,7 @@ DownloadToCSV.propTypes = {
     PropTypes.shape({
       label: PropTypes.string.isRequired,
       key: PropTypes.string.isRequired,
-    }),
+    })
   ).isRequired,
 };
 export default DownloadToCSV;

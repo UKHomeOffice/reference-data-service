@@ -12,8 +12,8 @@ import ApplicationSpinner from '../../../../components/ApplicationSpinner';
 import { transform } from '../../../../utils/dataUtil';
 import ChangeRequest from '../../../changeRequests/components/ChangeRequest';
 
-const editFormName = config.get('forms.editDataSetForm');
-const deleteFormName = config.get('forms.deleteFormName');
+const editFormName = config.get('forms.editDataRowForm');
+const deleteFormName = config.get('forms.deleteDataRowForm');
 
 const ChangeRequests = ({
   dataId,

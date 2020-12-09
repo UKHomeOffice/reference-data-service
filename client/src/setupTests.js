@@ -74,7 +74,7 @@ config.set(
     serviceUrl: 'bar',
     forms: {
       newDataSetForm: 'newDataSetForm',
-      editDataSetForm: 'editDataSetForm',
+      editDataRowForm: 'editDataRowForm',
     },
     processes: {
       newDataSetProcess: 'newDataSetProcess',
