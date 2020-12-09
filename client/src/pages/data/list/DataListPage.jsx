@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import PropTypes from 'prop-types';
 import { useNavigation } from 'react-navi';
 import moment from 'moment';
+import qs from 'query-string';
 import { useAxios } from '../../../utils/hooks';
 import DownloadToCSV from './components/DownloadToCSV';
 import { RefDataSetContext } from '../../../utils/RefDataSetContext';
@@ -24,6 +25,12 @@ const DataListPage = ({ entityId }) => {
 
   const [selectedColumns, setSelectedColumns] = useState([]);
   const [appliedColumns, setAppliedColumns] = useState([]);
+
+  const params = navigation.getCurrentValue()
+    ? qs.parse(navigation.getCurrentValue().url.search)
+    : {};
+
+  const [columnsFromQueryParams] = useState(params.selectedColumns);
 
   const checkBoxRefs = useRef([]);
   const [definition, setDefinition] = useState(
@@ -43,13 +50,7 @@ const DataListPage = ({ entityId }) => {
 
   let businessKey;
   Object.keys(definition.properties).forEach((k) => {
-    const property = definition.properties[k];
-    const { description } = property;
-    let parsed = description.replace(/(?:\r\n|\r|\n)/g, '');
-    if (parsed.indexOf('Note') !== -1) {
-      parsed = parsed.substring(0, parsed.indexOf('Note'));
-    }
-    const field = JSON.parse(parsed);
+    const field = getDescription(k, definition);
     if (field.businesskey === 'true') {
       businessKey = {
         key: k,
@@ -141,6 +142,11 @@ const DataListPage = ({ entityId }) => {
     })
       .then(async (response) => {
         setAppliedColumns(selectedColumns);
+        await navigation.navigate(
+          `/schema/${entityId}/data?selectedColumns=${selectedColumns
+            .map((c) => `${c.key}::${c.label}`)
+            .toString()}`
+        );
         setEntityData({
           isLoading: false,
           data: response.data,
@@ -161,7 +167,69 @@ const DataListPage = ({ entityId }) => {
     entityId,
     setAppliedColumns,
     businessKey,
+    navigation,
   ]);
+
+  const entityIdRef = useRef(entityId);
+  const businessKeyRef = useRef(businessKey);
+
+  useEffect(() => {
+    if (columnsFromQueryParams && axiosInstance) {
+      setEntityData({
+        isLoading: false,
+        data: [],
+        page: 0,
+        total: 0,
+      });
+      const fields = columnsFromQueryParams.split(',').map((col) => {
+        const fieldSplit = col.split('::');
+        return {
+          key: fieldSplit[0],
+          label: fieldSplit[1],
+        };
+      });
+
+      if (fields) {
+        setSelectedColumns(fields);
+        const bKey = businessKeyRef.current;
+        const modified = [].concat(fields);
+        if (!modified.find((c) => c.key === bKey.key)) {
+          modified.push(bKey);
+        }
+        axiosInstance({
+          method: 'GET',
+          url: `/refdata/${entityIdRef.current}`,
+          params: {
+            limit: 10,
+            offset: 0,
+            order: 'id.asc',
+            select: modified.map((col) => col.key).toString(),
+            and: `(or(validfrom.is.null,validfrom.lt.${now}),or(validto.is.null,validto.gt.${now}))`,
+          },
+          headers: {
+            Prefer: 'count=exact',
+          },
+        })
+          .then((response) => {
+            setAppliedColumns(fields);
+            setEntityData({
+              isLoading: false,
+              data: response.data,
+              page: 0,
+              total: response.headers['content-range'].split('/')[1],
+            });
+          })
+          .catch(() => {
+            setEntityData({
+              isLoading: false,
+              data: [],
+              page: 0,
+              total: 0,
+            });
+          });
+      }
+    }
+  }, [columnsFromQueryParams, axiosInstance]);
 
   const resolveData = (datum) => {
     if (!datum) {
@@ -213,6 +281,7 @@ const DataListPage = ({ entityId }) => {
                         ref={(ref) => {
                           checkBoxRefs.current.push(ref);
                         }}
+                        defaultChecked={selectedColumns.find((c) => c.key === k)}
                         onChange={(e) => {
                           if (e.target.checked) {
                             setSelectedColumns(
@@ -322,7 +391,6 @@ const DataListPage = ({ entityId }) => {
             );
           })}
           <hr className="govuk-section-break govuk-section-break--visible" />
-
           {entityData.data.length !== 0 ? (
             <DownloadToCSV
               entity={entityId}

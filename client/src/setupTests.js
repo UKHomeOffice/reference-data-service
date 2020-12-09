@@ -97,5 +97,3 @@ global.MutationObserver = class {
 export const mockScrollToTop = jest.fn();
 global.URL.createObjectURL = jest.fn();
 window.scrollTo = mockScrollToTop;
-
-jest.spyOn(console, 'error').mockImplementation(() => {});
