@@ -6,6 +6,8 @@ import { act } from '@testing-library/react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import DataListPage from './DataListPage';
 import { RefDataSetContextProvider } from '../../../utils/RefDataSetContext';
+import { mockGetCurrentValue } from '../../../setupTests';
+import ApplicationSpinner from '../../../components/ApplicationSpinner';
 
 jest.mock('./components/DownloadToCSV', () => ({
   __esModule: true,
@@ -412,5 +414,53 @@ describe('DataListPage', () => {
 
     field = wrapper.find('input[type="checkbox"]').at(0);
     expect(field.getDOMNode().checked).toBe(false);
+  });
+
+  it('can load from query parameters', async () => {
+    mockGetCurrentValue.mockReturnValue({
+      url: {
+        search:
+          '?selectedColumns=icao::ICAO%20code,geolat::Latitude,geolong::Longitude,type::Port%20type',
+      },
+    });
+    const wrapper = mount(
+      <RefDataSetContextProvider>
+        <DataListPage entityId="behavioursigns" />
+      </RefDataSetContextProvider>
+    );
+
+    await act(async () => {
+      await Promise.resolve(wrapper);
+      await new Promise((resolve) => setInterval(resolve, 1000));
+      await wrapper.update();
+    });
+    expect(mockAxios.history.get.length).toBe(3);
+  });
+
+  it('can handle api failure on query parameter load', async () => {
+    mockGetCurrentValue.mockReturnValue({
+      url: {
+        search:
+          '?selectedColumns=icao::ICAO%20code,geolat::Latitude,geolong::Longitude,type::Port%20type',
+      },
+    });
+
+    mockAxios.onGet('/refdata/behavioursigns').reply(500, []);
+
+    const wrapper = mount(
+      <RefDataSetContextProvider>
+        <DataListPage entityId="behavioursigns" />
+      </RefDataSetContextProvider>
+    );
+
+    await act(async () => {
+      await Promise.resolve(wrapper);
+      await new Promise((resolve) => setInterval(resolve, 1000));
+      await wrapper.update();
+    });
+    expect(wrapper.find(ApplicationSpinner).length).toBe(0);
+    expect(mockAxios.history.get.length).toBe(3);
+    expect(wrapper.find(InfiniteScroll).length).toBe(1);
+    expect(wrapper.find('li').length).toBe(0);
   });
 });

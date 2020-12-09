@@ -188,46 +188,43 @@ const DataListPage = ({ entityId }) => {
           label: fieldSplit[1],
         };
       });
-
-      if (fields) {
-        setSelectedColumns(fields);
-        const bKey = businessKeyRef.current;
-        const modified = [].concat(fields);
-        if (!modified.find((c) => c.key === bKey.key)) {
-          modified.push(bKey);
-        }
-        axiosInstance({
-          method: 'GET',
-          url: `/refdata/${entityIdRef.current}`,
-          params: {
-            limit: 10,
-            offset: 0,
-            order: 'id.asc',
-            select: modified.map((col) => col.key).toString(),
-            and: `(or(validfrom.is.null,validfrom.lt.${now}),or(validto.is.null,validto.gt.${now}))`,
-          },
-          headers: {
-            Prefer: 'count=exact',
-          },
-        })
-          .then((response) => {
-            setAppliedColumns(fields);
-            setEntityData({
-              isLoading: false,
-              data: response.data,
-              page: 0,
-              total: response.headers['content-range'].split('/')[1],
-            });
-          })
-          .catch(() => {
-            setEntityData({
-              isLoading: false,
-              data: [],
-              page: 0,
-              total: 0,
-            });
-          });
+      setSelectedColumns(fields);
+      const bKey = businessKeyRef.current;
+      const modified = [].concat(fields);
+      if (!modified.find((c) => c.key === bKey.key)) {
+        modified.push(bKey);
       }
+      axiosInstance({
+        method: 'GET',
+        url: `/refdata/${entityIdRef.current}`,
+        params: {
+          limit: 10,
+          offset: 0,
+          order: 'id.asc',
+          select: modified.map((col) => col.key).toString(),
+          and: `(or(validfrom.is.null,validfrom.lt.${now}),or(validto.is.null,validto.gt.${now}))`,
+        },
+        headers: {
+          Prefer: 'count=exact',
+        },
+      })
+        .then((response) => {
+          setAppliedColumns(fields);
+          setEntityData({
+            isLoading: false,
+            data: response.data,
+            page: 0,
+            total: response.headers['content-range'].split('/')[1],
+          });
+        })
+        .catch(() => {
+          setEntityData({
+            isLoading: false,
+            data: [],
+            page: 0,
+            total: 0,
+          });
+        });
     }
   }, [columnsFromQueryParams, axiosInstance]);
 
