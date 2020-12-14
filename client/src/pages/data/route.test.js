@@ -6,9 +6,10 @@ describe('Base routes', () => {
     jest.spyOn(console, 'error').mockImplementation(() => {});
   });
   it.each`
-      path                                                  | authenticated
-      ${'/'}                                                | ${true}
-      `('title and views for $path should be defined', async ({ path, authenticated }) => {
+    path                   | authenticated
+    ${'/'}                 | ${true}
+    ${'/test/pkName/test'} | ${true}
+  `('title and views for $path should be defined', async ({ path, authenticated }) => {
   const navigation = createMemoryNavigation({
     url: `${path}`,
     routes,

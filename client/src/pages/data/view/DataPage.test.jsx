@@ -1,16 +1,32 @@
 import React from 'react';
-import { mount, shallow } from 'enzyme';
-import axios from 'axios';
+import { shallow, mount } from 'enzyme';
 import MockAdapter from 'axios-mock-adapter';
+import axios from 'axios';
 import { act } from '@testing-library/react';
-import Home, { CustomLink } from './index';
-import ApplicationSpinner from '../../components/ApplicationSpinner';
-import { mockNavigate } from '../../setupTests';
-import { RefDataSetContextProvider } from '../../utils/RefDataSetContext';
+import DataPage from './DataPage';
+import { RefDataSetContextProvider } from '../../../utils/RefDataSetContext';
+import FullData from './components/FullData';
+import History from './components/History';
+import ChangeRequests from './components/ChangeRequests';
+import EditData from './components/EditData';
 
-describe('Home', () => {
+jest.mock('./components/FullData', () => ({
+  __esModule: true,
+  default: () => <div />,
+}));
+
+jest.mock('./components/History', () => ({
+  __esModule: true,
+  default: () => <div />,
+}));
+
+jest.mock('./components/EditData', () => ({
+  __esModule: true,
+  default: () => <div />,
+}));
+
+describe('DataPage', () => {
   const mockAxios = new MockAdapter(axios);
-
   const apiResponse = {
     paths: {
       '/behavioursigns': {
@@ -61,14 +77,14 @@ describe('Home', () => {
     definitions: {
       behavioursigns: {
         description:
-          '{"label": "Behaviour Signs", "description": "Behaviours Warning and Danger Signs",  "dataversion": 1}',
+          '{"label": "Behaviour Signs", "description": "Behaviours Warning and Danger Signs", "schemalastupdated": "06/03/2019", "dataversion": 1}',
         required: ['id', 'name', 'warning', 'danger'],
         properties: {
           id: {
             format: 'integer',
             type: 'integer',
             description:
-              '{"label": "Identifier", "description": "Unique identifying column.", "summaryview": "false"}\n\nNote:\nThis is a Primary Key.<pk/>',
+              '{"label": "Identifier", "description": "Unique identifying column.", "summaryview": "false", "businesskey" : "true"}\n\nNote:\nThis is a Primary Key.<pk/>',
           },
           name: {
             maxLength: 30,
@@ -106,14 +122,14 @@ describe('Home', () => {
       },
       bffunctiontypes: {
         description:
-          '{"label": "Border function types", "description": "Border functions type clarifications.", "schemalastupdated": "06/03/2019", "dataversion": 1, "owner" : "test"}',
+          '{"label": "Border function types", "description": "Border functions type clarifications.", "schemalastupdated": "06/03/2019", "dataversion": 1}',
         required: ['id', 'bffunction'],
         properties: {
           id: {
             format: 'uuid',
             type: 'string',
             description:
-              '{"label": "Identifier", "description": "Unique identifying column.", "summaryview": "false"}\n\nNote:\nThis is a Primary Key.<pk/>',
+              '{"label": "Identifier", "description": "Unique identifying column.", "summaryview": "false", "businesskey" : "true"}\n\nNote:\nThis is a Primary Key.<pk/>',
           },
           bffunction: {
             maxLength: 20,
@@ -141,97 +157,17 @@ describe('Home', () => {
   };
   beforeEach(() => {
     mockAxios.reset();
-    mockNavigate.mockReset();
-    // eslint-disable-next-line no-unused-vars
-    mockAxios.onGet('/refdata/bffunctiontypes').reply((config) => [
-      200,
-      [{ id: 'test' }],
-      {
-        'content-range': '0-10/23',
-      },
-    ]);
-  });
-
-  it('renders without crashing', () => {
-    shallow(
-      <RefDataSetContextProvider>
-        <Home />
-      </RefDataSetContextProvider>
-    );
-  });
-
-  it('can render loading bar', async () => {
-    mockAxios.onGet('/refdata').reply(
-      () =>
-        new Promise((resolve) => {
-          setTimeout(() => {
-            resolve([200, apiResponse]);
-          }, 2000);
-        })
-    );
-    const wrapper = mount(
-      <RefDataSetContextProvider>
-        <Home />
-      </RefDataSetContextProvider>
-    );
-    await act(async () => {
-      await Promise.resolve(wrapper);
-      await new Promise((resolve) => setImmediate(resolve, 1000));
-      await wrapper.update();
-    });
-    expect(wrapper.find(ApplicationSpinner).at(0).exists()).toBe(true);
-  });
-
-  it('can render entities', async () => {
     mockAxios.onGet('/refdata').reply(200, apiResponse);
-    const wrapper = mount(
-      <RefDataSetContextProvider>
-        <Home />
-      </RefDataSetContextProvider>
-    );
-
-    await act(async () => {
-      await Promise.resolve(wrapper);
-      await new Promise((resolve) => setInterval(resolve, 1000));
-      await wrapper.update();
-    });
-
-    expect(wrapper.find('ul[id="entityList"]').at(0).exists()).toBe(true);
-    expect(wrapper.find(CustomLink).length).toBe(2);
   });
 
-  it('can pre select entity', async () => {
-    mockAxios.onGet('/refdata').reply(200, apiResponse);
-    const wrapper = mount(
-      <RefDataSetContextProvider>
-        <Home entity="bffunctiontypes" />
-      </RefDataSetContextProvider>
-    );
-
-    await act(async () => {
-      await Promise.resolve(wrapper);
-      await new Promise((resolve) => setInterval(resolve, 1000));
-      await wrapper.update();
-    });
-
-    expect(wrapper.find(CustomLink).at(0).props().active).toBe(false);
-    const activeLink = wrapper.find(CustomLink).at(1);
-    expect(activeLink.props().active).toBe(true);
+  it('renders with crashing', () => {
+    shallow(<DataPage entityId="behavioursigns" dataId="test" businessKey="id" />);
   });
 
-  it('can select entity', async () => {
-    mockAxios.onGet('/refdata').reply(200, apiResponse);
-    // eslint-disable-next-line no-unused-vars
-    mockAxios.onGet('/refdata/behavioursigns').reply((config) => [
-      200,
-      [{ id: 'test' }],
-      {
-        'content-range': '0-10/23',
-      },
-    ]);
+  it('can render data component', async () => {
     const wrapper = mount(
       <RefDataSetContextProvider>
-        <Home entity="bffunctiontypes" />
+        <DataPage businessKey="id" entityId="behavioursigns" dataId="id" />
       </RefDataSetContextProvider>
     );
 
@@ -241,32 +177,13 @@ describe('Home', () => {
       await wrapper.update();
     });
 
-    await act(async () => {
-      wrapper
-        .find(CustomLink)
-        .at(0)
-        .simulate('click', {
-          preventDefault: () => {},
-        });
-      await new Promise((resolve) => setInterval(resolve, 1000));
-      await wrapper.update();
-    });
-    expect(mockNavigate).toBeCalledWith('/schema/behavioursigns', { replace: false });
+    expect(wrapper.find(FullData).length).toBe(1);
   });
 
-  it('can select data', async () => {
-    mockAxios.onGet('/refdata').reply(200, apiResponse);
-    // eslint-disable-next-line no-unused-vars
-    mockAxios.onGet('/refdata/behavioursigns').reply((config) => [
-      200,
-      [{ id: 'test' }],
-      {
-        'content-range': '0-10/23',
-      },
-    ]);
+  it('can click on history', async () => {
     const wrapper = mount(
       <RefDataSetContextProvider>
-        <Home entity="bffunctiontypes" />
+        <DataPage businessKey="id" entityId="behavioursigns" dataId="id" />
       </RefDataSetContextProvider>
     );
 
@@ -276,76 +193,100 @@ describe('Home', () => {
       await wrapper.update();
     });
 
-    await act(async () => {
-      wrapper
-        .find('a[id="viewData"]')
-        .at(0)
-        .simulate('click', {
-          preventDefault: () => {},
-        });
-      await new Promise((resolve) => setInterval(resolve, 1000));
-      await wrapper.update();
-    });
-    expect(mockNavigate).toBeCalledWith('/schema/bffunctiontypes/data');
-  });
+    expect(wrapper.find('a').length).toBe(5);
 
-  it('loading bar not displayed if api failure', async () => {
-    mockAxios.onGet('/refdata').reply(500, {});
-    const wrapper = mount(
-      <RefDataSetContextProvider>
-        <Home entity="bffunctiontypes" />
-      </RefDataSetContextProvider>
-    );
+    const defaultEvent = jest.fn();
 
     await act(async () => {
-      await Promise.resolve(wrapper);
-      await new Promise((resolve) => setInterval(resolve, 1000));
-      await wrapper.update();
-    });
-
-    expect(wrapper.find(ApplicationSpinner).at(0).exists()).toBe(false);
-    expect(wrapper.find(CustomLink).length).toBe(0);
-  });
-
-  it('can filter keys', async () => {
-    mockAxios.onGet('/refdata').reply(200, apiResponse);
-    const wrapper = mount(
-      <RefDataSetContextProvider>
-        <Home />
-      </RefDataSetContextProvider>
-    );
-
-    await act(async () => {
-      await Promise.resolve(wrapper);
-      await new Promise((resolve) => setInterval(resolve, 1000));
-      await wrapper.update();
-    });
-
-    expect(wrapper.find('ul[id="entityList"]').at(0).exists()).toBe(true);
-    const filter = wrapper.find('input[id="filter"]').at(0);
-
-    await act(async () => {
-      filter.simulate('change', {
-        target: {
-          value: 'type',
-        },
+      wrapper.find('a[id="history"]').at(0).simulate('click', {
+        preventDefault: defaultEvent,
       });
-      await new Promise((resolve) => setInterval(resolve, 1000));
+      await new Promise((resolve) => setInterval(resolve, 500));
       await wrapper.update();
     });
 
-    expect(wrapper.find(CustomLink).length).toBe(1);
+    expect(defaultEvent).toBeCalled();
+    expect(wrapper.find(History).length).toBe(1);
 
     await act(async () => {
-      filter.simulate('change', {
-        target: {
-          value: null,
-        },
+      wrapper.find('a[id="data"]').at(0).simulate('click', {
+        preventDefault: defaultEvent,
       });
+      await new Promise((resolve) => setInterval(resolve, 500));
+      await wrapper.update();
+    });
+
+    expect(defaultEvent).toBeCalled();
+
+    await act(async () => {
+      wrapper.find('a[id="edit"]').at(0).simulate('click', {
+        preventDefault: defaultEvent,
+      });
+      await new Promise((resolve) => setInterval(resolve, 500));
+      await wrapper.update();
+    });
+    expect(defaultEvent).toBeCalled();
+    expect(wrapper.find(EditData).length).toBe(1);
+
+    await act(async () => {
+      wrapper.find('a[id="delete"]').at(0).simulate('click', {
+        preventDefault: defaultEvent,
+      });
+      await new Promise((resolve) => setInterval(resolve, 500));
+      await wrapper.update();
+    });
+    expect(defaultEvent).toBeCalled();
+    expect(wrapper.find(EditData).length).toBe(1);
+
+    await act(async () => {
+      wrapper.find('a[id="change-requests"]').at(0).simulate('click', {
+        preventDefault: defaultEvent,
+      });
+      await new Promise((resolve) => setInterval(resolve, 500));
+      await wrapper.update();
+    });
+    expect(defaultEvent).toBeCalled();
+    expect(wrapper.find(ChangeRequests).length).toBe(1);
+  });
+
+  it('renders warning if change request for entity exists', async () => {
+    mockAxios.onGet('/camunda/engine-rest/history/process-instance/count').reply(200, {
+      count: 1,
+    });
+    const wrapper = mount(
+      <RefDataSetContextProvider>
+        <DataPage businessKey="id" entityId="behavioursigns" dataId="id" />
+      </RefDataSetContextProvider>
+    );
+
+    await act(async () => {
+      await Promise.resolve(wrapper);
       await new Promise((resolve) => setInterval(resolve, 1000));
       await wrapper.update();
     });
 
-    expect(wrapper.find(CustomLink).length).toBe(2);
+    expect(wrapper.find('div[id="runningInstanceWarning"]').length).toBe(1);
+    expect(wrapper.find('a[id="edit"]').at(0).props()['aria-disabled']).toBe(true);
+    expect(wrapper.find('a[id="delete"]').at(0).props()['aria-disabled']).toBe(true);
+  });
+  it('renders warning if change request fails', async () => {
+    mockAxios.onGet('/camunda/engine-rest/history/process-instance/count').reply(500, {
+      count: 1,
+    });
+    const wrapper = mount(
+      <RefDataSetContextProvider>
+        <DataPage businessKey="id" entityId="behavioursigns" dataId="id" />
+      </RefDataSetContextProvider>
+    );
+
+    await act(async () => {
+      await Promise.resolve(wrapper);
+      await new Promise((resolve) => setInterval(resolve, 1000));
+      await wrapper.update();
+    });
+
+    expect(wrapper.find('div[id="runningInstanceWarning"]').length).toBe(1);
+    expect(wrapper.find('a[id="edit"]').at(0).props()['aria-disabled']).toBe(true);
+    expect(wrapper.find('a[id="delete"]').at(0).props()['aria-disabled']).toBe(true);
   });
 });

@@ -36,6 +36,8 @@ The following properties need to be configured in AWS secrets manager (example f
   "tracing.zipkin.baseUrl" : "http://localhost:9411",
   "tracing.enabled" : true,
   "newDataSetForm" : "newDataSetRequest",
+  "editDataRowForm": "editDataRowForm",
+  "deleteDataRowForm": "deleteDataRowForm",
   "newDataSetProcess" : "newDataSetRequest",
   "deleteDataSetProcess" : "deleteDataSetProcess",
   "addDataRowProcess" : "addDataRowProcess",
@@ -129,6 +131,21 @@ And status that is not mappped will be marked with 'UNKNOWN'
 
 The following variable is request for creating a new data set:
 
-* newDataSetForm
+* newDataSetForm 
+* editDataRowForm
+* deleteDataRowForm
 
-This defines the form name that will be presented to the user if they choose to create a new data set.
+## newDataSetForm
+
+This form defines how a new data set can be created. 
+
+## editDataRowForm
+
+This form defines how an existing data row can be updated. This project includes an example edit [form](/docs/forms/editDataRow.json). Please use this
+as a guideline.
+
+## deleteDataRowForm
+
+This form defines how an existing data row can be deleted. This project includes an example delete [form](/docs/forms/deleteDataRow.json). Please use this
+as a guideline.
+

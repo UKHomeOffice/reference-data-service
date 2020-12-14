@@ -1,26 +1,45 @@
-import React, {
-  useCallback, useEffect, useRef, useState,
-} from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { JSONPath } from 'jsonpath-plus';
 import _ from 'lodash';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { v4 as uuidv4 } from 'uuid';
-import styled from 'styled-components';
 import PropTypes from 'prop-types';
+import { useNavigation } from 'react-navi';
+import moment from 'moment';
+import qs from 'query-string';
 import { useAxios } from '../../../utils/hooks';
 import DownloadToCSV from './components/DownloadToCSV';
+import { RefDataSetContext } from '../../../utils/RefDataSetContext';
+import { getDescription } from '../../../utils/dataUtil';
+import { Card, ScrollWrapper } from '../../../components/styles';
+
+const now = moment().toISOString();
 
 const DataListPage = ({ entityId }) => {
   const { t } = useTranslation();
+
+  const { dataSetContext } = useContext(RefDataSetContext);
+
+  const navigation = useNavigation();
+
   const [selectedColumns, setSelectedColumns] = useState([]);
   const [appliedColumns, setAppliedColumns] = useState([]);
 
+  const params = navigation.getCurrentValue()
+    ? qs.parse(navigation.getCurrentValue().url.search)
+    : {};
+
+  const [columnsFromQueryParams] = useState(params.selectedColumns);
+
   const checkBoxRefs = useRef([]);
-  const [definition, setDefinition] = useState({
-    properties: {},
-    description: '{}',
-  });
+  const [definition, setDefinition] = useState(
+    JSONPath({
+      path: `$.definitions['${entityId}']`,
+      json: dataSetContext,
+    })[0]
+  );
+
   const [count, setCount] = useState(0);
   const [entityData, setEntityData] = useState({
     isLoading: false,
@@ -28,20 +47,24 @@ const DataListPage = ({ entityId }) => {
     page: 0,
     total: 0,
   });
+
+  let businessKey;
+  Object.keys(definition.properties).forEach((k) => {
+    const field = getDescription(k, definition);
+    if (field.businesskey === 'true') {
+      businessKey = {
+        key: k,
+        label: field.label,
+      };
+    }
+  });
+
   const axiosInstance = useAxios();
 
   useEffect(() => {
     const loadDefinition = async () => {
       if (axiosInstance) {
         try {
-          const response = await axiosInstance('/refdata');
-          setDefinition(
-            JSONPath({
-              path: `$.definitions['${entityId}']`,
-              json: response.data,
-            })[0],
-          );
-
           const countResponse = await axiosInstance({
             method: 'GET',
             url: `/refdata/${entityId}`,
@@ -49,6 +72,7 @@ const DataListPage = ({ entityId }) => {
               limit: 1,
               offset: 0,
               select: 'id',
+              and: `(or(validfrom.is.null,validfrom.lt.${now}),or(validto.is.null,validto.gt.${now}))`,
             },
             headers: {
               Prefer: 'count=exact',
@@ -64,6 +88,10 @@ const DataListPage = ({ entityId }) => {
 
   const loadNext = useCallback(
     (page) => {
+      const modified = [].concat(selectedColumns);
+      if (!modified.find((c) => c.key === businessKey.key)) {
+        modified.push(businessKey);
+      }
       axiosInstance({
         method: 'GET',
         url: `/refdata/${entityId}`,
@@ -71,7 +99,8 @@ const DataListPage = ({ entityId }) => {
           limit: 10,
           offset: page,
           order: 'id.asc',
-          select: selectedColumns.map((col) => col.key).toString(),
+          select: modified.map((col) => col.key).toString(),
+          and: `(or(validfrom.is.null,validfrom.lt.${now}),or(validto.is.null,validto.gt.${now}))`,
         },
         headers: {
           Prefer: 'count=exact',
@@ -84,7 +113,7 @@ const DataListPage = ({ entityId }) => {
         });
       });
     },
-    [axiosInstance, entityData, setEntityData, entityId, selectedColumns],
+    [axiosInstance, entityData, setEntityData, entityId, selectedColumns, businessKey]
   );
 
   const loadData = useCallback(() => {
@@ -92,6 +121,11 @@ const DataListPage = ({ entityId }) => {
       ...entityData,
       isLoading: true,
     });
+
+    const modified = [].concat(selectedColumns);
+    if (!modified.find((c) => c.key === businessKey.key)) {
+      modified.push(businessKey);
+    }
     axiosInstance({
       method: 'GET',
       url: `/refdata/${entityId}`,
@@ -99,14 +133,20 @@ const DataListPage = ({ entityId }) => {
         limit: 10,
         offset: 0,
         order: 'id.asc',
-        select: selectedColumns.map((col) => col.key).toString(),
+        select: modified.map((col) => col.key).toString(),
+        and: `(or(validfrom.is.null,validfrom.lt.${now}),or(validto.is.null,validto.gt.${now}))`,
       },
       headers: {
         Prefer: 'count=exact',
       },
     })
-      .then((response) => {
+      .then(async (response) => {
         setAppliedColumns(selectedColumns);
+        await navigation.navigate(
+          `/schema/${entityId}/data?selectedColumns=${selectedColumns
+            .map((c) => `${c.key}::${c.label}`)
+            .toString()}`
+        );
         setEntityData({
           isLoading: false,
           data: response.data,
@@ -119,7 +159,74 @@ const DataListPage = ({ entityId }) => {
           ...entityData,
         });
       });
-  }, [axiosInstance, setEntityData, entityData, selectedColumns, entityId, setAppliedColumns]);
+  }, [
+    axiosInstance,
+    setEntityData,
+    entityData,
+    selectedColumns,
+    entityId,
+    setAppliedColumns,
+    businessKey,
+    navigation,
+  ]);
+
+  const entityIdRef = useRef(entityId);
+  const businessKeyRef = useRef(businessKey);
+
+  useEffect(() => {
+    if (columnsFromQueryParams && axiosInstance) {
+      setEntityData({
+        isLoading: false,
+        data: [],
+        page: 0,
+        total: 0,
+      });
+      const fields = columnsFromQueryParams.split(',').map((col) => {
+        const fieldSplit = col.split('::');
+        return {
+          key: fieldSplit[0],
+          label: fieldSplit[1],
+        };
+      });
+      setSelectedColumns(fields);
+      const bKey = businessKeyRef.current;
+      const modified = [].concat(fields);
+      if (!modified.find((c) => c.key === bKey.key)) {
+        modified.push(bKey);
+      }
+      axiosInstance({
+        method: 'GET',
+        url: `/refdata/${entityIdRef.current}`,
+        params: {
+          limit: 10,
+          offset: 0,
+          order: 'id.asc',
+          select: modified.map((col) => col.key).toString(),
+          and: `(or(validfrom.is.null,validfrom.lt.${now}),or(validto.is.null,validto.gt.${now}))`,
+        },
+        headers: {
+          Prefer: 'count=exact',
+        },
+      })
+        .then((response) => {
+          setAppliedColumns(fields);
+          setEntityData({
+            isLoading: false,
+            data: response.data,
+            page: 0,
+            total: response.headers['content-range'].split('/')[1],
+          });
+        })
+        .catch(() => {
+          setEntityData({
+            isLoading: false,
+            data: [],
+            page: 0,
+            total: 0,
+          });
+        });
+    }
+  }, [columnsFromQueryParams, axiosInstance]);
 
   const resolveData = (datum) => {
     if (!datum) {
@@ -163,12 +270,7 @@ const DataListPage = ({ entityId }) => {
 
               <div className="govuk-checkboxes govuk-!-margin-left-1 govuk-!-margin-top-1">
                 {Object.keys(definition.properties).map((k) => {
-                  const { description } = definition.properties[k];
-                  let parsed = description.replace(/(?:\r\n|\r|\n)/g, '');
-                  if (parsed.indexOf('Note') !== -1) {
-                    parsed = parsed.substring(0, parsed.indexOf('Note'));
-                  }
-                  const obj = JSON.parse(parsed);
+                  const obj = getDescription(k, definition);
                   return (
                     <div className="govuk-checkboxes__item" key={k}>
                       <input
@@ -176,13 +278,14 @@ const DataListPage = ({ entityId }) => {
                         ref={(ref) => {
                           checkBoxRefs.current.push(ref);
                         }}
+                        defaultChecked={selectedColumns.find((c) => c.key === k)}
                         onChange={(e) => {
                           if (e.target.checked) {
                             setSelectedColumns(
                               _.concat(selectedColumns, {
                                 label: obj.label,
                                 key: k,
-                              }),
+                              })
                             );
                           } else {
                             setSelectedColumns(_.filter(selectedColumns, (c) => c.key !== k));
@@ -271,21 +374,26 @@ const DataListPage = ({ entityId }) => {
               </div>
             ) : null}
           </div>
-          {appliedColumns.map((g) => (
-            <strong
-              key={uuidv4()}
-              className="govuk-tag govuk-tag--green govuk-!-margin-bottom-3 govuk-!-margin-left-1"
-            >
-              {g.label}
-            </strong>
-          ))}
+          {appliedColumns.map((g) => {
+            if (!g.label) {
+              return null;
+            }
+            return (
+              <strong
+                key={uuidv4()}
+                className="govuk-tag govuk-tag--green govuk-!-margin-bottom-3 govuk-!-margin-left-1"
+              >
+                {g.label}
+              </strong>
+            );
+          })}
           <hr className="govuk-section-break govuk-section-break--visible" />
-
           {entityData.data.length !== 0 ? (
             <DownloadToCSV
               entity={entityId}
               appliedColumns={appliedColumns}
-              count={entityData.total}
+              /* eslint-disable-next-line radix */
+              count={Number.parseInt(entityData.total)}
             />
           ) : null}
           <ul className="govuk-list">
@@ -296,16 +404,16 @@ const DataListPage = ({ entityId }) => {
               dataLength={entityData.data.length}
               hasMore={appliedColumns.length !== 0 && entityData.data.length < count}
               height={700}
-              loader={(
+              loader={
                 <h5 id="loading-text" className="govuk-heading-s govuk-!-margin-top-3">
                   {t('pages.data.loading', { entity: entityId })}
                 </h5>
-              )}
-              endMessage={(
+              }
+              endMessage={
                 <h5 id="no-more-data" className="govuk-heading-s govuk-!-margin-top-3">
                   {t('pages.data.no-more-data', { entity: entityId })}
                 </h5>
-              )}
+              }
             >
               {entityData.data.map((data) => (
                 <li key={uuidv4()}>
@@ -313,14 +421,40 @@ const DataListPage = ({ entityId }) => {
                     <div className="govuk-grid-column-full">
                       <Card>
                         <dl className="govuk-summary-list govuk-summary-list--no-border">
-                          {appliedColumns.map((c) => (
-                            <div className="govuk-summary-list__row" key={uuidv4()}>
-                              <dt className="govuk-summary-list__key">{`${c.label}:`}</dt>
-                              <dd className="govuk-summary-list__value">
-                                {resolveData(data[c.key])}
-                              </dd>
-                            </div>
-                          ))}
+                          {appliedColumns.map((c) => {
+                            if (!c.label) {
+                              return null;
+                            }
+                            return (
+                              <div className="govuk-summary-list__row" key={uuidv4()}>
+                                <dt className="govuk-summary-list__key">{`${c.label}:`}</dt>
+                                <dd className="govuk-summary-list__value">
+                                  {resolveData(data[c.key])}
+                                </dd>
+                              </div>
+                            );
+                          })}
+                          <div className="govuk-summary-list__row" key={uuidv4()}>
+                            <dt className="govuk-summary-list__key" />
+                            <dd className="govuk-summary-list__value">
+                              <a
+                                href={`/schema/${entityId}/data/${data[businessKey.key]}/pkName/${
+                                  businessKey.key
+                                }`}
+                                onClick={async (e) => {
+                                  e.preventDefault();
+                                  await navigation.navigate(
+                                    `/schema/${entityId}/data/${data[businessKey.key]}/pkName/${
+                                      businessKey.key
+                                    }`
+                                  );
+                                }}
+                                className="govuk-link govuk-link--no-visited-state"
+                              >
+                                {t('pages.data.view')}
+                              </a>
+                            </dd>
+                          </div>
                         </dl>
                       </Card>
                     </div>
@@ -335,15 +469,6 @@ const DataListPage = ({ entityId }) => {
   );
 };
 
-const ScrollWrapper = styled.div`
-  max-height: 600px;
-  overflow: auto;
-`;
-
-const Card = styled.div`
-  border-bottom: 3px solid #005ea5;
-  box-sizing: border-box;
-`;
 DataListPage.propTypes = {
   entityId: PropTypes.string.isRequired,
 };

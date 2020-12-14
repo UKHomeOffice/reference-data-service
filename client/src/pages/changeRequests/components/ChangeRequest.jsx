@@ -1,11 +1,11 @@
 import React from 'react';
-import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { Card } from '../../../components/styles';
 
-const ChangeRequest = ({ request, cancelComponent }) => {
+const ChangeRequest = ({ request, cancelComponent, viewRequest }) => {
   const { t } = useTranslation();
   const resolveStatus = (data) => {
     const s = _.find(data.variables, (v) => v.name === 'status');
@@ -70,16 +70,17 @@ const ChangeRequest = ({ request, cancelComponent }) => {
         ) : null}
         {!request.endTime ? cancelComponent : null}
       </dl>
+      {viewRequest || null}
     </Card>
   );
 };
 
-const Card = styled.div`
-  border-bottom: 3px solid #005ea5;
-  box-sizing: border-box;
-`;
+ChangeRequest.defaultProps = {
+  viewRequest: null,
+};
 
 ChangeRequest.propTypes = {
+  viewRequest: PropTypes.node,
   cancelComponent: PropTypes.element.isRequired,
   request: PropTypes.shape({
     id: PropTypes.string,

@@ -18,6 +18,7 @@ const routes = mount({
     withAuthentication(
       route({
         title: context.t('pages.home.title'),
+        // eslint-disable-next-line react/jsx-filename-extension
         getView: () => <Home entity={request.params.id} />,
       })
     )

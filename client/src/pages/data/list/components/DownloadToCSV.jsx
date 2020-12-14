@@ -3,6 +3,7 @@ import React, { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CSVLink } from 'react-csv';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 import { useAxios } from '../../../../utils/hooks';
 
 const DownloadToCSV = ({ entity, appliedColumns, count }) => {
@@ -27,6 +28,7 @@ const DownloadToCSV = ({ entity, appliedColumns, count }) => {
       },
       params: {
         order: 'id.asc',
+        and: `(or(validfrom.is.null,validfrom.lt.${moment().toISOString()}),or(validto.is.null,validto.gt.${moment().toISOString()}))`,
         select: appliedColumns.map((col) => col.key).toString(),
       },
     })
@@ -84,7 +86,7 @@ DownloadToCSV.propTypes = {
     PropTypes.shape({
       label: PropTypes.string.isRequired,
       key: PropTypes.string.isRequired,
-    }),
+    })
   ).isRequired,
 };
 export default DownloadToCSV;

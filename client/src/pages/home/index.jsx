@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import styled, { css } from 'styled-components';
@@ -7,45 +7,21 @@ import PropTypes from 'prop-types';
 import { JSONPath } from 'jsonpath-plus';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import ApplicationSpinner from '../../components/ApplicationSpinner';
-import { useAxios } from '../../utils/hooks';
 import Entity from './components/Entity';
+import { RefDataSetContext } from '../../utils/RefDataSetContext';
 
 const Home = ({ entity }) => {
   const { t } = useTranslation();
   const navigation = useNavigation();
 
-  const [dataSets, setDataSets] = useState({
-    isLoading: true,
-    data: {},
-  });
-  const [entityKeys, setEntityKeys] = useState([]);
-  const [key, setKey] = useState(entity);
-  const axiosInstance = useAxios();
-  const dataRef = useRef(dataSets.data);
-  useEffect(() => {
-    const loadDataSet = async () => {
-      if (axiosInstance) {
-        if (!Object.values(dataRef.current).some((x) => x !== null)) {
-          try {
-            const response = await axiosInstance('/refdata');
-            dataRef.current = response.data;
-            setDataSets({
-              isLoading: false,
-              data: dataRef.current,
-            });
-            setEntityKeys(Object.keys(dataRef.current.paths));
-            setKey(entity ? `/${entity}` : Object.keys(response.data.paths)[1]);
-          } catch (e) {
-            setDataSets({
-              isLoading: false,
-              data: {},
-            });
-          }
-        }
-      }
-    };
-    loadDataSet();
-  }, [axiosInstance, setDataSets, setEntityKeys, setKey, entity]);
+  const { dataSetContext } = useContext(RefDataSetContext);
+
+  const dataSets = {
+    data: dataSetContext,
+  };
+
+  const [entityKeys, setEntityKeys] = useState(Object.keys(dataSets.data.paths));
+  const [key, setKey] = useState(entity ? `/${entity}` : Object.keys(dataSets.data.paths)[1]);
 
   const renderData = () => {
     if (!dataSets.data.paths) {

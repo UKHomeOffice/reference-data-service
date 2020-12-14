@@ -46,7 +46,11 @@ public class UIConfig implements WebMvcConfigurer {
                         jsonObject.put("serviceDeskUrl", environment.getProperty("serviceDesk.url"));
                         jsonObject.put("uiEnvironment", environment.getProperty("uiEnvironment"));
                         jsonObject.put("uiVersion", environment.getProperty("uiVersion"));
-                        jsonObject.put("newDataSetForm", environment.getRequiredProperty("newDataSetForm"));
+                        jsonObject.put("forms", Map.of(
+                                "newDataSetForm", environment.getRequiredProperty("newDataSetForm"),
+                                "editDataRowForm", environment.getRequiredProperty("editDataRowForm"),
+                                "deleteDataRowForm", environment.getRequiredProperty("deleteDataRowForm")
+                        ));
                         jsonObject.put("processes",
                                Map.of("newDataSetProcess", environment.getRequiredProperty("newDataSetProcess"),
                                      "deleteDataSetProcess",  environment.getRequiredProperty("deleteDataSetProcess"),

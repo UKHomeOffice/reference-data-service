@@ -8,6 +8,7 @@ import { useKeycloak } from '@react-keycloak/web';
 import { useNavigation } from 'react-navi';
 import { useAxios } from '../../utils/hooks';
 import ChangeRequest from './components/ChangeRequest';
+import { transform } from '../../utils/dataUtil';
 
 const ChangeRequestsPage = () => {
   const { t } = useTranslation();
@@ -78,36 +79,20 @@ const ChangeRequestsPage = () => {
           const variableResponses =
             response.data.length !== 0
               ? await axiosInstance({
-                  method: 'GET',
-                  url: '/camunda/engine-rest/history/variable-instance',
-                  params: {
-                    deserializeValues: false,
-                    processInstanceIdIn: response.data.map((p) => p.id).toString(),
-                  },
-                })
+                method: 'GET',
+                url: '/camunda/engine-rest/history/variable-instance',
+                params: {
+                  deserializeValues: false,
+                  processInstanceIdIn: response.data.map((p) => p.id).toString(),
+                },
+              })
               : {
-                  data: [],
-                };
-          const transformedData = response.data.map((p) => {
-            const variables = _.filter(
-              variableResponses.data,
-              (v) => v.processInstanceId === p.id
-            ).map((v) => ({
-              type: v.type,
-              valueInfo: v.valueInfo,
-              id: v.id,
-              name: v.name,
-              value: v.type === 'Json' ? JSON.parse(v.value) : v.value,
-            }));
-            return {
-              ...p,
-              variables,
-            };
-          });
+                data: [],
+              };
 
           setRequests({
             isLoading: false,
-            data: transformedData,
+            data: transform(response.data, variableResponses.data),
             page: 0,
             total: countResponse.data.count,
           });
@@ -151,9 +136,24 @@ const ChangeRequestsPage = () => {
             startedBy: userRequestsOnly ? keycloak.tokenParsed.email : null,
           },
         });
+
+        const nextVariablesResponse =
+          response.data.length !== 0
+            ? await axiosInstance({
+              method: 'GET',
+              url: '/camunda/engine-rest/history/variable-instance',
+              params: {
+                deserializeValues: false,
+                processInstanceIdIn: response.data.map((p) => p.id).toString(),
+              },
+            })
+            : {
+              data: [],
+            };
+
         setRequests({
           ...requests,
-          data: _.concat(requests.data, response.data),
+          data: _.concat(requests.data, transform(response.data, nextVariablesResponse.data)),
           page,
         });
         // eslint-disable-next-line no-empty

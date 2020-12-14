@@ -72,9 +72,13 @@ jest.mock('react-i18next', () => ({
 config.set(
   {
     serviceUrl: 'bar',
-    newDataSetForm: 'newDataSetForm',
+    forms: {
+      newDataSetForm: 'newDataSetForm',
+      editDataRowForm: 'editDataRowForm',
+    },
     processes: {
       newDataSetProcess: 'newDataSetProcess',
+      editDataRowProcess: 'editDataRowProcess',
     },
   },
   { freeze: false }

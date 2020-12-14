@@ -29,6 +29,10 @@ const CancelChangeRequestPage = ({ id }) => {
         businessKey: request.data.businessKey,
         processInstanceId: request.data.id,
         processVariables: {
+          status: {
+            value: 'CANCELLED',
+            type: 'string',
+          },
           submittedBy: {
             value: keycloak.tokenParsed.email,
             type: 'string',
@@ -61,16 +65,17 @@ const CancelChangeRequestPage = ({ id }) => {
           const variableResponses =
             response.data.length !== 0
               ? await axiosInstance({
-                  method: 'GET',
-                  url: '/camunda/engine-rest/variable-instance',
-                  params: {
-                    deserializeValues: false,
-                    processInstanceIdIn: id,
-                  },
-                })
+                method: 'GET',
+                url: '/camunda/engine-rest/history/variable-instance',
+                params: {
+                  deserializeValues: false,
+                  processInstanceIdIn: id,
+                },
+              })
               : {
-                  data: [],
-                };
+                data: [],
+              };
+
           const processInstance = response.data;
 
           setRequest({

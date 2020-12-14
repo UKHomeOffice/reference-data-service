@@ -11,7 +11,7 @@
     "title" : "We are experiencing technical problems",
     "409" : "The form has already been submitted",
     "401/403" : "Unable to complete your request due to authorization issues.",
-    "400" : "Unable to complete your request due to form submission issues.",
+    "400" : "Unable to complete your request due to submission issues.",
     "50x": "Internal system error.",
     "contact-support" : "Please contact support by clicking",
     "error-info" : "URL {{path}} - Code: {{status}}"
@@ -119,7 +119,43 @@
       }
     },
     "data" : {
+      "running-instance": "You cannot make any changes to this record. There is an outstanding change request for this entity.",
+      "change-requests": {
+        "title"  : "Change requests | {{entity}} | {{dataId}}",
+        "summary"  : "Change requests",
+        "size" : {
+          "key":"request",
+          "key_plural": "requests",
+          "keyWithCount": "{{count}} request",
+          "keyWithCount_plural": "{{count}} requests"
+        }
+      },
+      "history" : {
+        "loading": "Loading versions for {{dataId}}",
+        "no-more": "No more versions for {{dataId}}",
+        "size" : {
+          "key":"version",
+          "key_plural": "versions",
+          "keyWithCount": "{{count}} version",
+          "keyWithCount_plural": "{{count}} versions"
+        }
+      },
+      "edit" : {
+        "title" : "Edit",
+        "submission-success" : "Your edit request has been successfully submitted"
+      },
+      "view" : "View",
+      "view-record" : "{{entity}} | {{dataId}}",
       "no-data" : "No data available",
+      "record": {
+        "actions" : {
+          "data" : "Data record",
+          "change-requests": "Change requests",
+          "history" : "History",
+          "edit" : "Edit",
+          "delete" : "Delete"
+        }
+      },
       "list" : {
         "csv" : {
           "generate": "Download to CSV",

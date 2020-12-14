@@ -40,7 +40,7 @@ describe('FormErrorsAlert', () => {
 
     await act(async () => {
       await Promise.resolve(form);
-      await new Promise((resolve) => setImmediate(resolve));
+      await new Promise((resolve) => setInterval(resolve, 1000));
       await form.update();
     });
 
