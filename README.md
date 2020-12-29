@@ -1,5 +1,7 @@
 ![Reference Data Service UI CI](https://github.com/DigitalPatterns/reference-data-service/workflows/Reference%20Data%20Service%20UI%20CI/badge.svg)
 
+[![codecov](https://codecov.io/gh/DigitalPatterns/reference-data-service/branch/master/graph/badge.svg?token=PQENUDCSAT)](https://codecov.io/gh/DigitalPatterns/reference-data-service)
+
 # Reference Data Service
 
 Provides a UI for viewing and updating reference data. Data is not updated directly and requires an approval process.

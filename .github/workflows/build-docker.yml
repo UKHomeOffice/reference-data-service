@@ -40,6 +40,12 @@ jobs:
         run: npm run test-coverage
         env:
           CI: true
+      - uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: ./client/coverage
+          name: reference-data-service
+          verbose: true
 
   build:
     needs: [test-react-ui, test-ui-server]
