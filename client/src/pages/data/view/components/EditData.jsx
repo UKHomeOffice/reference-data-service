@@ -47,6 +47,10 @@ const EditData = ({
   const submitForm = (editData) => {
     setSubmitting(true);
     const variables = {
+      dataOwner: {
+        type: 'string',
+        value: definition.owner,
+      },
       status: {
         value: 'SUBMITTED',
         type: 'string',
@@ -58,10 +62,6 @@ const EditData = ({
       dataId: {
         value: dataId,
         type: 'string',
-      },
-      dataOwner: {
-        type: 'string',
-        value: definition.owner,
       },
       [formDefinition.name]: {
         value: JSON.stringify(editData),
@@ -274,6 +274,7 @@ EditData.propTypes = {
   handleOnSubmit: PropTypes.func.isRequired,
   businessKey: PropTypes.string.isRequired,
   definition: PropTypes.shape({
+    owner: PropTypes.string,
     properties: PropTypes.shape({}),
   }).isRequired,
   entityId: PropTypes.string.isRequired,
