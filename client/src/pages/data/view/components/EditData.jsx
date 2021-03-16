@@ -22,6 +22,8 @@ const EditData = ({
   processName,
   formName,
   handleCancel,
+  titleKey,
+  submissionSuccessKey,
 }) => {
   const formRef = useRef();
   const { t } = useTranslation();
@@ -57,6 +59,10 @@ const EditData = ({
         value: dataId,
         type: 'string',
       },
+      dataOwner: {
+        type: 'string',
+        value: definition.owner,
+      },
       [formDefinition.name]: {
         value: JSON.stringify(editData),
         type: 'json',
@@ -74,7 +80,7 @@ const EditData = ({
         setAlertContext({
           type: 'form-submission',
           status: 'successful',
-          message: t('pages.data.edit.submission-success'),
+          message: t(submissionSuccessKey),
           reference: `${editData.businessKey}`,
         });
         setSubmitting(false);
@@ -166,7 +172,7 @@ const EditData = ({
 
   return !formDefinition.isFailed && !data.isFailed ? (
     <>
-      <h2 className="govuk-heading-l">{t('pages.data.edit.title')}</h2>
+      <h2 className="govuk-heading-l">{t(titleKey)}</h2>
       <hr className="govuk-section-break govuk-section-break--m govuk-section-break--visible" />
       <div className="govuk-grid-row">
         <div className="govuk-grid-column-full">
@@ -255,9 +261,13 @@ const EditData = ({
 
 EditData.defaultProps = {
   handleCancel: () => {},
+  submissionSuccessKey: 'pages.data.edit.submission-success',
+  titleKey: 'pages.data.edit.title',
 };
 
 EditData.propTypes = {
+  submissionSuccessKey: PropTypes.string,
+  titleKey: PropTypes.string,
   processName: PropTypes.string.isRequired,
   formName: PropTypes.string.isRequired,
   handleCancel: PropTypes.func,
