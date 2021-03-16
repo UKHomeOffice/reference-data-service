@@ -49,7 +49,7 @@ const EditData = ({
     const variables = {
       dataOwner: {
         type: 'string',
-        value: definition.owner,
+        value: JSON.parse(definition.description.replace(/(?:\r\n|\r|\n)/g, '')).owner,
       },
       status: {
         value: 'SUBMITTED',
@@ -275,6 +275,7 @@ EditData.propTypes = {
   businessKey: PropTypes.string.isRequired,
   definition: PropTypes.shape({
     owner: PropTypes.string,
+    description: PropTypes.string,
     properties: PropTypes.shape({}),
   }).isRequired,
   entityId: PropTypes.string.isRequired,
