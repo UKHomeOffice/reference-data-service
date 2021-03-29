@@ -5,7 +5,7 @@
   "dependencies": {
     "@digitalpatterns/formio-gds-template": "^1.6.1",
     "@react-keycloak/web": "^2.1.4",
-    "axios": "^0.20.0",
+    "axios": "^0.21.1",
     "govuk-colours": "^1.1.0",
     "govuk-frontend": "^3.9.1",
     "html-react-parser": "^0.14.0",
