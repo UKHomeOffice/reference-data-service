@@ -9,8 +9,9 @@ spring:
           issuer-uri: ${auth.url:http://localhost:8080}/auth/realms/${auth.realm:elf}
   servlet:
     multipart:
-      max-request-size: -1
-      max-file-size: -1
+      max-file-size: 50MB
+      max-request-size: 50MB
+
 
 server:
   ssl:
@@ -44,6 +45,7 @@ zuul:
       path: /camunda/**
       url: ${workflowApi.url:http://localhost:8000}
   sensitive-headers: Cookie,Set-Cookie
+  ssl-hostname-validation-enabled: false
 
 management:
   endpoints:

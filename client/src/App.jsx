@@ -43,7 +43,6 @@ const keycloakInstance = new Keycloak({
 });
 const keycloakProviderInitConfig = {
   onLoad: 'login-required',
-  checkLoginIframe: false,
 };
 
 const RouterView = () => {
@@ -53,6 +52,21 @@ const RouterView = () => {
     return <ApplicationSpinner translationKey="keycloak.initialising" />;
   }
   initAll();
+
+  keycloak.onTokenExpired = () => {
+    keycloak
+      .updateToken()
+      .then(() => {
+        // eslint-disable-next-line no-console
+        console.log('token refreshed');
+      })
+      .catch(() => {
+        // eslint-disable-next-line no-console
+        console.error('Failed to refresh token...logging user out');
+        keycloak.logout();
+      });
+  };
+
   return (
     <Router
       hashScrollBehavior="smooth"

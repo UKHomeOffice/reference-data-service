@@ -53,7 +53,6 @@ jobs:
       - name: Publish to Docker Registry
         uses: elgohr/Publish-Docker-Github-Action@master
         with:
-          name: ${{ env.IMAGE_DOCKER_HUB }}
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           registry: quay.io

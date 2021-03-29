@@ -12,7 +12,7 @@ import EditData from './EditData';
 
 const definition = {
   description:
-    '{"label": "Behaviour Signs", "description": "Behaviours Warning and Danger Signs", "schemalastupdated": "06/03/2019", "dataversion": 1}',
+    '{"label": "Behaviour Signs", "description": "Behaviours Warning and Danger Signs", "schemalastupdated": "06/03/2019", "dataversion": 1, "owner" : "test"}',
   required: ['id', 'name', 'warning', 'danger'],
   properties: {
     id: {
