@@ -59,6 +59,9 @@ describe('Home', () => {
       },
     },
     definitions: {
+      m_function: {
+        type: 'object',
+      },
       behavioursigns: {
         description:
           '{"label": "Behaviour Signs", "description": "Behaviours Warning and Danger Signs",  "dataversion": 1}',
@@ -198,6 +201,22 @@ describe('Home', () => {
 
     expect(wrapper.find('ul[id="entityList"]').at(0).exists()).toBe(true);
     expect(wrapper.find(CustomLink).length).toBe(2);
+  });
+
+  it('does not render entity without description', async () => {
+    mockAxios.onGet('/refdata').reply(200, apiResponse);
+    const wrapper = mount(
+      <RefDataSetContextProvider>
+        <Home />
+      </RefDataSetContextProvider>
+    );
+
+    await act(async () => {
+      await Promise.resolve(wrapper);
+      await new Promise((resolve) => setInterval(resolve, 1000));
+      await wrapper.update();
+    });
+    expect(wrapper.find(CustomLink).length).not.toBe(3);
   });
 
   it('can pre select entity', async () => {

@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 import { useNavigation } from 'react-navi';
 import PropTypes from 'prop-types';
-import { JSONPath } from 'jsonpath-plus';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import _ from 'lodash';
 import ApplicationSpinner from '../../components/ApplicationSpinner';
 import Entity from './components/Entity';
 import { RefDataSetContext } from '../../utils/RefDataSetContext';
@@ -20,11 +20,17 @@ const Home = ({ entity }) => {
     data: dataSetContext,
   };
 
-  const [entityKeys, setEntityKeys] = useState(Object.keys(dataSets.data.paths));
-  const [key, setKey] = useState(entity ? `/${entity}` : Object.keys(dataSets.data.paths)[1]);
+  // eslint-disable-next-line no-unused-vars
+  const filteredDefinitions = _.pickBy(dataSets.data.definitions, (value) => {
+    return value && value.description && value.description !== '';
+  });
+
+  const [entityKeys, setEntityKeys] = useState(Object.keys(filteredDefinitions));
+
+  const [key, setKey] = useState(entity ? `${entity}` : `${Object.keys(filteredDefinitions)[0]}`);
 
   const renderData = () => {
-    if (!dataSets.data.paths) {
+    if (!filteredDefinitions) {
       return null;
     }
 
@@ -40,13 +46,13 @@ const Home = ({ entity }) => {
             onChange={(e) => {
               if (e.target.value) {
                 setEntityKeys(
-                  Object.keys(dataSets.data.paths).filter((k) =>
-                    k.replace('/', '').toLowerCase().match(e.target.value)
+                  Object.keys(filteredDefinitions).filter((k) =>
+                    k.toLowerCase().match(e.target.value)
                   )
                 );
               } else {
-                setEntityKeys(Object.keys(dataSets.data.paths));
-                setKey(Object.keys(dataSets.data.paths)[1]);
+                setEntityKeys(Object.keys(filteredDefinitions));
+                setKey(Object.keys(filteredDefinitions)[0]);
               }
             }}
             spellCheck="false"
@@ -57,18 +63,18 @@ const Home = ({ entity }) => {
             {entityKeys.map((k) => (
               <li key={k}>
                 <CustomLink
-                  href={`/schema${k}`}
+                  href={`/schema/${k}`}
                   active={key === k}
                   className="govuk-link govuk-link--no-visited-state"
                   onClick={async (e) => {
                     e.preventDefault();
                     setKey(k);
-                    await navigation.navigate(`/schema${k}`, {
+                    await navigation.navigate(`/schema/${k}`, {
                       replace: false,
                     });
                   }}
                 >
-                  {k.replace('/', '')}
+                  {k}
                 </CustomLink>
               </li>
             ))}
@@ -97,15 +103,10 @@ const Home = ({ entity }) => {
             {renderData()}
           </div>
           <div className="govuk-grid-column-three-quarters">
-            {key && dataSets.data.paths && dataSets.data.paths[key] ? (
+            {key && filteredDefinitions && filteredDefinitions[key] ? (
               <Entity
-                definition={
-                  JSONPath({
-                    path: `$.definitions['${key.replace('/', '')}']`,
-                    json: dataSets.data,
-                  })[0]
-                }
-                entity={{ ...dataSets.data.paths[key], key }}
+                definition={filteredDefinitions[key]}
+                entity={{ ...dataSets.data.paths[`/${key}`], key: `/${key}` }}
               />
             ) : null}
           </div>
