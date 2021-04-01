@@ -43,6 +43,7 @@ const keycloakInstance = new Keycloak({
 });
 const keycloakProviderInitConfig = {
   onLoad: 'login-required',
+  checkLoginIframe: false,
 };
 
 const RouterView = () => {
