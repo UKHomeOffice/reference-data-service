@@ -1,14 +1,10 @@
-![Reference Data Service UI CI](https://github.com/DigitalPatterns/reference-data-service/workflows/Reference%20Data%20Service%20UI%20CI/badge.svg)
-
-[![codecov](https://codecov.io/gh/DigitalPatterns/reference-data-service/branch/master/graph/badge.svg?token=PQENUDCSAT)](https://codecov.io/gh/DigitalPatterns/reference-data-service)
-
 # Reference Data Service
 
 Provides a UI for viewing and updating reference data. Data is not updated directly and requires an approval process.
 
 # Server
 
-The spring boot application provides a server to serve the client code but also 
+The spring boot application provides a server to serve the client code but also
 acts as a reverse proxy removing the need to provide any additional configuration set up in the UI.
 
 ## Bootstrap configuration
@@ -133,13 +129,13 @@ And status that is not mappped will be marked with 'UNKNOWN'
 
 The following variable is request for creating a new data set:
 
-* newDataSetForm 
+* newDataSetForm
 * editDataRowForm
 * deleteDataRowForm
 
 ## newDataSetForm
 
-This form defines how a new data set can be created. 
+This form defines how a new data set can be created.
 
 ## editDataRowForm
 
@@ -150,4 +146,3 @@ as a guideline.
 
 This form defines how an existing data row can be deleted. This project includes an example delete [form](/docs/forms/deleteDataRow.json). Please use this
 as a guideline.
-
